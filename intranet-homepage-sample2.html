@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>CCM Europe Intranet — Sample 2 (Professional)</title>
+  <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --primary:#003366; /* CCM Blue */
+      --accent:#00509e;  /* Hover Blue */
+      --accent-2:#05B4FF; /* Bright Blue */
+      --muted:#f2f4f6;
+      --panel:#ffffff;
+      --text:#222;
+    }
+    *{box-sizing:border-box}
+    body{font-family:'Segoe UI', Arial, sans-serif;margin:0;background:var(--muted);color:var(--text);}
+    .wrap{max-width:1200px;margin:0 auto;padding:1rem}
+
+    /* Header */
+    header{display:flex;justify-content:space-between;align-items:center;padding:.75rem 0}
+    .logo{display:flex;align-items:center;gap:.6rem}
+    .brand{font-weight:700;color:var(--primary);font-size:1.15rem}
+    .search{min-width:260px}
+    .user{font-size:.95rem;text-align:right}
+
+    /* Top nav */
+    .topnav{background:#fff;border-radius:8px;padding:.5rem;display:flex;gap:.5rem;align-items:center;box-shadow:0 6px 18px rgba(11,24,39,0.04)}
+    .topnav a{padding:.45rem .7rem;border-radius:6px;color:var(--primary);text-decoration:none;font-weight:600}
+    .topnav a:hover{background:var(--accent-2);color:var(--primary)}
+    .topnav a.active{background:var(--primary);color:#fff}
+
+    /* Grid */
+    .grid{display:grid;grid-template-columns:320px 1fr 300px;gap:1rem;margin-top:1rem}
+
+    /* Left sidebar (navigation) */
+    nav.side{background:var(--panel);padding:1rem;border-radius:8px;height:fit-content}
+    nav.side a{display:block;padding:.6rem;border-radius:6px;color:var(--primary);text-decoration:none;margin-bottom:.35rem}
+    nav.side a:hover{background:var(--accent-2)}
+
+    /* Main content */
+    main{display:flex;flex-direction:column;gap:1rem}
+
+    /* Hero: image with overlay and CTA */
+    .hero{background:#fff;border-radius:8px;overflow:hidden;display:flex}
+    .hero .hero-media{width:55%;min-height:220px;position:relative}
+    .hero img{width:100%;height:100%;object-fit:cover;display:block}
+    .hero .hero-content{padding:1.25rem;display:flex;flex-direction:column;justify-content:center}
+    .hero h1{margin:0 0 .5rem;color:var(--primary)}
+    .hero p{margin:0 0 1rem;color:#334}
+    .btn{background:var(--accent-2);color:var(--primary);border:none;padding:.6rem .9rem;border-radius:6px;font-weight:700;cursor:pointer}
+
+    /* News feed */
+    .news-list{display:grid;grid-template-columns:repeat(2,1fr);gap:.75rem}
+    .news-item{background:#fff;padding:.8rem;border-radius:8px;display:flex;gap:.75rem;align-items:flex-start}
+    .news-item img{width:110px;height:70px;object-fit:cover;border-radius:6px}
+    .news-item h4{margin:.1rem 0;font-size:1rem;color:var(--primary)}
+    .meta{font-size:.85rem;color:#666}
+
+    /* Right panel (quick actions + media) */
+    aside.right{background:var(--panel);padding:1rem;border-radius:8px;height:fit-content;position:sticky;top:1rem}
+    .actions{display:grid;grid-template-columns:1fr 1fr;gap:.5rem}
+    .action{background:var(--muted);padding:.5rem;border-radius:6px;text-decoration:none;color:var(--primary);font-weight:600;display:inline-block;text-align:center}
+    .action:hover{background:var(--accent-2);color:#003366}
+
+    /* Video / image block */
+    .media-block{margin-top:1rem;border-radius:8px;overflow:hidden}
+    .media-block img{width:100%;display:block}
+
+    /* Footer small */
+    footer{margin-top:1rem;text-align:center;color:#777;font-size:.9rem}
+
+    @media(max-width:1100px){.grid{grid-template-columns:1fr;}.hero{flex-direction:column}.hero .hero-media{width:100%;min-height:200px}}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="logo">
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="4" fill="#003366"/></svg>
+        <div>
+          <div class="brand">CCM Europe</div>
+          <div style="font-size:.8rem;color:#666">Corporate Intranet</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:1rem">
+        <input class="search" type="search" placeholder="Search people, documents..." style="padding:.5rem;border-radius:6px;border:1px solid #e6e6e6">
+        <div class="user">John Doe<br><span style="font-size:.85rem;color:#666">Product Management</span></div>
+      </div>
+    </header>
+
+    <div class="topnav" role="navigation" aria-label="Primary">
+      <div class="wrap" style="display:flex;align-items:center;gap:1rem">
+        <a class="active" href="#">Home</a>
+        <a href="#">News</a>
+        <a href="#">Departments</a>
+        <a href="#">Docs</a>
+        <a href="#">People</a>
+        <a href="#">IT</a>
+      </div>
+    </div>
+
+    <div class="grid">
+      <nav class="side" aria-label="Side Navigation">
+        <a href="#">Dashboard</a>
+        <a href="#">Projects</a>
+        <a href="#">Quality</a>
+        <a href="#">Safety</a>
+        <a href="#">HR</a>
+        <a href="#">Finance</a>
+        <a href="#">Legal</a>
+      </nav>
+
+      <main>
+        <section class="hero" aria-labelledby="hero-title">
+          <div class="hero-media">
+            <img src="https://via.placeholder.com/900x400.png?text=CCM+Corporate+Video+Preview" alt="Hero media">
+          </div>
+          <div class="hero-content">
+            <h1 id="hero-title">Company updates, resources and tools — all in one place</h1>
+            <p>Quick access to policies, systems and important announcements. Designed for speed, clarity and easy access on SharePoint.</p>
+            <div style="display:flex;gap:.6rem">
+              <button class="btn">Open Requests</button>
+              <button class="btn" style="background:#fff;color:var(--primary);border:1px solid var(--accent-2)">Team Directory</button>
+            </div>
+          </div>
+        </section>
+
+        <section style="display:flex;gap:1rem;margin-top:1rem;align-items:flex-start">
+          <div style="flex:1">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem">
+              <h2 style="margin:0;color:var(--primary)">Latest News</h2>
+              <a href="#" style="color:var(--accent-2);font-weight:700;text-decoration:none">See all</a>
+            </div>
+            <div class="news-list" aria-live="polite">
+              <article class="news-item">
+                <img src="https://via.placeholder.com/200x120.png?text=Recycling" alt="Recycling">
+                <div>
+                  <div class="meta">Mar 2026 — Sustainability</div>
+                  <h4>EPDM Recycling Initiative Launch</h4>
+                  <p style="margin:0;color:#555;font-size:.9rem">A multi-site initiative to reduce EPDM waste across Europe.</p>
+                </div>
+              </article>
+
+              <article class="news-item">
+                <img src="https://via.placeholder.com/200x120.png?text=Town+Hall" alt="Town Hall">
+                <div>
+                  <div class="meta">Feb 2026 — Corporate</div>
+                  <h4>Q1 Town Hall Recording</h4>
+                  <p style="margin:0;color:#555;font-size:.9rem">Watch the management team discuss the strategy for 2026.</p>
+                </div>
+              </article>
+
+              <article class="news-item">
+                <img src="https://via.placeholder.com/200x120.png?text=Welcome" alt="Welcome">
+                <div>
+                  <div class="meta">Jan 2026 — People</div>
+                  <h4>New Team Members</h4>
+                  <p style="margin:0;color:#555;font-size:.9rem">Join us in welcoming colleagues across Berlin and Paris.</p>
+                </div>
+              </article>
+
+              <article class="news-item">
+                <img src="https://via.placeholder.com/200x120.png?text=Event" alt="Event">
+                <div>
+                  <div class="meta">Dec 2025 — Events</div>
+                  <h4>Year-end Gallery Published</h4>
+                  <p style="margin:0;color:#555;font-size:.9rem">Photos from the year-end celebrations are now available.</p>
+                </div>
+              </article>
+            </div>
+          </div>
+
+          <div style="width:320px">
+            <div style="background:#fff;border-radius:8px;padding:1rem;box-shadow:0 6px 18px rgba(11,24,39,0.04)">
+              <h3 style="margin:0 0 .5rem;color:var(--primary)">Notifications</h3>
+              <p style="margin:0;color:#555">You have <strong>2</strong> unread messages and <strong>1</strong> pending approval.</p>
+
+              <div style="margin-top:1rem">
+                <h4 style="margin:.2rem 0;color:#666;font-size:.95rem">Quick actions</h4>
+                <div class="actions">
+                  <a class="action" href="#">Webmail</a>
+                  <a class="action" href="#">IT Support</a>
+                  <a class="action" href="#">Expense</a>
+                  <a class="action" href="#">Holiday</a>
+                </div>
+
+                <div style="margin-top:.75rem;font-size:.9rem;color:#666">More quick links in the panel on the right.</div>
+              </div>
+            </div>
+
+            <div class="media-block">
+              <img src="https://via.placeholder.com/320x180.png?text=Intro+Video" alt="Intro video">
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <aside class="right" aria-label="Quick actions">
+        <h3 style="margin-top:0;color:var(--primary)">Quick Actions</h3>
+        <div style="display:flex;flex-direction:column;gap:.5rem">
+          <a class="action" style="display:block;background:var(--muted);padding:.6rem;border-radius:6px;text-decoration:none;color:var(--primary)" href="#">1. HR Portal</a>
+          <a class="action" style="display:block;background:var(--muted);padding:.6rem;border-radius:6px;text-decoration:none;color:var(--primary)" href="#">2. IT Support</a>
+          <a class="action" style="display:block;background:var(--muted);padding:.6rem;border-radius:6px;text-decoration:none;color:var(--primary)" href="#">3. Service Desk</a>
+          <a class="action" style="display:block;background:var(--muted);padding:.6rem;border-radius:6px;text-decoration:none;color:var(--primary)" href="#">4. Webmail</a>
+          <a class="action" style="display:block;background:var(--muted);padding:.6rem;border-radius:6px;text-decoration:none;color:var(--primary)" href="#">5. SAP ERP</a>
+          <a class="action" style="display:block;background:var(--muted);padding:.6rem;border-radius:6px;text-decoration:none;color:var(--primary)" href="#">6. Expense Claims</a>
+          <a class="action" style="display:block;background:var(--muted);padding:.6rem;border-radius:6px;text-decoration:none;color:var(--primary)" href="#">7. Holiday Calendar</a>
+          <a class="action" style="display:block;background:var(--muted);padding:.6rem;border-radius:6px;text-decoration:none;color:var(--primary)" href="#">8. Company Policies</a>
+          <a class="action" style="display:block;background:var(--muted);padding:.6rem;border-radius:6px;text-decoration:none;color:var(--primary)" href="#">9. Facilities Request</a>
+          <a class="action" style="display:block;background:var(--muted);padding:.6rem;border-radius:6px;text-decoration:none;color:var(--primary)" href="#">10. Training Hub</a>
+          <a class="action" style="display:block;background:var(--muted);padding:.6rem;border-radius:6px;text-decoration:none;color:var(--primary)" href="#">11. Vendor Portal</a>
+          <a class="action" style="display:block;background:var(--muted);padding:.6rem;border-radius:6px;text-decoration:none;color:var(--primary)" href="#">12. Health & Safety</a>
+          <a class="action" style="display:block;background:var(--muted);padding:.6rem;border-radius:6px;text-decoration:none;color:var(--primary)" href="#">13. Travel Requests</a>
+          <a class="action" style="display:block;background:var(--muted);padding:.6rem;border-radius:6px;text-decoration:none;color:var(--primary)" href="#">14. Finance Approvals</a>
+          <a class="action" style="display:block;background:var(--muted);padding:.6rem;border-radius:6px;text-decoration:none;color:var(--primary)" href="#">15. Knowledge Base</a>
+        </div>
+      </aside>
+    </div>
+
+    <footer>
+      CCM Europe Intranet — internal use only
+    </footer>
+  </div>
+</body>
+</html>

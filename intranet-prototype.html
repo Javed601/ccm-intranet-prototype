@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>CCM Europe — Intranet Prototype</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+  :root{
+    /* ── CCM Europe Brand Palette (from Design System) ── */
+    --primary:#003366;          /* CCM Blue */
+    --secondary:#e6e6e6;        /* Light Gray */
+    --accent:#00509e;           /* Hover Blue */
+    --bright:#05B4FF;           /* Bright Blue — buttons, highlights */
+    --bg:#f7f7f7;               /* Page background */
+    --card:#fff;
+    --text:#222;                /* Dark Gray body text */
+    --muted:#666;               /* Subdued text — neutral gray */
+    --border:#e6e6e6;           /* Borders = secondary color */
+    --radius:10px; --shadow:0 6px 18px rgba(0,0,0,.06);
+    --rightbar-w:300px; --topbar-h:64px; --gap:16px; --font:'Segoe UI',Arial,sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{font-family:var(--font);margin:0;background:var(--bg);color:var(--text);}
+  a{color:inherit;text-decoration:none}
+  .topbar{position:fixed;left:0;right:0;top:0;height:var(--topbar-h);background:var(--primary);display:flex;align-items:center;padding:0 18px;gap:12px;color:#fff;z-index:110}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:700}
+  .brand .logo{width:36px;height:36px;background:#fff;border-radius:6px;color:var(--primary);display:flex;align-items:center;justify-content:center;font-weight:900}
+  .topnav{display:flex;gap:8px;align-items:center;margin-left:8px}
+  .topnav a{padding:8px 10px;border-radius:6px;font-weight:600;color:#fff;opacity:.95}
+  .topnav a:hover{background:rgba(255,255,255,.06)}
+  .search{margin-left:12px;flex:1;max-width:520px;display:flex;gap:0}
+  .search input{flex:1;padding:8px 14px;border-radius:20px 0 0 20px;border:none;outline:none;font-family:var(--font);font-size:13px}
+  .search-btn{background:var(--bright);color:#fff;border:none;border-radius:0 20px 20px 0;padding:8px 16px;cursor:pointer;font-size:13px;transition:background .2s;flex-shrink:0}
+  .search-btn:hover{background:#048ec5}
+  .top-actions{margin-left:auto;display:flex;gap:8px;align-items:center}
+  .topbar-select{background:rgba(255,255,255,.15);color:#fff;border:1.5px solid rgba(255,255,255,.35);padding:6px 10px;border-radius:8px;cursor:pointer;font-size:12px;font-family:var(--font);outline:none}
+  .topbar-select option{background:#003366;color:#fff}
+  /* ── Language pill switcher ── */
+  .lang-switcher{display:flex;gap:2px;background:rgba(255,255,255,.12);border-radius:20px;padding:3px;align-items:center}
+  .lang-btn{background:transparent;border:none;color:rgba(255,255,255,.75);padding:5px 10px;border-radius:16px;cursor:pointer;font-size:12px;font-family:var(--font);font-weight:600;transition:background .18s,color .18s;white-space:nowrap;line-height:1}
+  .lang-btn:hover{background:rgba(255,255,255,.18);color:#fff}
+  .lang-btn.active{background:#fff;color:var(--primary);box-shadow:0 1px 4px rgba(0,0,0,.15)}
+
+  /* Layout — right padding accounts for the fixed sidebar so main fills all usable space */
+  .layout{display:flex;padding-top:calc(var(--topbar-h) + 20px);padding-left:18px;padding-right:calc(var(--rightbar-w) + 32px)}
+  .main{flex:1;min-width:0}
+  /* ── Welcome Banner ── */
+  .welcome-banner{background:linear-gradient(120deg,var(--primary) 0%,var(--accent) 60%,#007acc 100%);border-radius:var(--radius);padding:24px 30px;margin-bottom:0;display:flex;align-items:center;justify-content:space-between;gap:20px;position:relative;overflow:hidden;box-shadow:0 4px 18px rgba(0,51,102,.12)}
+  .welcome-banner::before{content:'';position:absolute;right:-40px;top:-40px;width:200px;height:200px;border-radius:50%;background:rgba(255,255,255,.06)}
+  .welcome-banner::after{content:'';position:absolute;right:60px;bottom:-60px;width:160px;height:160px;border-radius:50%;background:rgba(255,255,255,.04)}
+  .welcome-text h1{color:#fff;font-size:22px;font-weight:700;margin:0 0 4px}
+  .welcome-text p{color:rgba(255,255,255,.85);font-size:13px;margin:0}
+
+  .section{margin-top:18px}
+  .card{background:var(--card);border-radius:8px;padding:14px;box-shadow:var(--shadow)}
+  .card + .card{margin-top:12px}
+  .card-header{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+  .card-header h3{margin:0;font-size:15px;color:var(--primary)}
+
+  /* News list */
+  .news-list{display:flex;flex-direction:column;gap:10px}
+  .news-item{display:flex;gap:14px;padding:14px;border-radius:8px;border:1px solid var(--border);cursor:pointer;transition:box-shadow .15s}
+  .news-item:hover{box-shadow:0 4px 14px rgba(0,0,0,.08)}
+  .news-thumb{width:70px;height:60px;border-radius:8px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:22px}
+  .news-body{flex:1;min-width:0}
+  .news-cat{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px}
+  .news-title{font-size:13px;font-weight:700;line-height:1.35;margin-bottom:4px;color:var(--text)}
+  .news-excerpt{font-size:12px;color:var(--muted);line-height:1.4}
+  .news-meta{font-size:11px;color:var(--muted);margin-top:5px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  .tag{font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px}
+  /* Rightbar */
+  .rightbar{position:fixed;top:calc(var(--topbar-h) + 20px);right:18px;width:var(--rightbar-w);bottom:18px;background:transparent;padding:8px;overflow:auto}
+  .quicklinks{display:grid;grid-template-columns:1fr;gap:8px}
+  .ql-item{background:var(--card);padding:12px;border-radius:8px;display:flex;gap:10px;align-items:center;box-shadow:var(--shadow);cursor:pointer}
+  .ql-icon{width:44px;height:44px;border-radius:8px;display:flex;align-items:center;justify-content:center;background:#eaf6ff;color:var(--accent);font-size:18px}
+  .ql-label{font-weight:700;font-size:13px}
+  .ql-meta{font-size:12px;color:var(--muted)}
+
+  /* ── Safety First ── */
+  .safety-section{margin-bottom:0}
+  .section-header{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+  .section-title{font-size:15px;font-weight:700;color:var(--primary);display:flex;align-items:center;gap:8px}
+  .section-title i{color:var(--bright)}
+  .section-link{margin-left:auto;font-size:12px;color:var(--accent);cursor:pointer;font-weight:600;display:flex;align-items:center;gap:4px}
+  .section-link:hover{color:var(--bright)}
+  .safety-banner{background:linear-gradient(135deg,#0a2540 0%,var(--primary) 100%);border-radius:var(--radius);padding:18px 24px;margin-bottom:14px;display:flex;align-items:center;gap:20px;box-shadow:0 4px 18px rgba(0,51,102,.12);border-left:5px solid var(--bright)}
+  .safety-icon-big{width:52px;height:52px;border-radius:50%;background:rgba(5,180,255,.2);display:flex;align-items:center;justify-content:center;font-size:24px;color:var(--bright);flex-shrink:0}
+  .safety-headline{color:#fff}
+  .safety-headline h3{font-size:14px;font-weight:700;margin-bottom:2px;letter-spacing:.04em;text-transform:uppercase}
+  .safety-headline p{font-size:12px;color:rgba(255,255,255,.65)}
+  .safety-total{margin-left:auto;text-align:center;flex-shrink:0;background:rgba(5,180,255,.15);border-radius:var(--radius);padding:10px 20px;border:1px solid rgba(5,180,255,.3)}
+  .safety-total .big-num{font-size:38px;font-weight:900;color:var(--bright);line-height:1}
+  .safety-total .big-label{font-size:10px;color:rgba(255,255,255,.65);text-transform:uppercase;letter-spacing:.08em;margin-top:2px}
+  .safety-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+  .safety-card{background:var(--card);border-radius:var(--radius);padding:14px 16px;box-shadow:var(--shadow);border-top:3px solid var(--bright);transition:transform .18s ease,box-shadow .18s ease;cursor:default}
+  .safety-card:hover{transform:translateY(-2px);box-shadow:0 4px 18px rgba(0,51,102,.12)}
+  .sc-location{font-size:11px;font-weight:700;color:var(--primary);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;display:flex;align-items:center;gap:5px}
+  .sc-location i{color:var(--muted);font-size:10px}
+  .sc-days{font-size:30px;font-weight:900;color:var(--primary);line-height:1}
+  .sc-label{font-size:10px;color:var(--muted);margin-top:2px}
+  .sc-status{display:inline-flex;align-items:center;gap:4px;margin-top:8px;font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px}
+  .sc-status.good{background:#e8f5e9;color:#2e7d32}
+  .sc-status.warn{background:#fff3e0;color:#f57c00}
+  .sc-status.great{background:#e3f2fd;color:var(--accent)}
+  /* Locations */
+  .locations-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+  .loc-card{background:var(--card);border-radius:12px;overflow:hidden;box-shadow:var(--shadow);transition:transform .2s,box-shadow .2s;cursor:pointer;display:flex;flex-direction:column}
+  .loc-card:hover{transform:translateY(-5px);box-shadow:0 14px 32px rgba(0,51,102,.16)}
+  .loc-card-head{padding:20px 18px 16px;position:relative;display:flex;flex-direction:column;gap:4px}
+  .loc-flag{font-size:36px;line-height:1;filter:drop-shadow(0 2px 4px rgba(0,0,0,.18))}
+  .loc-city{font-size:17px;font-weight:800;color:#fff;margin:6px 0 0;letter-spacing:.01em}
+  .loc-country-tag{font-size:11px;color:rgba(255,255,255,.72);display:flex;align-items:center;gap:4px;margin-top:1px}
+  .loc-hq-badge{position:absolute;top:12px;right:12px;background:rgba(255,255,255,.22);border:1.5px solid rgba(255,255,255,.5);color:#fff;font-size:9px;font-weight:800;padding:3px 8px;border-radius:10px;letter-spacing:.1em;text-transform:uppercase}
+  .loc-card-body{padding:14px 18px 10px;flex:1;display:flex;flex-direction:column;gap:10px}
+  .loc-role-row{display:flex;align-items:center;gap:10px}
+  .loc-role-icon{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+  .loc-role-text{font-size:12px;font-weight:700;color:var(--primary);line-height:1.35}
+  .loc-employees{font-size:11px;color:var(--muted);display:flex;align-items:center;gap:6px}
+  .loc-card-foot{padding:10px 18px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;margin-top:auto}
+  .loc-view-link{font-size:11px;font-weight:700;color:var(--accent);display:flex;align-items:center;gap:4px;transition:color .15s}
+  .loc-card:hover .loc-view-link{color:var(--bright)}
+  /* Utility */
+  .muted{color:var(--muted)}
+  .controls{display:flex;gap:8px;align-items:center}
+  .chip{padding:6px 10px;border-radius:999px;background:#fff;font-size:13px;border:1px solid var(--border);color:var(--text)}
+  .hide{display:none}
+
+  /* ── Mission Section — Figma Split-Screen ── */
+  @keyframes mSlideLeft  { from{opacity:0;transform:translateX(-28px)} to{opacity:1;transform:translateX(0)} }
+  @keyframes mSlideUp    { from{opacity:0;transform:translateY(50px)}  to{opacity:1;transform:translateY(0)} }
+  @keyframes mFloatRing  { 0%,100%{transform:translateY(0) rotate(0deg)} 50%{transform:translateY(-14px) rotate(6deg)} }
+  @keyframes mGlowPulse  { 0%,100%{opacity:.15} 50%{opacity:.35} }
+
+  .mission-section{
+    position:relative;
+    display:grid;
+    grid-template-columns:58% 42%;
+    min-height:500px;
+    border-radius:var(--radius);
+    overflow:hidden;
+    margin-top:24px;
+    margin-bottom:18px;
+    box-shadow:0 12px 48px rgba(0,30,80,.22);
+  }
+  /* Left dark navy panel */
+  .mission-text-panel{
+    background:linear-gradient(140deg,#001e4a 0%,#002f6c 55%,#003d80 100%);
+    padding:52px 52px 52px 40px;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    gap:22px;
+    position:relative;
+    z-index:2;
+    /* angled right edge */
+    clip-path:polygon(0 0,100% 0,94% 100%,0 100%);
+  }
+  .mission-text-panel::before{
+    content:'';
+    position:absolute;
+    top:-70px;left:-70px;
+    width:280px;height:280px;
+    border-radius:50%;
+    border:55px solid rgba(5,180,255,.07);
+    pointer-events:none;
+    animation:mFloatRing 8s ease-in-out infinite;
+  }
+  .mission-tag{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    color:#05B4FF;
+    font-size:.68rem;
+    font-weight:800;
+    letter-spacing:2.5px;
+    text-transform:uppercase;
+    animation:mSlideLeft .6s .05s ease both;
+  }
+  .mission-tag::before{
+    content:'';
+    display:inline-block;
+    width:22px;height:2px;
+    background:#05B4FF;
+    border-radius:2px;
+  }
+  .mission-text-panel h2{
+    margin:0;
+    color:#fff;
+    font-size:2.1rem;
+    font-weight:800;
+    line-height:1.15;
+    letter-spacing:-.5px;
+    animation:mSlideLeft .6s .15s ease both;
+  }
+  .mission-text-panel h2 em{
+    font-style:normal;
+    color:#05B4FF;
+  }
+  .mission-text-panel > p{
+    margin:0;
+    color:rgba(255,255,255,.7);
+    line-height:1.75;
+    font-size:.93rem;
+    max-width:420px;
+    animation:mSlideLeft .6s .25s ease both;
+  }
+  /* stat cards row */
+  .mission-stats-row{
+    display:flex;
+    gap:10px;
+    animation:mSlideLeft .6s .35s ease both;
+  }
+  .m-stat{
+    flex:1;
+    padding:14px 12px;
+    border-radius:10px;
+    background:rgba(255,255,255,.07);
+    border:1px solid rgba(255,255,255,.1);
+    text-align:center;
+    cursor:default;
+    transition:background .2s,border-color .2s,transform .2s;
+  }
+  .m-stat:hover{
+    background:rgba(5,180,255,.14);
+    border-color:rgba(5,180,255,.4);
+    transform:translateY(-3px);
+  }
+  .m-stat strong{
+    display:block;
+    color:#fff;
+    font-size:1.55rem;
+    font-weight:900;
+    line-height:1;
+  }
+  .m-stat span{
+    color:rgba(255,255,255,.45);
+    font-size:.65rem;
+    letter-spacing:.7px;
+    text-transform:uppercase;
+  }
+  /* checklist */
+  .mission-checks{
+    display:flex;
+    flex-direction:column;
+    gap:9px;
+    animation:mSlideLeft .6s .45s ease both;
+  }
+  .mission-check{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    color:rgba(255,255,255,.8);
+    font-size:.86rem;
+  }
+  .m-dot{
+    width:22px;height:22px;
+    border-radius:50%;
+    background:rgba(5,180,255,.15);
+    border:1.5px solid #05B4FF;
+    display:flex;align-items:center;justify-content:center;
+    flex-shrink:0;
+    font-size:.6rem;
+    color:#05B4FF;
+  }
+  .mission-qquote{
+    padding:14px 18px;
+    border-left:3px solid #05B4FF;
+    background:rgba(5,180,255,.08);
+    border-radius:0 8px 8px 0;
+    color:rgba(255,255,255,.88);
+    font-style:italic;
+    font-size:.9rem;
+    line-height:1.65;
+    animation:mSlideLeft .6s .55s ease both;
+  }
+  /* Right photo panel */
+  .mission-photo-panel{
+    background:linear-gradient(175deg,#001020 0%,#001e40 50%,#000d22 100%);
+    position:relative;
+    overflow:hidden;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:flex-end;
+  }
+  /* glow behind photo */
+  .mission-photo-panel::before{
+    content:'';
+    position:absolute;
+    bottom:-40px;left:50%;
+    transform:translateX(-50%);
+    width:320px;height:320px;
+    border-radius:50%;
+    background:radial-gradient(circle,rgba(5,180,255,.22) 0%,transparent 65%);
+    animation:mGlowPulse 3s ease-in-out infinite;
+    pointer-events:none;
+  }
+  /* floating accent rings */
+  .mission-photo-panel::after{
+    content:'';
+    position:absolute;
+    top:24px;right:24px;
+    width:100px;height:100px;
+    border-radius:50%;
+    border:2px solid rgba(5,180,255,.18);
+    animation:mFloatRing 6s ease-in-out infinite;
+    pointer-events:none;
+  }
+  .mission-photo-wrap{
+    position:relative;
+    flex:1;
+    width:100%;
+    display:flex;
+    align-items:flex-end;
+    justify-content:center;
+    animation:mSlideUp .8s .2s ease both;
+  }
+  .mission-photo-wrap img{
+    height:100%;
+    width:auto;
+    min-height:480px;
+    max-width:none;
+    display:block;
+    object-fit:contain;
+    object-position:bottom center;
+    filter:brightness(1.04) contrast(1.02)
+           drop-shadow(0 0 40px rgba(5,180,255,.2));
+    position:relative;
+    z-index:1;
+  }
+  .mission-photo-wrap img{
+    margin-bottom:-18px;
+    transform: translateY(-40px);
+    -webkit-mask-image: linear-gradient(to bottom, black 55%, transparent 100%);
+    mask-image: linear-gradient(to bottom, black 55%, transparent 100%);
+  }
+  .mission-person-label{
+    position:relative;
+    z-index:2;
+    text-align:center;
+    padding:28px 0 22px;
+  }
+  .mission-person-label strong{
+    display:block;
+    color:#fff;
+    font-size:.95rem;
+    font-weight:700;
+    letter-spacing:.2px;
+  }
+  .mission-person-label span{
+    color:rgba(5,180,255,.85);
+    font-size:.76rem;
+    letter-spacing:.4px;
+  }
+
+  @media(max-width:1000px){
+    .rightbar{display:none}
+    .layout{padding-right:18px}
+    .main{max-width:100%}
+    .safety-grid{grid-template-columns:repeat(2,1fr)}
+    .locations-grid{grid-template-columns:repeat(2,1fr)}
+    .loc-city{font-size:15px}
+    .mission-section{grid-template-columns:1fr;min-height:auto;}
+    .mission-text-panel{clip-path:none;padding:36px 28px;}
+    .mission-text-panel h2{font-size:1.6rem;}
+    .mission-photo-panel{min-height:320px;}
+    .mission-photo-wrap img{min-height:280px;}
+  }
+  @media(max-width:640px){
+    .mission-text-panel{padding:28px 20px;}
+    .mission-stats-row{flex-wrap:wrap;}
+    .m-stat{min-width:calc(50% - 10px);}
+    .mission-photo-panel{min-height:260px;}
+  }
+</style>
+</head>
+<body>
+<!--
+  Prototype notes & SharePoint mapping
+  - News: SharePoint list "NewsFeed" fields: Title, Excerpt, Category, PublishedDate, Author, Language (EN/DE/NL/RO), Region (EU,DE,NL,UK,RO), AudienceGroups (multi-value), ImageUrl
+  - QuickLinks: SharePoint list "QuickLinks" fields: Title, Url, IconClass, Region, AllowedGroups
+  - Events: SharePoint calendar or list "Events" fields: Title, StartDate, Location, AudienceGroups, Language
+  - Notifications & Personal items: exposed via per-user API (Azure AD / Graph) and not surfaced globally
+  - Permissions: Use SharePoint audience targeting + Azure AD groups. Prototype simulates behavior client-side for demonstration.
+-->
+<header class="topbar">
+  <div class="brand">
+    <div class="logo">CCM</div>
+    <div>
+      <div style="font-size:14px">CCM Europe</div>
+      <div style="font-size:11px;opacity:.85">Company Intranet (Prototype)</div>
+    </div>
+  </div>
+
+  <nav class="topnav">
+    <a href="#">Home</a>
+    <a href="#">News</a>
+    <a href="#">Documents</a>
+    <a href="#">Tools</a>
+    <a href="#">Sites</a>
+  </nav>
+
+  <div class="search">
+    <input id="searchInput" placeholder="Search people, documents, news..." />
+    <button class="search-btn" id="searchBtn" title="Search"><i class="fa fa-search"></i></button>
+  </div>
+
+  <div class="top-actions">
+    <div class="controls">
+      <select class="topbar-select" id="regionSelect" title="Select your region">
+        <option value="EU">🌍 EU (Global)</option>
+        <option value="DE">🇩🇪 Germany</option>
+        <option value="NL">🇳🇱 Netherlands</option>
+        <option value="UK">🇬🇧 United Kingdom</option>
+        <option value="RO">🇷🇴 Romania</option>
+        <option value="DK">🇩🇰 Denmark</option>
+        <option value="FR">🇫🇷 France</option>
+      </select>
+      <div class="lang-switcher" id="langSwitcher" title="Switch language">
+        <button class="lang-btn active" data-lang="EN">🇬🇧 EN</button>
+        <button class="lang-btn" data-lang="DE">🇩🇪 DE</button>
+        <button class="lang-btn" data-lang="NL">🇳🇱 NL</button>
+        <button class="lang-btn" data-lang="RO">🇷🇴 RO</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="layout">
+  <main class="main">
+    <div class="welcome-banner fade-in">
+      <div class="welcome-text">
+        <h1 id="welcome">👋 Welcome back, Michael!</h1>
+        <p id="welcome-sub">Welcome to the CCM Europe company-wide intranet — resources and tools for everyone.</p>
+      </div>
+    </div>
+
+    <!-- MISSION SECTION -->
+    <section class="mission-section fade-in">
+
+      <!-- Left: navy text panel -->
+      <div class="mission-text-panel">
+        <div class="mission-tag">Our Mission</div>
+
+        <h2>Building a Better<br>Future, <em>Together.</em></h2>
+
+        <p>At CCM Europe, we deliver innovative, sustainable sealing solutions creating lasting value for our customers, employees, and communities &mdash; with safety and inclusion at the core of everything we do.</p>
+
+        <div class="mission-checks">
+          <div class="mission-check"><div class="m-dot"><i class="fa fa-check"></i></div> Customer Focus &mdash; exceed expectations with reliable, high-quality products</div>
+          <div class="mission-check"><div class="m-dot"><i class="fa fa-check"></i></div> Sustainability &mdash; responsible sourcing and continuous improvement</div>
+          <div class="mission-check"><div class="m-dot"><i class="fa fa-check"></i></div> People First &mdash; safe, inclusive workplaces with room to grow</div>
+        </div>
+
+        <div class="mission-qquote">&ldquo;We build with care &mdash; for people, for quality, and for the planet.&rdquo;</div>
+      </div>
+
+      <!-- Right: LARGE president photo filling full panel -->
+      <div class="mission-photo-panel">
+        <div class="mission-photo-wrap">
+          <img src="assets/president.png" alt="Klaas Kortegast, President CCM Europe">
+        </div>
+        <div class="mission-person-label">
+          <strong>Klaas Kortegast</strong>
+          <span>President, CCM Europe</span>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- Safety First -->
+    <section class="section safety-section fade-in" id="ehsSection">
+      <div class="section-header">
+        <div class="section-title"><i class="fa fa-shield-alt"></i> Safety First — Days Without Incident</div>
+        <span class="section-link"><i class="fa fa-external-link-alt"></i> EHS Dashboard</span>
+      </div>
+      <div class="safety-banner">
+        <div class="safety-icon-big"><i class="fa fa-hard-hat"></i></div>
+        <div class="safety-headline">
+          <h3>🏆 Safety is Our #1 Priority — Zero Harm Culture</h3>
+          <p>All 8 CCM Europe locations are actively tracking accident-free days. Report any near-misses immediately via the EHS Portal.</p>
+        </div>
+        <div class="safety-total">
+          <div class="big-num" id="totalDays">—</div>
+          <div class="big-label" style="color:rgba(255,255,255,.65)">Combined Days</div>
+        </div>
+      </div>
+      <div class="safety-grid" id="ehsGrid"><!-- injected by JS --></div>
+    </section>
+
+    <section class="section" id="newsSection">
+      <div class="card">
+        <div class="card-header"><i class="fa fa-newspaper"></i><h3>Company News & Announcements</h3><div style="margin-left:auto" class="muted">Showing: <span id="currentFilter">Global / EN</span></div></div>
+        <div class="news-list" id="newsList">
+          <!-- news items injected by JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Our CCM Europe Locations -->
+    <section class="section">
+      <div class="card">
+        <div class="card-header"><i class="fa fa-map-marked-alt"></i><h3>Our CCM Europe Locations</h3><span style="margin-left:auto;font-size:12px;color:var(--muted)">9 sites across 4 countries</span></div>
+        <div class="locations-grid" id="locationsGrid"><!-- injected by JS --></div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Rightbar: Quick Links (permission-aware) -->
+  <aside class="rightbar">
+    <div class="card">
+      <div class="card-header"><i class="fa fa-th"></i><h3>Quick Links</h3></div>
+      <div class="quicklinks" id="quicklinks">
+        <!-- quick links injected by JS -->
+      </div>
+    </div>
+
+  </aside>
+</div>
+
+<script>
+// ── NEWS DATA  (SharePoint list: NewsFeed)
+const newsItems = [
+  {id:1,
+   title:{EN:'CCM Europe Achieves Carbon-Neutral Operations at Breda',DE:'CCM Europa: CO₂-neutraler Betrieb in Breda',NL:'CCM Europa bereikt CO₂-neutraliteit in Breda',RO:'CCM Europa atinge neutralitatea CO₂ la Breda'},
+   excerpt:{EN:'Breda plant is now fully carbon-neutral — a major milestone in our 2030 sustainability roadmap.',NL:'Onze fabriek in Breda is nu volledig CO₂-neutraal.'},
+   category:'Sustainability', catColor:'#2e7d32', thumbBg:'#e8f5e9', icon:'fa-leaf',
+   date:'2026-03-01', author:'Corporate Comms', regions:['EU'], audience:[]},
+
+  {id:2,
+   title:{EN:'New Travel & Expense Policy Effective April 2026',DE:'Neue Reise- und Spesenrichtlinie ab April 2026',NL:'Nieuw reis- en onkostenbeleid per april 2026',RO:'Noua politică de cheltuieli intră în vigoare în aprilie 2026'},
+   excerpt:{EN:'Updated Travel Expense Policy and Company Car Directive are in Quick Links. All employees must review by 31 March.'},
+   category:'HR & Policy', catColor:'#880e4f', thumbBg:'#fce4ec', icon:'fa-plane',
+   date:'2026-02-28', author:'HR Department', regions:['EU'], audience:[]},
+
+  {id:3,
+   title:{EN:'Q1 Employee Training Week — Hamburg (10–14 March)',DE:'Q1 Schulungswoche – Hamburg',NL:'Q1 Trainingweek – Hamburg',RO:'Săptămâna de instruire Q1 – Hamburg'},
+   excerpt:{EN:'Sessions include MS Office Life Hacks, Kelio FAQ, Software Trainings and Employee Training programmes. Register now.'},
+   category:'Training', catColor:'#1565c0', thumbBg:'#e3f2fd', icon:'fa-chalkboard-teacher',
+   date:'2026-02-25', author:'CCM Academy / HR', regions:['EU','DE'], audience:[]},
+
+  {id:4,
+   title:{EN:'Updated EHS Near-Miss Reporting Procedure',DE:'Aktualisiertes EHS-Meldeverfahren',NL:'Bijgewerkte EHS-procedure bijna-ongelukken',RO:'Procedura EHS actualizată privind raportarea incidentelor'},
+   excerpt:{EN:'New near-miss reporting procedure effective March 2026. Use the Safety Alert Manager to submit reports from all sites.'},
+   category:'EHS & Safety', catColor:'#c62828', thumbBg:'#ffebee', icon:'fa-hard-hat',
+   date:'2026-02-18', author:'EHS Team', regions:['EU'], audience:[]},
+
+  {id:5,
+   title:{EN:'Commercial Processes Guide 2026 Published',DE:'Leitfaden Handelsprozesse 2026',NL:'Gids Commerciële Processen 2026',RO:'Ghidul proceselor comerciale 2026'},
+   excerpt:{EN:'Updated Commercial Processes guide, complete Price List 2026 and revised Territory Maps for sales reps now in Quick Links.'},
+   category:'Commercial', catColor:'#0277bd', thumbBg:'#e1f5fe', icon:'fa-briefcase',
+   date:'2026-02-15', author:'Sales & Commercial', regions:['EU'], audience:['Sales','Commercial']},
+
+  {id:6,
+   title:{EN:'Year-End Financial Close Schedule Available',DE:'Zeitplan für den Jahresabschluss',NL:'Tijdschema jaarafsluiting beschikbaar',RO:'Calendarul închiderii de an financiar'},
+   excerpt:{EN:'Finance published the Year-End Close checklist. Review Expenses, Gifts & Hospitality policy before submission.'},
+   category:'Finance', catColor:'#558b2f', thumbBg:'#f9fbe7', icon:'fa-chart-bar',
+   date:'2026-02-10', author:'Finance Team', regions:['EU'], audience:['Finance']},
+
+  {id:7,
+   title:{NL:'Gorinchem site: nieuwe veiligheidsprotocollen',EN:'[NL] Gorinchem Site — New Safety Protocols'},
+   excerpt:{NL:'De Gorinchem-locatie heeft nieuwe veiligheidsprotocollen ingevoerd per 1 maart 2026.',EN:'Gorinchem site has implemented new safety protocols effective March 2026.'},
+   category:'Local NL', catColor:'#00695c', thumbBg:'#e0f7fa', icon:'fa-map-marker-alt',
+   date:'2026-02-22', author:'NL Site Management', regions:['NL'], audience:[]},
+
+  {id:8,
+   title:{DE:'Neue IT-Tutorials für SAP-Nutzer',EN:'[DE] New SAP IT Tutorials Available'},
+   excerpt:{DE:'Der IT-Bereich hat neue SAP- und MS-Office-Tutorials veröffentlicht. Verfügbar in Quick Links.',EN:'New SAP IT tutorials are now available under Quick Links > IT Tutorial.'},
+   category:'IT & Tools', catColor:'#283593', thumbBg:'#e8eaf6', icon:'fa-laptop-code',
+   date:'2026-02-20', author:'IT Department — DE', regions:['DE'], audience:[]},
+
+  {id:9,
+   title:{EN:'Swindon: Contract Management System Upgrade — 15 March'},
+   excerpt:{EN:'The Contract Management system upgrade at Swindon runs 15 March 18:00–22:00 GMT. Contact IT Helpdesk for queries.'},
+   category:'IT & Tools', catColor:'#283593', thumbBg:'#e8eaf6', icon:'fa-file-signature',
+   date:'2026-02-17', author:'IT Department — UK', regions:['UK'], audience:[]},
+
+  {id:10,
+   title:{RO:'Actualizare proceduri interne — Brașov',EN:'[RO] Internal Procedures Update — Brasov'},
+   excerpt:{RO:'Procedurile interne pentru site-ul Brașov au fost actualizate. Consultați biblioteca de documente.',EN:'Internal procedures for the Brasov site have been updated. See the document library.'},
+   category:'Local RO', catColor:'#6a1b9a', thumbBg:'#f3e5f5', icon:'fa-map-marker-alt',
+   date:'2026-02-14', author:'RO Site Management', regions:['RO'], audience:[]}
+];
+
+// ── EHS SAFETY DASHBOARD  (SharePoint list: EHSSiteTracker — fields: SiteName, Country, Flag, Subtitle, AccidentFreeDays, StatusLabel)
+const ehsData = [
+  {site:'Hamburg Noeldekestrasse', flag:'🇩🇪', subtitle:'Plant', days:89,  status:'Good',        statusColor:'#003366', statusBg:'#d6e4f0'},
+  {site:'Kampen',                  flag:'🇳🇱', subtitle:'NL',    days:211, status:'Outstanding', statusColor:'#fff',    statusBg:'#05B4FF'},
+  {site:'Weesp',                   flag:'🇳🇱', subtitle:'NL',    days:67,  status:'Good',        statusColor:'#003366', statusBg:'#d6e4f0'},
+  {site:'Mansfield',               flag:'🇬🇧', subtitle:'UK',    days:156, status:'Excellent',   statusColor:'#fff',    statusBg:'#003366'},
+  {site:'Kirby',                   flag:'🇬🇧', subtitle:'UK',    days:183, status:'Outstanding', statusColor:'#fff',    statusBg:'#05B4FF'},
+  {site:'Baia Mare',               flag:'🇷🇴', subtitle:'RO',    days:42,  status:'Improving',   statusColor:'#003366', statusBg:'#e6e6e6'},
+  {site:'Kaufbeuren',              flag:'🇩🇪', subtitle:'DE',    days:103, status:'Excellent',   statusColor:'#fff',    statusBg:'#003366'},
+  {site:'Waltershausen',           flag:'🇩🇪', subtitle:'DE',    days:58,  status:'Good',        statusColor:'#003366', statusBg:'#d6e4f0'}
+];
+
+// ── CCM EUROPE LOCATIONS  (visible to all — no group filter needed)
+const locations = [
+  // Germany
+  {city:'Hamburg (DE)',             country:'Germany',        flag:'🇩🇪', hq:true,  employees:120, icon:'fa-building',   iconBg:'#ede9fe', iconColor:'#6d28d9', grad:['#4776E6','#8E54E9']},
+  {city:'Hamburg Noeldekestrasse', country:'Germany',        flag:'🇩🇪', hq:false, employees:200, icon:'fa-industry',   iconBg:'#e0f2fe', iconColor:'#0369a1', grad:['#0369a1','#38bdf8']},
+  {city:'Kaufbeuren',              country:'Germany',        flag:'🇩🇪', hq:false, employees:130, icon:'fa-cogs',       iconBg:'#fce7f3', iconColor:'#be185d', grad:['#be185d','#f472b6']},
+  {city:'Waltershausen',           country:'Germany',        flag:'🇩🇪', hq:false, employees:115, icon:'fa-industry',   iconBg:'#fef9c3', iconColor:'#a16207', grad:['#d97706','#fde047']},
+  // Netherlands
+  {city:'Kampen',                  country:'Netherlands',    flag:'🇳🇱', hq:false, employees:95,  icon:'fa-cogs',       iconBg:'#fff7ed', iconColor:'#c2410c', grad:['#c2410c','#fb923c']},
+  {city:'Weesp',                   country:'Netherlands',    flag:'🇳🇱', hq:false, employees:110, icon:'fa-warehouse',  iconBg:'#fef3c7', iconColor:'#b45309', grad:['#b45309','#fbbf24']},
+  // United Kingdom
+  {city:'Mansfield',               country:'United Kingdom', flag:'🇬🇧', hq:false, employees:75,  icon:'fa-boxes',      iconBg:'#f3e8ff', iconColor:'#7e22ce', grad:['#6d28d9','#a78bfa']},
+  {city:'Kirby',                   country:'United Kingdom', flag:'🇬🇧', hq:false, employees:80,  icon:'fa-truck',      iconBg:'#e0f7fa', iconColor:'#00838f', grad:['#0097a7','#4dd0e1']},
+  // Romania
+  {city:'Baia Mare',               country:'Romania',        flag:'🇷🇴', hq:false, employees:180, icon:'fa-industry',   iconBg:'#dcfce7', iconColor:'#15803d', grad:['#15803d','#4ade80']}
+];
+
+const quickLinks = [
+  {id:'ql1', title:'IT Tutorial',              url:'#', icon:'fa-desktop',            color:'#e3f2fd', iconColor:'#1565c0', allowedGroups:['IT','Global'],         regions:['EU']},
+  {id:'ql2', title:'HR Policies',              url:'#', icon:'fa-users',              color:'#fce4ec', iconColor:'#880e4f', allowedGroups:['HR','Global'],         regions:['EU']},
+  {id:'ql3', title:'Kelio Training / FAQ',     url:'#', icon:'fa-clock',              color:'#fff8e1', iconColor:'#f57f17', allowedGroups:['HR','Global'],         regions:['EU']},
+  {id:'ql4', title:'Company Agreements',       url:'#', icon:'fa-scroll',             color:'#f3e5f5', iconColor:'#6a1b9a', allowedGroups:['Legal','Global'],      regions:['EU']},
+  {id:'ql5', title:'Employee Training',        url:'#', icon:'fa-chalkboard-teacher', color:'#e8f5e9', iconColor:'#2e7d32', allowedGroups:['Global'],              regions:['EU']},
+  {id:'ql6', title:'Special Leave',            url:'#', icon:'fa-calendar-check',     color:'#e0f7fa', iconColor:'#00695c', allowedGroups:['HR','Global'],         regions:['EU']},
+  {id:'ql7', title:'Give Away Shop',           url:'#', icon:'fa-gift',               color:'#ffebee', iconColor:'#c62828', allowedGroups:['Global'],              regions:['EU']},
+  {id:'ql8', title:'Invitation Flyers',        url:'#', icon:'fa-envelope-open-text', color:'#e8eaf6', iconColor:'#283593', allowedGroups:['Marketing','Global'],  regions:['EU']},
+  {id:'ql9', title:'Travel Expense Policy',    url:'#', icon:'fa-plane',              color:'#ede7f6', iconColor:'#4527a0', allowedGroups:['Global'],              regions:['EU']},
+  {id:'ql10',title:'Company Car Directive',    url:'#', icon:'fa-car',               color:'#e0f2f1', iconColor:'#00695c', allowedGroups:['Global'],              regions:['EU']},
+  {id:'ql11',title:'Expenses, Gifts & Hospitality',url:'#',icon:'fa-credit-card',   color:'#fbe9e7', iconColor:'#bf360c', allowedGroups:['Finance','Global'],    regions:['EU']},
+  {id:'ql12',title:'Commercial Processes',     url:'#', icon:'fa-briefcase',          color:'#e1f5fe', iconColor:'#0277bd', allowedGroups:['Commercial','Global'], regions:['EU']},
+  {id:'ql13',title:'Year-End Close',           url:'#', icon:'fa-chart-bar',          color:'#f9fbe7', iconColor:'#558b2f', allowedGroups:['Finance','Global'],    regions:['EU']},
+  {id:'ql14',title:'Complete Price List',      url:'#', icon:'fa-file-alt',           color:'#fff3e0', iconColor:'#e65100', allowedGroups:['Sales','Global'],      regions:['EU']},
+  {id:'ql15',title:'Territory Maps',           url:'#', icon:'fa-map-marker-alt',     color:'#e3f2fd', iconColor:'#1565c0', allowedGroups:['Sales','Global'],      regions:['EU']},
+  {id:'ql16',title:'Software Trainings',       url:'#', icon:'fa-laptop-code',        color:'#e8f5e9', iconColor:'#1b5e20', allowedGroups:['IT','Global'],         regions:['EU']},
+  {id:'ql17',title:'MS Office Life Hacks',     url:'#', icon:'fa-magic',              color:'#f3e5f5', iconColor:'#6a1b9a', allowedGroups:['Global'],              regions:['EU']},
+  {id:'ql18',title:'Ticket Process',           url:'#', icon:'fa-ticket-alt',         color:'#fff8e1', iconColor:'#f57f17', allowedGroups:['IT','Global'],         regions:['EU']}
+];
+
+// State (in real app: use Azure AD + SharePoint audience targeting)
+let currentLang = 'EN';
+let userGroups = ['Global'];
+let currentRegion = 'EU';
+
+function renderNews(){
+  const list = document.getElementById('newsList'); list.innerHTML='';
+  const visible = newsItems.filter(n=>{
+    const regionMatch = n.regions.includes('EU') || n.regions.includes(currentRegion);
+    const audOk = !n.audience || n.audience.length===0 || n.audience.some(g=>userGroups.includes(g));
+    return regionMatch && audOk;
+  });
+  if(!visible.length){
+    list.innerHTML='<div style="padding:16px;color:var(--muted);font-size:13px">No news items for your current region and groups.</div>';
+    return;
+  }
+  visible.forEach(n=>{
+    const title = n.title[currentLang]||n.title['EN']||n.title['NL']||Object.values(n.title)[0];
+    const ex    = n.excerpt&&(n.excerpt[currentLang]||n.excerpt['EN']||'');
+    const el = document.createElement('div'); el.className='news-item';
+    el.innerHTML = `
+      <div class="news-thumb" style="background:${n.thumbBg||'#eee'};color:${n.catColor||'#444'}">
+        <i class="fa ${n.icon||'fa-newspaper'}"></i>
+      </div>
+      <div class="news-body">
+        <div class="news-cat" style="color:${n.catColor}">${n.category}</div>
+        <div class="news-title">${title}</div>
+        <div class="news-excerpt">${ex}</div>
+        <div class="news-meta">
+          <span><i class="fa fa-user" style="opacity:.5"></i> ${n.author||''}</span>
+          <span><i class="fa fa-clock" style="opacity:.5"></i> ${n.date}</span>
+          <span class="tag" style="background:${n.thumbBg};color:${n.catColor}">${n.regions.join(', ')}</span>
+        </div>
+      </div>`;
+    list.appendChild(el);
+  });
+  document.getElementById('currentFilter').textContent = currentRegion + ' / ' + currentLang;
+}
+
+function renderEHS(){
+  const grid = document.getElementById('ehsGrid'); grid.innerHTML='';
+  const total = ehsData.reduce((s,d)=>s+d.days, 0);
+  document.getElementById('totalDays').textContent = total.toLocaleString();
+  ehsData.forEach(d=>{
+    const statusClass = d.status==='Outstanding'||d.status==='Excellent' ? 'great' : d.status==='Good' ? 'good' : 'warn';
+    const statusIcon  = statusClass==='great' ? 'fa-star' : statusClass==='good' ? 'fa-check' : 'fa-exclamation';
+    const el = document.createElement('div'); el.className='safety-card';
+    el.innerHTML = `
+      <div class="sc-location"><i class="fa fa-map-marker-alt"></i> ${d.site}${d.subtitle?' ('+d.subtitle+')':''}</div>
+      <div class="sc-days">${d.days}</div>
+      <div class="sc-label">accident-free days</div>
+      <span class="sc-status ${statusClass}"><i class="fa ${statusIcon}"></i> ${d.status}</span>`;
+    grid.appendChild(el);
+  });
+}
+
+function renderLocations(){
+  const grid = document.getElementById('locationsGrid'); grid.innerHTML='';
+  locations.forEach(l=>{
+    const el = document.createElement('div'); el.className='loc-card';
+    if(l.city==='Hamburg (DE)'){
+      el.addEventListener('click',()=>window.location.href='site-schellerdam-hq.html');
+    }
+    el.innerHTML = `
+      <div class="loc-card-head" style="background:linear-gradient(135deg,${l.grad[0]} 0%,${l.grad[1]} 100%)">
+        ${l.hq ? '<span class="loc-hq-badge">&#9733; HQ</span>' : ''}
+        <div class="loc-flag">${l.flag}</div>
+        <div class="loc-city">${l.city}</div>
+        <div class="loc-country-tag"><i class="fa fa-map-marker-alt"></i> ${l.country}</div>
+      </div>
+      <div class="loc-card-body">
+        <div class="loc-employees"><i class="fa fa-users" style="color:var(--bright)"></i> ~${l.employees} employees</div>
+      </div>
+      <div class="loc-card-foot">
+        <span style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;font-weight:700">${l.country}</span>
+        <span class="loc-view-link">View Site <i class="fa fa-arrow-right"></i></span>
+      </div>`;
+    grid.appendChild(el);
+  });
+}
+
+function renderQuickLinks(){
+  const container = document.getElementById('quicklinks'); container.innerHTML='';
+  quickLinks.forEach(q=>{
+    const allowed = q.allowedGroups.some(g=>userGroups.includes(g));
+    const regionOk = q.regions.includes('EU') || q.regions.includes(currentRegion);
+    if(!allowed || !regionOk) return;
+    const el = document.createElement('div'); el.className='ql-item';
+    el.innerHTML = `
+      <div class="ql-icon" style="background:${q.color||'#eaf6ff'};color:${q.iconColor||'#00509e'}">
+        <i class="fa ${q.icon}"></i>
+      </div>
+      <div><div class="ql-label">${q.title}</div></div>`;
+    container.appendChild(el);
+  });
+}
+
+// ── Helpers for the pill language switcher
+function setActiveLangBtn(lang){
+  document.querySelectorAll('#langSwitcher .lang-btn').forEach(btn=>{
+    btn.classList.toggle('active', btn.dataset.lang === lang);
+  });
+}
+
+// ── AUTO-DETECT language from browser, region from localStorage
+function autoDetect(){
+  const saved = localStorage.getItem('ccm-lang');
+  if(saved){
+    currentLang = saved;
+  } else {
+    const bl = (navigator.language || navigator.userLanguage || 'en').toLowerCase();
+    if(bl.startsWith('nl'))      currentLang = 'NL';
+    else if(bl.startsWith('de')) currentLang = 'DE';
+    else if(bl.startsWith('ro')) currentLang = 'RO';
+    else                          currentLang = 'EN';
+  }
+  setActiveLangBtn(currentLang);
+
+  const savedRegion = localStorage.getItem('ccm-region');
+  if(savedRegion){
+    currentRegion = savedRegion;
+    document.getElementById('regionSelect').value = currentRegion;
+  }
+}
+
+// Language pill switcher (topbar)
+document.getElementById('langSwitcher').addEventListener('click', e=>{
+  const btn = e.target.closest('.lang-btn');
+  if(!btn) return;
+  currentLang = btn.dataset.lang;
+  localStorage.setItem('ccm-lang', currentLang);
+  setActiveLangBtn(currentLang);
+  renderNews();
+});
+
+// Region select (topbar)
+document.getElementById('regionSelect').addEventListener('change', e=>{
+  currentRegion = e.target.value;
+  localStorage.setItem('ccm-region', currentRegion);
+  renderNews(); renderQuickLinks();
+});
+
+// Search CTA
+document.getElementById('searchBtn').addEventListener('click',()=>{
+  const q = document.getElementById('searchInput').value.trim();
+  if(q) alert('SharePoint Search: "' + q + '"\n\nIn production this calls:\n/_api/search/query?querytext=\'' + q + '\'&sourceid=...');
+});
+document.getElementById('searchInput').addEventListener('keydown', e=>{
+  if(e.key==='Enter') document.getElementById('searchBtn').click();
+});
+
+// init
+autoDetect();
+renderEHS(); renderLocations(); renderNews(); renderQuickLinks();
+
+</script>
+</body>
+</html>

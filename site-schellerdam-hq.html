@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Hamburg Schellerdam HQ — CCM Europe Intranet</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+  :root{
+    --primary:#003366;
+    --secondary:#e6e6e6;
+    --accent:#00509e;
+    --bright:#05B4FF;
+    --bg:#f7f7f7;
+    --card:#fff;
+    --text:#222;
+    --muted:#666;
+    --border:#e6e6e6;
+    --radius:10px;
+    --shadow:0 6px 18px rgba(0,0,0,.06);
+    --topbar-h:64px;
+    --font:'Segoe UI',Arial,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:var(--font);background:var(--bg);color:var(--text);}
+  a{color:inherit;text-decoration:none}
+
+  /* ── TOPBAR ── */
+  .topbar{position:fixed;left:0;right:0;top:0;height:var(--topbar-h);background:var(--primary);display:flex;align-items:center;padding:0 24px;gap:12px;color:#fff;z-index:110;box-shadow:0 2px 12px rgba(0,0,0,.18)}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:700;margin-right:8px}
+  .brand .logo{width:36px;height:36px;background:#fff;border-radius:6px;color:var(--primary);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:14px}
+  .breadcrumb{display:flex;align-items:center;gap:8px;font-size:13px;opacity:.88}
+  .breadcrumb a{opacity:.75;font-weight:500;transition:opacity .15s}
+  .breadcrumb a:hover{opacity:1}
+  .breadcrumb .sep{opacity:.4}
+  .topbar-right{margin-left:auto;display:flex;align-items:center;gap:12px}
+  .topbar-icon{width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .18s}
+  .topbar-icon:hover{background:rgba(255,255,255,.22)}
+  .avatar-chip{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.12);border-radius:20px;padding:4px 12px 4px 4px;cursor:pointer}
+  .avatar{width:28px;height:28px;border-radius:50%;background:var(--bright);color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700}
+  .avatar-name{font-size:12px;font-weight:600}
+
+  /* ── HERO ── */
+  .hero{margin-top:var(--topbar-h);background:linear-gradient(120deg,#003366 0%,#00509e 55%,#007acc 100%);padding:40px 32px 32px;position:relative;overflow:hidden}
+  .hero::before{content:'';position:absolute;right:-60px;top:-60px;width:300px;height:300px;border-radius:50%;background:rgba(255,255,255,.05)}
+  .hero::after{content:'';position:absolute;right:120px;bottom:-80px;width:220px;height:220px;border-radius:50%;background:rgba(255,255,255,.04)}
+  .hero-inner{max-width:1200px;margin:0 auto;display:flex;align-items:flex-end;gap:28px;flex-wrap:wrap}
+  .hero-flag{font-size:56px;filter:drop-shadow(0 4px 8px rgba(0,0,0,.25));line-height:1}
+  .hero-info{flex:1}
+  .hero-label{font-size:11px;font-weight:700;color:rgba(255,255,255,.65);text-transform:uppercase;letter-spacing:.12em;margin-bottom:6px}
+  .hero-title{font-size:30px;font-weight:900;color:#fff;line-height:1.1;margin-bottom:6px}
+  .hero-sub{font-size:14px;color:rgba(255,255,255,.8)}
+  .hero-badge{background:rgba(255,255,255,.18);border:1.5px solid rgba(255,255,255,.4);color:#fff;font-size:10px;font-weight:800;padding:4px 12px;border-radius:20px;letter-spacing:.1em;text-transform:uppercase;display:inline-flex;align-items:center;gap:5px;margin-top:10px}
+  .hero-stats{display:flex;gap:24px;margin-top:16px;flex-wrap:wrap}
+  .hero-stat{text-align:center;background:rgba(255,255,255,.1);border-radius:10px;padding:12px 20px}
+  .hero-stat-val{font-size:22px;font-weight:900;color:#fff}
+  .hero-stat-lbl{font-size:10px;color:rgba(255,255,255,.65);text-transform:uppercase;letter-spacing:.07em;margin-top:2px}
+
+  /* ── PAGE BODY ── */
+  .page{max-width:1200px;margin:0 auto;padding:28px 24px 48px}
+
+  /* ── ADDRESS + QUICK CONTACTS ── */
+  .top-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px}
+  @media(max-width:700px){.top-grid{grid-template-columns:1fr}}
+
+  .info-card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px 22px}
+  .info-card-title{font-size:12px;font-weight:800;color:var(--primary);text-transform:uppercase;letter-spacing:.1em;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+  .info-card-title i{color:var(--bright)}
+  .address-block{display:flex;gap:14px;align-items:flex-start}
+  .addr-icon{width:42px;height:42px;border-radius:10px;background:#e3f2fd;color:var(--accent);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;margin-top:2px}
+  .addr-text p{font-size:14px;font-weight:700;color:var(--primary);margin-bottom:3px}
+  .addr-text span{font-size:13px;color:var(--muted);line-height:1.6;display:block}
+  .addr-map-link{display:inline-flex;align-items:center;gap:5px;margin-top:10px;font-size:12px;font-weight:700;color:var(--bright);cursor:pointer}
+  .addr-map-link:hover{text-decoration:underline}
+
+  .qc-list{display:flex;flex-direction:column;gap:10px}
+  .qc-item{display:flex;align-items:center;gap:14px;padding:10px 12px;border-radius:8px;background:#f7f9fc;border:1px solid var(--border);transition:background .15s}
+  .qc-item:hover{background:#eef3fa}
+  .qc-avatar{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--bright));color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;flex-shrink:0}
+  .qc-meta{flex:1}
+  .qc-name{font-size:13px;font-weight:700;color:var(--primary)}
+  .qc-role{font-size:11px;color:var(--muted);margin-top:1px}
+  .qc-action{display:flex;gap:6px}
+  .qc-btn{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;cursor:pointer;border:none;transition:background .18s}
+  .qc-btn.phone{background:#e8f5e9;color:#2e7d32}
+  .qc-btn.phone:hover{background:#c8e6c9}
+  .qc-btn.mail{background:#e3f2fd;color:#1565c0}
+  .qc-btn.mail:hover{background:#bbdefb}
+  .qc-btn.chat{background:#ede7f6;color:#4527a0}
+  .qc-btn.chat:hover{background:#d1c4e9}
+
+  /* ── SEARCH BAR ── */
+  .search-bar-wrap{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px 20px;margin-bottom:20px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  .search-bar-wrap h2{font-size:15px;font-weight:800;color:var(--primary);white-space:nowrap;margin-right:4px}
+  .search-input-wrap{flex:1;min-width:200px;position:relative}
+  .search-input-wrap i{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:13px}
+  .search-input{width:100%;padding:9px 14px 9px 34px;border:1.5px solid var(--border);border-radius:20px;font-family:var(--font);font-size:13px;outline:none;transition:border .18s}
+  .search-input:focus{border-color:var(--bright)}
+  .filter-select{padding:9px 12px;border:1.5px solid var(--border);border-radius:8px;font-family:var(--font);font-size:12px;color:var(--text);outline:none;cursor:pointer;background:var(--bg)}
+  .filter-select:focus{border-color:var(--bright)}
+  .results-count{font-size:12px;color:var(--muted);white-space:nowrap}
+
+  /* ── DIRECTORY TABLE ── */
+  .dir-card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+  .dir-table{width:100%;border-collapse:collapse}
+  .dir-table thead th{background:#f0f4f9;color:var(--primary);font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;padding:12px 16px;text-align:left;border-bottom:2px solid var(--border);white-space:nowrap}
+  .dir-table thead th i{margin-right:5px;opacity:.6}
+  .dir-table tbody tr{transition:background .15s;border-bottom:1px solid #f2f4f8}
+  .dir-table tbody tr:hover{background:#f5f8fd}
+  .dir-table tbody tr:last-child{border-bottom:none}
+  .dir-table td{padding:13px 16px;font-size:13px;vertical-align:middle}
+  .person-cell{display:flex;align-items:center;gap:11px}
+  .person-avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;flex-shrink:0}
+  .person-name{font-weight:700;color:var(--primary);font-size:13px}
+  .person-email{font-size:11px;color:var(--muted);margin-top:1px}
+  .dept-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:700}
+  .role-text{font-size:12px;color:var(--text);font-weight:500}
+  .phone-link{display:flex;align-items:center;gap:5px;color:var(--accent);font-size:12px;font-weight:500}
+  .phone-link i{font-size:11px;opacity:.7}
+  .addr-cell{font-size:11px;color:var(--muted);line-height:1.5}
+  .row-actions{display:flex;gap:5px}
+  .act-btn{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;cursor:pointer;border:none;background:#f0f4f9;color:var(--accent);transition:background .18s}
+  .act-btn:hover{background:#dce8f8}
+
+  .no-results{text-align:center;padding:48px 20px;color:var(--muted)}
+  .no-results i{font-size:40px;opacity:.25;display:block;margin-bottom:12px}
+  .no-results p{font-size:14px}
+
+  /* ── DEPT COLORS ── */
+  .dept-IT       {background:#dbeafe;color:#1d4ed8}
+  .dept-HR       {background:#fce7f3;color:#9d174d}
+  .dept-Finance  {background:#d1fae5;color:#065f46}
+  .dept-Sales    {background:#fef3c7;color:#92400e}
+  .dept-Ops      {background:#ede9fe;color:#5b21b6}
+  .dept-Legal    {background:#fee2e2;color:#991b1b}
+  .dept-Mktg     {background:#e0f7fa;color:#006064}
+  .dept-Mgmt     {background:#e8f5e9;color:#1b5e20}
+  .dept-Admin    {background:#f3e8ff;color:#6b21a8}
+  .dept-EHS      {background:#e0f2f1;color:#00695c}
+
+  /* ── AVATAR COLORS ── */
+  .av-blue   {background:linear-gradient(135deg,#1d4ed8,#60a5fa)}
+  .av-rose   {background:linear-gradient(135deg,#9d174d,#f472b6)}
+  .av-green  {background:linear-gradient(135deg,#065f46,#34d399)}
+  .av-yellow {background:linear-gradient(135deg,#92400e,#fbbf24)}
+  .av-violet {background:linear-gradient(135deg,#5b21b6,#a78bfa)}
+  .av-red    {background:linear-gradient(135deg,#991b1b,#f87171)}
+  .av-teal   {background:linear-gradient(135deg,#006064,#4dd0e1)}
+  .av-navy   {background:linear-gradient(135deg,#003366,#07B4FF)}
+  .av-purple {background:linear-gradient(135deg,#6b21a8,#c084fc)}
+  .av-emerald{background:linear-gradient(135deg,#00695c,#6ee7b7)}
+</style>
+</head>
+<body>
+
+<!-- ══ TOPBAR ══ -->
+<header class="topbar">
+  <div class="brand">
+    <div class="logo">CCM</div>
+    <div>
+      <div style="font-size:14px">CCM Europe</div>
+      <div style="font-size:11px;opacity:.75">Company Intranet</div>
+    </div>
+  </div>
+  <div class="breadcrumb">
+    <span class="sep">/</span>
+    <a href="intranet-prototype.html"><i class="fa fa-map-marked-alt" style="margin-right:4px"></i> Our Locations</a>
+    <span class="sep">/</span>
+    <span style="color:#fff;font-weight:700">Hamburg Schellerdam HQ</span>
+  </div>
+  <div class="topbar-right">
+    <div class="topbar-icon"><i class="fa fa-bell"></i></div>
+    <div class="topbar-icon"><i class="fa fa-question-circle"></i></div>
+    <div class="avatar-chip">
+      <div class="avatar">JA</div>
+      <span class="avatar-name">Javed Akbar</span>
+    </div>
+  </div>
+</header>
+
+<!-- ══ HERO ══ -->
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-flag">🇩🇪</div>
+    <div class="hero-info">
+      <div class="hero-label">CCM Europe · Germany</div>
+      <div class="hero-title">Hamburg Schellerdam</div>
+      <div class="hero-sub"><i class="fa fa-map-marker-alt" style="opacity:.7;margin-right:4px"></i>Schellerdamm 16, 21079 Hamburg, Germany</div>
+      <div class="hero-badge"><i class="fa fa-star"></i> Headquarters</div>
+    </div>
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <div class="hero-stat-val">120</div>
+        <div class="hero-stat-lbl">Employees</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-val">8</div>
+        <div class="hero-stat-lbl">Departments</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-val">124</div>
+        <div class="hero-stat-lbl">Accident-Free Days</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ PAGE ══ -->
+<div class="page">
+
+  <!-- ADDRESS + QUICK CONTACTS -->
+  <div class="top-grid">
+
+    <!-- Address -->
+    <div class="info-card">
+      <div class="info-card-title"><i class="fa fa-map-marker-alt"></i> Site Address</div>
+      <div class="address-block">
+        <div class="addr-icon"><i class="fa fa-building"></i></div>
+        <div class="addr-text">
+          <p>CCM Europe GmbH — HQ</p>
+          <span>Schellerdamm 16</span>
+          <span>21079 Hamburg</span>
+          <span>Germany</span>
+          <span style="margin-top:6px;display:block"><i class="fa fa-phone" style="opacity:.5;margin-right:4px"></i>+49 40 7654 3210</span>
+          <span><i class="fa fa-envelope" style="opacity:.5;margin-right:4px"></i>hq.hamburg@ccmeurope.com</span>
+        </div>
+      </div>
+      <a class="addr-map-link" href="https://maps.google.com/?q=Schellerdamm+16+21079+Hamburg" target="_blank">
+        <i class="fa fa-external-link-alt"></i> Open in Google Maps
+      </a>
+    </div>
+
+    <!-- Quick Contacts -->
+    <div class="info-card">
+      <div class="info-card-title"><i class="fa fa-bolt"></i> Quick Contacts</div>
+      <div class="qc-list">
+        <div class="qc-item">
+          <div class="qc-avatar av-blue">JA</div>
+          <div class="qc-meta">
+            <div class="qc-name">Javed Akbar</div>
+            <div class="qc-role"><span style="background:#dbeafe;color:#1d4ed8;padding:1px 7px;border-radius:10px;font-size:10px;font-weight:700">IT</span> &nbsp;Office 365 Application and Cloud Specialist</div>
+          </div>
+          <div class="qc-action">
+            <button class="qc-btn phone" title="Call"><i class="fa fa-phone"></i></button>
+            <button class="qc-btn mail" title="Email"><i class="fa fa-envelope"></i></button>
+            <button class="qc-btn chat" title="Chat"><i class="fa fa-comment"></i></button>
+          </div>
+        </div>
+        <div class="qc-item">
+          <div class="qc-avatar av-purple">AB</div>
+          <div class="qc-meta">
+            <div class="qc-name">Andrea Buchholz</div>
+            <div class="qc-role"><span style="background:#f3e8ff;color:#6b21a8;padding:1px 7px;border-radius:10px;font-size:10px;font-weight:700">Administration</span> &nbsp;Management Assistant</div>
+          </div>
+          <div class="qc-action">
+            <button class="qc-btn phone" title="Call"><i class="fa fa-phone"></i></button>
+            <button class="qc-btn mail" title="Email"><i class="fa fa-envelope"></i></button>
+            <button class="qc-btn chat" title="Chat"><i class="fa fa-comment"></i></button>
+          </div>
+        </div>
+        <div class="qc-item">
+          <div class="qc-avatar av-emerald">RM</div>
+          <div class="qc-meta">
+            <div class="qc-name">Ralf Meier</div>
+            <div class="qc-role"><span style="background:#e8f5e9;color:#1b5e20;padding:1px 7px;border-radius:10px;font-size:10px;font-weight:700">Mgmt</span> &nbsp;Site Director / Managing Director</div>
+          </div>
+          <div class="qc-action">
+            <button class="qc-btn phone" title="Call"><i class="fa fa-phone"></i></button>
+            <button class="qc-btn mail" title="Email"><i class="fa fa-envelope"></i></button>
+            <button class="qc-btn chat" title="Chat"><i class="fa fa-comment"></i></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- DIRECTORY SEARCH BAR -->
+  <div class="search-bar-wrap">
+    <h2><i class="fa fa-users" style="color:var(--bright);margin-right:6px"></i>Employee Directory</h2>
+    <div class="search-input-wrap">
+      <i class="fa fa-search"></i>
+      <input class="search-input" id="searchInput" type="text" placeholder="Search by name, role, department, phone…" oninput="filterTable()">
+    </div>
+    <select class="filter-select" id="deptFilter" onchange="filterTable()">
+      <option value="">All Departments</option>
+      <option value="IT">IT</option>
+      <option value="HR">HR</option>
+      <option value="Finance">Finance</option>
+      <option value="Sales">Sales</option>
+      <option value="Operations">Operations</option>
+      <option value="Legal">Legal</option>
+      <option value="Marketing">Marketing</option>
+      <option value="Management">Management</option>
+      <option value="Administration">Administration</option>
+      <option value="EHS">EHS</option>
+    </select>
+    <span class="results-count" id="resultsCount">Showing all employees</span>
+  </div>
+
+  <!-- DIRECTORY TABLE -->
+  <div class="dir-card">
+    <table class="dir-table" id="dirTable">
+      <thead>
+        <tr>
+          <th><i class="fa fa-user"></i>Name</th>
+          <th><i class="fa fa-th-large"></i>Department</th>
+          <th><i class="fa fa-id-badge"></i>Role / Title</th>
+          <th><i class="fa fa-phone"></i>Phone</th>
+          <th><i class="fa fa-map-marker-alt"></i>Office / Floor</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="dirBody">
+      </tbody>
+    </table>
+    <div class="no-results" id="noResults" style="display:none">
+      <i class="fa fa-search"></i>
+      <p>No employees match your search.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+const employees = [
+  // ── Management ──
+  {name:'Ralf Meier',        initials:'RM', avClass:'av-emerald', email:'r.meier@ccmeurope.com',      dept:'Management',     deptClass:'dept-Mgmt',   role:'Site Director / Managing Director',  phone:'+49 40 7654 3200', floor:'Floor 4 · Office 401'},
+  {name:'Petra Schönfeld',   initials:'PS', avClass:'av-navy',    email:'p.schoenfeld@ccmeurope.com', dept:'Management',     deptClass:'dept-Mgmt',   role:'Deputy Director',                    phone:'+49 40 7654 3201', floor:'Floor 4 · Office 402'},
+
+  // ── IT ──
+  {name:'Javed Akbar',       initials:'JA', avClass:'av-blue',    email:'j.akbar@ccmeurope.com',      dept:'IT',             deptClass:'dept-IT',     role:'Office 365 Application and Cloud Specialist', phone:'+49 40 7654 3101', floor:'Floor 2 · Office 210'},
+  {name:'Tobias Kraft',      initials:'TK', avClass:'av-blue',    email:'t.kraft@ccmeurope.com',      dept:'IT',             deptClass:'dept-IT',     role:'Systems Administrator',              phone:'+49 40 7654 3102', floor:'Floor 2 · Office 211'},
+  {name:'Sophie Wagner',     initials:'SW', avClass:'av-blue',    email:'s.wagner@ccmeurope.com',     dept:'IT',             deptClass:'dept-IT',     role:'IT Support Specialist',              phone:'+49 40 7654 3103', floor:'Floor 2 · Office 212'},
+  {name:'Lukas Bauer',       initials:'LB', avClass:'av-blue',    email:'l.bauer@ccmeurope.com',      dept:'IT',             deptClass:'dept-IT',     role:'Network Engineer',                   phone:'+49 40 7654 3104', floor:'Floor 2 · Office 213'},
+
+  // ── Administration ──
+  {name:'Andrea Buchholz',   initials:'AB', avClass:'av-purple',  email:'a.buchholz@ccmeurope.com',   dept:'Administration', deptClass:'dept-Admin',  role:'Management Assistant',               phone:'+49 40 7654 3050', floor:'Floor 1 · Reception'},
+  {name:'Klaus Hoffmann',    initials:'KH', avClass:'av-purple',  email:'k.hoffmann@ccmeurope.com',   dept:'Administration', deptClass:'dept-Admin',  role:'Office Coordinator',                 phone:'+49 40 7654 3051', floor:'Floor 1 · Office 105'},
+  {name:'Marta Kowalski',    initials:'MK', avClass:'av-purple',  email:'m.kowalski@ccmeurope.com',   dept:'Administration', deptClass:'dept-Admin',  role:'Administrative Assistant',           phone:'+49 40 7654 3052', floor:'Floor 1 · Office 106'},
+
+  // ── HR ──
+  {name:'Lisa Brandt',       initials:'LB', avClass:'av-rose',    email:'l.brandt@ccmeurope.com',     dept:'HR',             deptClass:'dept-HR',     role:'HR Director',                        phone:'+49 40 7654 3300', floor:'Floor 3 · Office 310'},
+  {name:'Oliver Fischer',    initials:'OF', avClass:'av-rose',    email:'o.fischer@ccmeurope.com',    dept:'HR',             deptClass:'dept-HR',     role:'HR Business Partner',                phone:'+49 40 7654 3301', floor:'Floor 3 · Office 311'},
+  {name:'Hanna Schmidt',     initials:'HS', avClass:'av-rose',    email:'h.schmidt@ccmeurope.com',    dept:'HR',             deptClass:'dept-HR',     role:'HR Coordinator – Payroll',           phone:'+49 40 7654 3302', floor:'Floor 3 · Office 312'},
+  {name:'Jan Müller',        initials:'JM', avClass:'av-rose',    email:'j.mueller@ccmeurope.com',    dept:'HR',             deptClass:'dept-HR',     role:'Talent Acquisition Specialist',      phone:'+49 40 7654 3303', floor:'Floor 3 · Office 313'},
+
+  // ── Finance ──
+  {name:'Claudia Weber',     initials:'CW', avClass:'av-green',   email:'c.weber@ccmeurope.com',      dept:'Finance',        deptClass:'dept-Finance','role':'CFO / Finance Director',            phone:'+49 40 7654 3400', floor:'Floor 4 · Office 410'},
+  {name:'Michael Stein',     initials:'MS', avClass:'av-green',   email:'m.stein@ccmeurope.com',      dept:'Finance',        deptClass:'dept-Finance','role':'Senior Controller',                 phone:'+49 40 7654 3401', floor:'Floor 4 · Office 411'},
+  {name:'Julia Richter',     initials:'JR', avClass:'av-green',   email:'j.richter@ccmeurope.com',    dept:'Finance',        deptClass:'dept-Finance','role':'Accounts Payable Specialist',       phone:'+49 40 7654 3402', floor:'Floor 4 · Office 412'},
+
+  // ── Sales ──
+  {name:'Thomas Keller',     initials:'TK', avClass:'av-yellow',  email:'t.keller@ccmeurope.com',     dept:'Sales',          deptClass:'dept-Sales',  role:'Sales Director – DACH',              phone:'+49 40 7654 3500', floor:'Floor 3 · Office 320'},
+  {name:'Sabine Lehmann',    initials:'SL', avClass:'av-yellow',  email:'s.lehmann@ccmeurope.com',    dept:'Sales',          deptClass:'dept-Sales',  role:'Key Account Manager',                phone:'+49 40 7654 3501', floor:'Floor 3 · Office 321'},
+  {name:'Felix Braun',       initials:'FB', avClass:'av-yellow',  email:'f.braun@ccmeurope.com',      dept:'Sales',          deptClass:'dept-Sales',  role:'Sales Representative',               phone:'+49 40 7654 3502', floor:'Floor 3 · Office 322'},
+
+  // ── Operations ──
+  {name:'Markus Wolf',       initials:'MW', avClass:'av-violet',  email:'m.wolf@ccmeurope.com',       dept:'Operations',     deptClass:'dept-Ops',    role:'Operations Manager',                 phone:'+49 40 7654 3600', floor:'Floor 2 · Office 220'},
+  {name:'Elena Vogt',        initials:'EV', avClass:'av-violet',  email:'e.vogt@ccmeurope.com',       dept:'Operations',     deptClass:'dept-Ops',    role:'Process Improvement Lead',           phone:'+49 40 7654 3601', floor:'Floor 2 · Office 221'},
+
+  // ── Legal ──
+  {name:'Stefan Krause',     initials:'SK', avClass:'av-red',     email:'s.krause@ccmeurope.com',     dept:'Legal',          deptClass:'dept-Legal',  role:'General Counsel',                    phone:'+49 40 7654 3700', floor:'Floor 4 · Office 420'},
+  {name:'Nadine Klein',      initials:'NK', avClass:'av-red',     email:'n.klein@ccmeurope.com',      dept:'Legal',          deptClass:'dept-Legal',  role:'Compliance Officer',                 phone:'+49 40 7654 3701', floor:'Floor 4 · Office 421'},
+
+  // ── Marketing ──
+  {name:'Bianca Hartmann',   initials:'BH', avClass:'av-teal',    email:'b.hartmann@ccmeurope.com',   dept:'Marketing',      deptClass:'dept-Mktg',   role:'Marketing Director',                 phone:'+49 40 7654 3800', floor:'Floor 2 · Office 230'},
+  {name:'David Schwarz',     initials:'DS', avClass:'av-teal',    email:'d.schwarz@ccmeurope.com',    dept:'Marketing',      deptClass:'dept-Mktg',   role:'Digital Marketing Specialist',       phone:'+49 40 7654 3801', floor:'Floor 2 · Office 231'},
+
+  // ── EHS ──
+  {name:'Ingrid Möller',     initials:'IM', avClass:'av-emerald', email:'i.moeller@ccmeurope.com',    dept:'EHS',            deptClass:'dept-EHS',    role:'EHS Manager',                        phone:'+49 40 7654 3900', floor:'Floor 1 · Office 110'},
+  {name:'Carsten Fuchs',     initials:'CF', avClass:'av-emerald', email:'c.fuchs@ccmeurope.com',      dept:'EHS',            deptClass:'dept-EHS',    role:'Health & Safety Officer',            phone:'+49 40 7654 3901', floor:'Floor 1 · Office 111'},
+];
+
+function initials(name){return name.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase()}
+
+function renderTable(list){
+  const tbody = document.getElementById('dirBody');
+  tbody.innerHTML='';
+  list.forEach(e=>{
+    const tr = document.createElement('tr');
+    tr.dataset.dept = e.dept;
+    tr.innerHTML=`
+      <td>
+        <div class="person-cell">
+          <div class="person-avatar ${e.avClass}">${e.initials}</div>
+          <div>
+            <div class="person-name">${e.name}</div>
+            <div class="person-email">${e.email}</div>
+          </div>
+        </div>
+      </td>
+      <td><span class="dept-badge ${e.deptClass}">${e.dept}</span></td>
+      <td><span class="role-text">${e.role}</span></td>
+      <td><a class="phone-link" href="tel:${e.phone}"><i class="fa fa-phone-alt"></i>${e.phone}</a></td>
+      <td><span class="addr-cell">${e.floor}<br><span style="color:#999">Schellerdamm 16, Hamburg</span></span></td>
+      <td>
+        <div class="row-actions">
+          <button class="act-btn" title="Email" onclick="window.location='mailto:${e.email}'"><i class="fa fa-envelope"></i></button>
+          <button class="act-btn" title="Call" onclick="window.location='tel:${e.phone}'"><i class="fa fa-phone"></i></button>
+          <button class="act-btn" title="Chat"><i class="fa fa-comment"></i></button>
+        </div>
+      </td>`;
+    tbody.appendChild(tr);
+  });
+  document.getElementById('noResults').style.display = list.length ? 'none' : 'block';
+  document.getElementById('resultsCount').textContent =
+    list.length === employees.length
+      ? `Showing all ${employees.length} employees`
+      : `${list.length} of ${employees.length} employees`;
+}
+
+function filterTable(){
+  const q    = document.getElementById('searchInput').value.toLowerCase().trim();
+  const dept = document.getElementById('deptFilter').value;
+  const filtered = employees.filter(e=>{
+    const matchQ = !q ||
+      e.name.toLowerCase().includes(q) ||
+      e.role.toLowerCase().includes(q) ||
+      e.dept.toLowerCase().includes(q) ||
+      e.phone.includes(q) ||
+      e.email.toLowerCase().includes(q) ||
+      e.floor.toLowerCase().includes(q);
+    const matchDept = !dept || e.dept === dept;
+    return matchQ && matchDept;
+  });
+  renderTable(filtered);
+}
+
+// Initial render
+renderTable(employees);
+</script>
+</body>
+</html>

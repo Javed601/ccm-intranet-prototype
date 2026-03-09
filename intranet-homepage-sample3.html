@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>CCM Europe Intranet — Sample 3 (Visual)</title>
+  <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{--primary:#003366;--accent:#00509e;--accent2:#05B4FF;--secondary:#e6e6e6;--bg:#f7f7f7;--text:#222}
+    *{box-sizing:border-box}
+    body{margin:0;font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--text)}
+    .wrap{max-width:1200px;margin:0 auto;padding:1rem}
+
+    /* Header */
+    header{display:flex;justify-content:space-between;align-items:center;padding:.8rem 0}
+    .brand{display:flex;align-items:center;gap:.6rem}
+    .brand .name{font-weight:700;color:var(--primary);font-size:1.15rem}
+
+    /* Top nav */
+    .topnav{display:flex;gap:.5rem;background:#fff;padding:.5rem;border-radius:10px;box-shadow:0 6px 18px rgba(0,0,0,0.06)}
+    .topnav a{padding:.45rem .7rem;border-radius:8px;color:var(--primary);text-decoration:none;font-weight:600}
+    .topnav a.active{background:var(--primary);color:#fff}
+    .topnav a:hover{background:var(--accent2);color:var(--primary)}
+
+    /* Masthead hero */
+    .hero{margin-top:1rem;background:linear-gradient(120deg,var(--primary),var(--accent2));color:#fff;border-radius:12px;padding:1.6rem;display:grid;grid-template-columns:1fr 420px;gap:1rem;align-items:center}
+    .hero h1{margin:0 0 .4rem;font-size:1.8rem}
+    .hero p{margin:0 0 1rem;opacity:.95}
+    .cta{display:flex;gap:.6rem}
+    .btn{background:#fff;color:var(--primary);padding:.6rem 1rem;border-radius:8px;border:none;font-weight:700;cursor:pointer}
+    .video-thumb{border-radius:8px;overflow:hidden;position:relative}
+    .video-thumb img{width:100%;height:100%;object-fit:cover;display:block}
+    .playBtn{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);background:rgba(255,255,255,.95);padding:.6rem .8rem;border-radius:50%;font-weight:700;color:var(--primary);cursor:pointer}
+
+    /* Main area */
+    .main{display:grid;grid-template-columns:1fr 360px;gap:1rem;margin-top:1rem}
+
+    /* News grid */
+    .news-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+    .news-card{background:#fff;border-radius:10px;overflow:hidden;box-shadow:0 8px 22px rgba(0,0,0,0.06);cursor:pointer;display:flex;flex-direction:column}
+    .news-card img{width:100%;height:140px;object-fit:cover}
+    .news-body{padding:1rem}
+    .news-body h3{margin:.2rem 0;color:var(--primary);font-size:1rem}
+    .news-body p{margin:0;color:#555;font-size:.9rem}
+    .tag{display:inline-block;padding:.2rem .4rem;border-radius:6px;background:var(--secondary);font-size:.75rem;font-weight:700;color:var(--primary)}
+
+    /* Right panel */
+    aside.panel{background:#fff;padding:1rem;border-radius:10px;height:fit-content;position:sticky;top:1rem}
+    .panel h4{margin:0 0 .6rem;color:var(--primary)}
+    .quick a{display:block;padding:.5rem;border-radius:8px;background:var(--secondary);color:var(--primary);text-decoration:none;margin-bottom:.4rem;font-weight:700}
+    .quick a:hover{background:var(--accent2);color:#003366}
+
+    /* Footer */
+    footer{margin-top:1rem;text-align:center;color:#666;font-size:.9rem}
+
+    /* Responsive */
+    @media(max-width:1000px){.hero{grid-template-columns:1fr}.news-grid{grid-template-columns:repeat(2,1fr)}.main{grid-template-columns:1fr}} 
+    @media(max-width:600px){.news-grid{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="brand">
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="4" fill="#003366"/></svg>
+        <div>
+          <div class="name">CCM Europe</div>
+          <div style="font-size:.85rem;color:#666">Intranet • Internal</div>
+        </div>
+      </div>
+      <nav class="topnav" aria-label="top navigation">
+        <a class="active" href="#">Home</a>
+        <a href="#">News</a>
+        <a href="#">Docs</a>
+        <a href="#">People</a>
+        <a href="#">Tools</a>
+      </nav>
+    </header>
+
+    <section class="hero" aria-labelledby="hero-title">
+      <div>
+        <h1 id="hero-title">All company resources in one place</h1>
+        <p>Instant access to tools, documents, and latest news. Built with SharePoint-friendly fonts and your brand colors for consistent experience.</p>
+        <div class="cta">
+          <button class="btn" id="openRequest">Submit a request</button>
+          <button class="btn" style="background:transparent;border:2px solid rgba(255,255,255,.2);color:#fff">Browse policies</button>
+        </div>
+      </div>
+
+      <div class="video-thumb" role="button" id="playThumb" aria-label="Play intro video">
+        <img src="https://via.placeholder.com/420x260.png?text=Intro+Video+Thumb" alt="Intro video">
+        <div class="playBtn">▶</div>
+      </div>
+    </section>
+
+    <div class="main">
+      <div>
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <h2 style="margin:0;color:var(--primary)">Top Stories</h2>
+          <div style="display:flex;gap:.5rem">
+            <button id="filterAll" class="btn" style="background:var(--primary);color:#fff;padding:.4rem .6rem">All</button>
+            <button id="filterSust" class="btn" style="background:#fff;color:var(--primary);border:1px solid var(--secondary);padding:.4rem .6rem">Sustainability</button>
+          </div>
+        </div>
+
+        <div class="news-grid" id="newsGrid">
+          <article class="news-card" data-cat="sustainability">
+            <img src="https://via.placeholder.com/600x300.png?text=Recycling+Initiative" alt="Recycling Initiative">
+            <div class="news-body">
+              <span class="tag">Sustainability</span>
+              <h3>EPDM Recycling Initiative Launch</h3>
+              <p>Rolling out a plant-wide recycling program to reduce material waste by 15%.</p>
+            </div>
+          </article>
+
+          <article class="news-card" data-cat="corporate">
+            <img src="https://via.placeholder.com/600x300.png?text=Town+Hall" alt="Town Hall">
+            <div class="news-body">
+              <span class="tag">Corporate</span>
+              <h3>Q1 Town Hall Recording</h3>
+              <p>Catch up on leadership updates and strategic priorities for 2026.</p>
+            </div>
+          </article>
+
+          <article class="news-card" data-cat="people">
+            <img src="https://via.placeholder.com/600x300.png?text=New+Team+Members" alt="New Team Members">
+            <div class="news-body">
+              <span class="tag">People</span>
+              <h3>Welcome New Colleagues</h3>
+              <p>Meet our new team members joining the Berlin and Paris offices.</p>
+            </div>
+          </article>
+        </div>
+      </div>
+
+      <aside class="panel" aria-labelledby="quick-actions">
+        <h4 id="quick-actions">Quick Actions</h4>
+        <div class="quick">
+          <a href="#">HR Portal</a>
+          <a href="#">IT Support</a>
+          <a href="#">Service Desk</a>
+          <a href="#">Webmail</a>
+          <a href="#">SAP ERP</a>
+          <a href="#">Expense Claims</a>
+          <a href="#">Holiday Calendar</a>
+          <a href="#">Company Policies</a>
+          <a href="#">Facilities Request</a>
+          <a href="#">Training Hub</a>
+          <a href="#">Vendor Portal</a>
+          <a href="#">Health & Safety</a>
+          <a href="#">Travel Requests</a>
+          <a href="#">Finance Approvals</a>
+          <a href="#">Knowledge Base</a>
+        </div>
+
+        <div style="margin-top:1rem;background:var(--secondary);padding:.6rem;border-radius:8px">
+          <strong style="color:var(--primary)">Featured</strong>
+          <p style="margin:.4rem 0 0;font-size:.9rem;color:#444">Year-end gallery available in the Media Library.</p>
+        </div>
+      </aside>
+    </div>
+
+    <footer>
+      <p style="margin:.75rem 0 0;color:#666;text-align:center">CCM Europe Intranet — internal use only</p>
+    </footer>
+  </div>
+
+  <!-- Video modal -->
+  <div id="videoModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);align-items:center;justify-content:center;padding:1rem">
+    <div style="max-width:900px;width:100%;background:#000;border-radius:8px;overflow:hidden;position:relative">
+      <button id="closeVideo" style="position:absolute;right:8px;top:8px;z-index:2;background:#fff;border:none;border-radius:6px;padding:.4rem .6rem;cursor:pointer">Close</button>
+      <iframe id="videoFrame" width="100%" height="500" src="" frameborder="0" allowfullscreen></iframe>
+    </div>
+  </div>
+
+  <script>
+    // simple filter
+    document.getElementById('filterSust').addEventListener('click',()=>{
+      document.querySelectorAll('#newsGrid .news-card').forEach(card=>{
+        card.style.display = card.dataset.cat === 'sustainability' ? 'block' : 'none';
+      });
+    });
+    document.getElementById('filterAll').addEventListener('click',()=>{
+      document.querySelectorAll('#newsGrid .news-card').forEach(card=>card.style.display='block');
+    });
+
+    // video modal
+    const modal=document.getElementById('videoModal');const frame=document.getElementById('videoFrame');
+    document.getElementById('playThumb').addEventListener('click',()=>{frame.src='https://www.youtube.com/embed/ScMzIvxBSi4?autoplay=1';modal.style.display='flex'});
+    document.getElementById('closeVideo').addEventListener('click',()=>{frame.src='';modal.style.display='none'});
+  </script>
+</body>
+</html>
