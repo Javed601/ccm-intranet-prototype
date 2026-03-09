@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Marketing & Communications — CCM Europe Intranet</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+  :root{
+    --primary:#003366;
+    --accent:#00509e;
+    --bright:#05B4FF;
+    --bg:#f7f7f7;
+    --card:#fff;
+    --text:#222;
+    --muted:#666;
+    --border:#e6e6e6;
+    --radius:10px;
+    --shadow:0 6px 18px rgba(0,0,0,.06);
+    --topbar-h:64px;
+    --font:'Segoe UI',Arial,sans-serif;
+    /* ── Department accent colour — change this per department ── */
+    --dept-color:#0097a7;
+    --dept-light:#e0f7fa;
+    --dept-dark:#006064;
+    --dept-grad-a:#0097a7;
+    --dept-grad-b:#4dd0e1;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:var(--font);background:var(--bg);color:var(--text)}
+  a{color:inherit;text-decoration:none}
+
+  /* ══ TOPBAR ══ */
+  .topbar{position:fixed;left:0;right:0;top:0;height:var(--topbar-h);background:var(--primary);display:flex;align-items:center;padding:0 24px;gap:12px;color:#fff;z-index:110;box-shadow:0 2px 12px rgba(0,0,0,.18)}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:700;margin-right:8px}
+  .brand .logo{width:36px;height:36px;background:#fff;border-radius:6px;color:var(--primary);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:14px}
+  .topnav{display:flex;gap:4px;align-items:center;margin-left:4px}
+  .topnav a{padding:7px 10px;border-radius:6px;font-weight:600;color:#fff;opacity:.88;font-size:13px}
+  .topnav a:hover{background:rgba(255,255,255,.08);opacity:1}
+  .topnav a.active{background:rgba(255,255,255,.14);opacity:1}
+  .breadcrumb{display:flex;align-items:center;gap:8px;font-size:13px;opacity:.88}
+  .breadcrumb a{opacity:.75;font-weight:500}
+  .breadcrumb a:hover{opacity:1}
+  .breadcrumb .sep{opacity:.4}
+  .topbar-right{margin-left:auto;display:flex;align-items:center;gap:10px}
+  .tb-icon{width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:13px;transition:background .18s}
+  .tb-icon:hover{background:rgba(255,255,255,.22)}
+  .avatar-chip{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.12);border-radius:20px;padding:4px 12px 4px 4px;cursor:pointer}
+  .avatar{width:28px;height:28px;border-radius:50%;background:var(--dept-color);color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700}
+  .avatar-name{font-size:12px;font-weight:600}
+
+  /* ══ HERO ══ */
+  .hero{margin-top:var(--topbar-h);background:linear-gradient(120deg,#003366 0%,#00509e 55%,#007acc 100%);padding:36px 32px 28px;position:relative;overflow:hidden}
+  .hero::before{content:'';position:absolute;right:-60px;top:-60px;width:320px;height:320px;border-radius:50%;background:rgba(255,255,255,.05)}
+  .hero::after{content:'';position:absolute;left:55%;bottom:-80px;width:260px;height:260px;border-radius:50%;background:rgba(255,255,255,.04)}
+  .hero-inner{max-width:1280px;margin:0 auto;display:flex;align-items:center;gap:28px;flex-wrap:wrap}
+  .hero-icon-wrap{width:72px;height:72px;border-radius:18px;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:32px;color:#fff;flex-shrink:0;border:2px solid rgba(255,255,255,.25)}
+  .hero-info{flex:1}
+  .hero-label{font-size:11px;font-weight:700;color:rgba(255,255,255,.65);text-transform:uppercase;letter-spacing:.12em;margin-bottom:5px}
+  .hero-title{font-size:28px;font-weight:900;color:#fff;line-height:1.1;margin-bottom:5px}
+  .hero-desc{font-size:13px;color:rgba(255,255,255,.8);max-width:720px;line-height:1.6}
+
+  /* ══ LAYOUT ══ */
+  .page-wrap{max-width:1280px;margin:0 auto;padding:24px 24px 56px;display:grid;grid-template-columns:1fr 300px;gap:20px}
+  .main-col{min-width:0;display:flex;flex-direction:column;gap:20px}
+  .side-col{display:flex;flex-direction:column;gap:16px}
+  @media(max-width:900px){.page-wrap{grid-template-columns:1fr}.side-col{display:none}}
+
+  /* ══ CARDS ══ */
+  .card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+  .card-hd{display:flex;align-items:center;gap:10px;padding:16px 20px 0;margin-bottom:14px}
+  .card-hd h3{font-size:15px;font-weight:800;color:var(--primary);margin:0;flex:1}
+  .card-hd i{color:var(--dept-color);font-size:15px}
+  .card-hd .see-all{font-size:12px;font-weight:700;color:var(--dept-color);cursor:pointer;white-space:nowrap}
+  .card-hd .see-all:hover{text-decoration:underline}
+  .card-body{padding:0 20px 20px}
+
+  /* ══ DEPT INTRO ══ */
+  .intro-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;padding:0 20px 20px}
+  @media(max-width:700px){.intro-grid{grid-template-columns:1fr}}
+  .intro-text{font-size:13px;color:var(--muted);line-height:1.7}
+  .intro-text p{margin-bottom:10px}
+  .intro-text p:last-child{margin-bottom:0}
+  .kpi-row{display:flex;flex-direction:column;gap:10px}
+  .kpi-box{background:var(--dept-light);border-radius:8px;padding:14px 16px;display:flex;align-items:center;gap:14px}
+  .kpi-box-icon{width:38px;height:38px;border-radius:9px;background:var(--dept-color);color:#fff;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+  .kpi-box-val{font-size:20px;font-weight:900;color:var(--dept-dark)}
+  .kpi-box-lbl{font-size:11px;color:var(--dept-dark);opacity:.75;margin-top:1px}
+
+  /* ══ TEAM MEMBERS ══ */
+  .team-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;padding:0 20px 20px}
+  @media(max-width:700px){.team-grid{grid-template-columns:1fr 1fr}}
+  .member-card{border:1px solid var(--border);border-radius:10px;padding:16px;text-align:center;transition:box-shadow .18s,transform .18s;cursor:pointer}
+  .member-card:hover{box-shadow:0 6px 20px rgba(0,0,0,.1);transform:translateY(-3px)}
+  .member-av{width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:#fff;margin:0 auto 10px}
+  .member-name{font-size:13px;font-weight:700;color:var(--primary);margin-bottom:3px}
+  .member-role{font-size:11px;color:var(--muted);line-height:1.4;margin-bottom:8px}
+  .member-actions{display:flex;justify-content:center;gap:6px}
+  .m-btn{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;cursor:pointer;border:none;background:#f0f4f9;color:var(--accent);transition:background .18s}
+  .m-btn:hover{background:var(--dept-light);color:var(--dept-dark)}
+  .member-badge{display:inline-block;background:var(--dept-light);color:var(--dept-dark);font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;margin-bottom:6px}
+  .member-location{font-size:11px;color:var(--muted);margin-top:5px;margin-bottom:8px;display:flex;align-items:center;justify-content:center;gap:4px}
+  .member-location i{font-size:10px;opacity:.55}
+
+  /* ══ NEWS ══ */
+  .news-list{display:flex;flex-direction:column;gap:10px;padding:0 20px 20px}
+  .news-item{display:flex;gap:14px;padding:13px;border-radius:8px;border:1px solid var(--border);cursor:pointer;transition:box-shadow .15s}
+  .news-item:hover{box-shadow:0 4px 14px rgba(0,0,0,.08)}
+  .news-thumb{width:64px;height:56px;border-radius:8px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:20px}
+  .news-body{flex:1;min-width:0}
+  .news-cat{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px;color:var(--dept-color)}
+  .news-title{font-size:13px;font-weight:700;line-height:1.35;margin-bottom:4px}
+  .news-meta{font-size:11px;color:var(--muted);display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:4px}
+
+  /* ══ DOCUMENTS ══ */
+  .doc-list{display:flex;flex-direction:column;gap:8px;padding:0 20px 20px}
+  .doc-item{display:flex;align-items:center;gap:12px;padding:11px 14px;border-radius:8px;border:1px solid var(--border);transition:background .15s;cursor:pointer}
+  .doc-item:hover{background:#f5f8fd}
+  .doc-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+  .doc-icon.pdf{background:#ffebee;color:#c62828}
+  .doc-icon.ppt{background:#fff3e0;color:#e65100}
+  .doc-icon.word{background:#e3f2fd;color:#1565c0}
+  .doc-icon.xls{background:#e8f5e9;color:#2e7d32}
+  .doc-icon.folder{background:var(--dept-light);color:var(--dept-dark)}
+  .doc-name{font-size:13px;font-weight:600;color:var(--text);flex:1}
+  .doc-sub{font-size:11px;color:var(--muted);margin-top:2px}
+  .doc-date{font-size:11px;color:var(--muted);white-space:nowrap}
+  .doc-badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;background:#e3f2fd;color:#1565c0;white-space:nowrap}
+  .doc-badge.new{background:#e8f5e9;color:#2e7d32}
+  .doc-badge.updated{background:#fff8e1;color:#f57f17}
+
+  /* ══ QUICK LINKS SIDEBAR ══ */
+  .ql-list{display:flex;flex-direction:column;gap:7px;padding:0 16px 16px}
+  .ql-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;background:#f8fafc;border:1px solid var(--border);cursor:pointer;transition:background .15s}
+  .ql-item:hover{background:var(--dept-light)}
+  .ql-icon{width:32px;height:32px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;background:var(--dept-light);color:var(--dept-dark)}
+  .ql-label{font-size:13px;font-weight:600;color:var(--text)}
+
+  /* ══ CALENDAR SIDEBAR ══ */
+  .event-list{display:flex;flex-direction:column;gap:8px;padding:0 16px 16px}
+  .event-item{display:flex;gap:10px;align-items:flex-start}
+  .event-date-box{width:38px;flex-shrink:0;text-align:center;background:var(--dept-light);border-radius:8px;padding:4px 0}
+  .event-day{font-size:16px;font-weight:900;color:var(--dept-dark);line-height:1}
+  .event-mon{font-size:9px;font-weight:700;color:var(--dept-color);text-transform:uppercase;letter-spacing:.06em}
+  .event-info{}
+  .event-title{font-size:12px;font-weight:700;color:var(--primary);line-height:1.3}
+  .event-loc{font-size:11px;color:var(--muted);margin-top:2px}
+
+  /* ══ MY TASKS SIDEBAR ══ */
+  .task-list{display:flex;flex-direction:column;gap:7px;padding:0 16px 16px}
+  .task-item{display:flex;align-items:flex-start;gap:9px;padding:9px 11px;border-radius:8px;border:1px solid var(--border);background:#f8fafc}
+  .task-cb{width:16px;height:16px;border-radius:4px;border:2px solid var(--dept-color);flex-shrink:0;margin-top:1px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:9px;color:transparent;transition:background .15s,color .15s}
+  .task-cb.done{background:var(--dept-color);color:#fff;border-color:var(--dept-color)}
+  .task-title{font-size:12px;font-weight:600;color:var(--text);line-height:1.4;flex:1}
+  .task-due{font-size:10px;color:var(--muted);margin-top:2px}
+  .task-tag{font-size:10px;font-weight:700;padding:1px 6px;border-radius:8px;background:var(--dept-light);color:var(--dept-dark);white-space:nowrap}
+
+  /* ══ POLICIES ══ */
+  .policy-list{display:flex;flex-direction:column;gap:8px;padding:0 20px 20px}
+  .policy-item{display:flex;align-items:center;gap:12px;padding:11px 14px;border-radius:8px;border:1px solid var(--border);cursor:pointer;transition:background .15s}
+  .policy-item:hover{background:#f5f8fd}
+  .policy-icon{width:34px;height:34px;border-radius:8px;background:var(--dept-light);color:var(--dept-dark);display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0}
+  .policy-name{font-size:13px;font-weight:600;flex:1}
+  .policy-ver{font-size:10px;color:var(--muted)}
+  .policy-arrow{font-size:11px;color:var(--dept-color)}
+
+  /* ══ SUB-NAV TABS ══ */
+  .subnav{background:var(--card);border-bottom:2px solid var(--border);position:sticky;top:var(--topbar-h);z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+  .subnav-inner{max-width:1280px;margin:0 auto;padding:0 24px;display:flex;gap:4px}
+  .snav-tab{padding:13px 18px;font-size:13px;font-weight:700;color:var(--muted);cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;display:flex;align-items:center;gap:8px;transition:color .15s,border-color .15s;white-space:nowrap}
+  .snav-tab:hover{color:var(--accent)}
+  .snav-tab.active{color:var(--primary);border-bottom-color:var(--accent)}
+  .snav-tab i{font-size:13px}
+  .snav-tab .snav-badge{font-size:10px;font-weight:700;padding:1px 7px;border-radius:10px;background:rgba(0,80,158,.12);color:var(--accent);margin-left:2px}
+
+  /* ══ TOOLS MEGA-MENU DROPDOWN ══ */
+  .snav-dropdown{position:relative}
+  .snav-dropdown-trigger{padding:13px 18px;font-size:13px;font-weight:700;color:var(--muted);cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;display:flex;align-items:center;gap:8px;transition:color .15s,border-color .15s;white-space:nowrap;user-select:none}
+  .snav-dropdown-trigger:hover,.snav-dropdown-trigger.open{color:var(--primary)}
+  .snav-dropdown-trigger.open{border-bottom-color:var(--accent)}
+  .snav-dropdown-trigger .caret{font-size:10px;margin-left:2px;transition:transform .18s}
+  .snav-dropdown-trigger.open .caret{transform:rotate(180deg)}
+  .snav-megamenu{display:none;position:absolute;top:calc(100% + 2px);left:0;min-width:680px;background:#fff;border-radius:0 12px 12px 12px;box-shadow:0 12px 40px rgba(0,0,0,.13);border:1px solid var(--border);padding:20px 24px 24px;z-index:200}
+  .snav-megamenu.open{display:flex;gap:32px}
+  .mm-group{flex:1;min-width:180px}
+  .mm-group-title{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);padding-bottom:8px;margin-bottom:8px;border-bottom:1px solid var(--border)}
+  .mm-item{display:flex;align-items:flex-start;gap:10px;padding:8px 10px;border-radius:8px;cursor:pointer;transition:background .14s;text-decoration:none}
+  .mm-item:hover{background:var(--dept-light)}
+  .mm-icon{width:30px;height:30px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;margin-top:1px}
+  .mm-name{font-size:12px;font-weight:700;color:var(--primary);line-height:1.3}
+  .mm-desc{font-size:11px;color:var(--muted);margin-top:2px;line-height:1.3}
+
+  /* ══ AVATAR COLOURS ══ */
+  .av-teal   {background:linear-gradient(135deg,#006064,#4dd0e1)}
+  .av-blue   {background:linear-gradient(135deg,#1d4ed8,#60a5fa)}
+  .av-violet {background:linear-gradient(135deg,#5b21b6,#a78bfa)}
+  .av-rose   {background:linear-gradient(135deg,#9d174d,#f472b6)}
+  .av-green  {background:linear-gradient(135deg,#065f46,#34d399)}
+  .av-yellow {background:linear-gradient(135deg,#92400e,#fbbf24)}
+  .av-navy   {background:linear-gradient(135deg,#003366,#07B4FF)}
+</style>
+</head>
+<body>
+
+<!-- ══ TOPBAR ══ -->
+<header class="topbar">
+  <div class="brand">
+    <div class="logo">CCM</div>
+    <div>
+      <div style="font-size:14px">CCM Europe</div>
+      <div style="font-size:11px;opacity:.75">Company Intranet</div>
+    </div>
+  </div>
+  <nav class="topnav">
+    <a href="intranet-prototype.html">Home</a>
+    <a href="#">News</a>
+    <a href="#">Tools</a>
+    <a href="#" class="active">My Workspace</a>
+  </nav>
+  <div class="topbar-right">
+    <div class="tb-icon"><i class="fa fa-bell"></i></div>
+    <div class="tb-icon"><i class="fa fa-search"></i></div>
+    <div class="tb-icon"><i class="fa fa-question-circle"></i></div>
+    <div class="avatar-chip">
+      <div class="avatar">BH</div>
+      <span class="avatar-name">Bianca Hartmann</span>
+    </div>
+  </div>
+</header>
+
+<!-- ══ HERO ══ -->
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-icon-wrap"><i class="fa fa-bullhorn"></i></div>
+    <div class="hero-info">
+      <div class="hero-label">CCM Europe · My Workspace</div>
+      <div class="hero-title">Marketing &amp; Communications</div>
+      <div class="hero-desc">Your central hub for campaigns, brand assets, team news, documents and everything the Marketing &amp; Communications team needs — in one place.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SUB-NAV ══ -->
+<div class="subnav">
+  <div class="subnav-inner">
+    <div class="snav-tab active" data-tab="overview"><i class="fa fa-home"></i> Overview</div>
+    <div class="snav-tab" data-tab="docs"><i class="fa fa-folder-open"></i> Documents</div>
+    <div class="snav-dropdown" id="toolsDropdown">
+      <div class="snav-dropdown-trigger" id="toolsTrigger">
+        <i class="fa fa-tools"></i> Tools <i class="fa fa-chevron-down caret"></i>
+      </div>
+      <div class="snav-megamenu" id="toolsMegamenu">
+
+        <!-- Group 1 -->
+        <div class="mm-group">
+          <div class="mm-group-title">Marketing &amp; Content</div>
+          <a href="#" class="mm-item">
+            <div class="mm-icon" style="background:#e0f7fa;color:#006064"><i class="fa fa-photo-video"></i></div>
+            <div><div class="mm-name">Media Hub</div><div class="mm-desc">Brand assets &amp; images</div></div>
+          </a>
+          <a href="#" class="mm-item">
+            <div class="mm-icon" style="background:#fce4ec;color:#880e4f"><i class="fa fa-magic"></i></div>
+            <div><div class="mm-name">Brand Asset Builder</div><div class="mm-desc">Create on-brand visuals</div></div>
+          </a>
+          <a href="#" class="mm-item">
+            <div class="mm-icon" style="background:#e8eaf6;color:#283593"><i class="fa fa-envelope-open-text"></i></div>
+            <div><div class="mm-name">Email Signature Generator</div><div class="mm-desc">Standardised signatures</div></div>
+          </a>
+          <a href="#" class="mm-item">
+            <div class="mm-icon" style="background:#e8f5e9;color:#2e7d32"><i class="fa fa-newspaper"></i></div>
+            <div><div class="mm-name">Newsletter Builder</div><div class="mm-desc">Internal &amp; external newsletters</div></div>
+          </a>
+        </div>
+
+        <!-- Group 2 -->
+        <div class="mm-group">
+          <div class="mm-group-title">Analytics &amp; Reporting</div>
+          <a href="#" class="mm-item">
+            <div class="mm-icon" style="background:#fff3e0;color:#e65100"><i class="fa fa-chart-bar"></i></div>
+            <div><div class="mm-name">Campaign Reports</div><div class="mm-desc">Performance dashboards</div></div>
+          </a>
+          <a href="#" class="mm-item">
+            <div class="mm-icon" style="background:#f3e5f5;color:#6a1b9a"><i class="fa fa-chart-line"></i></div>
+            <div><div class="mm-name">Web Analytics</div><div class="mm-desc">Visits, reach &amp; conversions</div></div>
+          </a>
+          <a href="#" class="mm-item">
+            <div class="mm-icon" style="background:#e1f5fe;color:#0277bd"><i class="fa fa-share-alt"></i></div>
+            <div><div class="mm-name">Social Dashboard</div><div class="mm-desc">LinkedIn, XING, Instagram</div></div>
+          </a>
+        </div>
+
+        <!-- Group 3 -->
+        <div class="mm-group">
+          <div class="mm-group-title">Collaboration &amp; Productivity</div>
+          <a href="#" class="mm-item">
+            <div class="mm-icon" style="background:#e3f2fd;color:#1565c0"><i class="fa fa-tasks"></i></div>
+            <div><div class="mm-name">Project Planner</div><div class="mm-desc">Tasks &amp; project tracking</div></div>
+          </a>
+          <a href="#" class="mm-item">
+            <div class="mm-icon" style="background:#fce4ec;color:#880e4f"><i class="fa fa-calendar-alt"></i></div>
+            <div><div class="mm-name">Shared Calendar</div><div class="mm-desc">Team events &amp; deadlines</div></div>
+          </a>
+          <a href="#" class="mm-item">
+            <div class="mm-icon" style="background:#e8f5e9;color:#2e7d32"><i class="fa fa-headset"></i></div>
+            <div><div class="mm-name">IT Service Desk</div><div class="mm-desc">Raise &amp; track tickets</div></div>
+          </a>
+          <a href="#" class="mm-item">
+            <div class="mm-icon" style="background:#fff8e1;color:#f57f17"><i class="fa fa-comments"></i></div>
+            <div><div class="mm-name">Teams Channels</div><div class="mm-desc">Marketing team channels</div></div>
+          </a>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ PAGE ══ -->
+<div class="page-wrap" id="tab-overview">
+
+  <!-- ════ MAIN COLUMN ════ -->
+  <div class="main-col">
+
+    <!-- DEPARTMENT INTRODUCTION -->
+    <div class="card">
+      <div class="card-hd">
+        <i class="fa fa-info-circle"></i>
+        <h3>About Marketing &amp; Communications</h3>
+      </div>
+      <div style="padding:0 20px 20px;font-size:13px;color:var(--muted);line-height:1.7">
+        <p style="margin-bottom:10px">The <strong>Marketing &amp; Communications</strong> team is responsible for shaping and communicating the CCM Europe brand across all channels and markets. We develop strategies that connect our products and values with customers, partners, and employees.</p>
+        <p style="margin-bottom:10px">Our work spans digital marketing, campaign management, corporate communications, trade events, media relations, and internal communications — ensuring a consistent, compelling voice for CCM Europe across Germany, Netherlands, UK, Romania and beyond.</p>
+        <p>We collaborate closely with Sales, Product Management, and the Executive team to align our messaging with business objectives and regional priorities.</p>
+      </div>
+    </div>
+
+    <!-- TEAM MEMBERS -->
+    <div class="card">
+      <div class="card-hd">
+        <i class="fa fa-users"></i>
+        <h3>Team Members</h3>
+        <span class="see-all">View full directory →</span>
+      </div>
+      <div class="team-grid">
+        <div class="member-card">
+          <div class="member-av av-teal">BH</div>
+          <div class="member-badge">Department Lead</div>
+          <div class="member-name">Bianca Hartmann</div>
+          <div class="member-role">Marketing Director</div>
+          <div class="member-location"><i class="fa fa-map-marker-alt"></i> Hamburg</div>
+          <div class="member-actions">
+            <a class="m-btn" href="mailto:b.hartmann@ccmeurope.com" title="Send Email"><i class="fa fa-envelope"></i></a>
+            <a class="m-btn" href="https://teams.microsoft.com/l/chat/0/0?users=b.hartmann@ccmeurope.com" target="_blank" title="Teams Message"><i class="fa fa-comment"></i></a>
+          </div>
+        </div>
+        <div class="member-card">
+          <div class="member-av av-blue">DS</div>
+          <div class="member-badge">Digital</div>
+          <div class="member-name">David Schwarz</div>
+          <div class="member-role">Digital Marketing Specialist</div>
+          <div class="member-location"><i class="fa fa-map-marker-alt"></i> Remote</div>
+          <div class="member-actions">
+            <a class="m-btn" href="mailto:d.schwarz@ccmeurope.com" title="Send Email"><i class="fa fa-envelope"></i></a>
+            <a class="m-btn" href="https://teams.microsoft.com/l/chat/0/0?users=d.schwarz@ccmeurope.com" target="_blank" title="Teams Message"><i class="fa fa-comment"></i></a>
+          </div>
+        </div>
+        <div class="member-card">
+          <div class="member-av av-rose">LC</div>
+          <div class="member-badge">Content</div>
+          <div class="member-name">Laura Conte</div>
+          <div class="member-role">Content &amp; Copywriter</div>
+          <div class="member-location"><i class="fa fa-map-marker-alt"></i> Hamburg</div>
+          <div class="member-actions">
+            <a class="m-btn" href="mailto:l.conte@ccmeurope.com" title="Send Email"><i class="fa fa-envelope"></i></a>
+            <a class="m-btn" href="https://teams.microsoft.com/l/chat/0/0?users=l.conte@ccmeurope.com" target="_blank" title="Teams Message"><i class="fa fa-comment"></i></a>
+          </div>
+        </div>
+        <div class="member-card">
+          <div class="member-av av-violet">MP</div>
+          <div class="member-badge">Design</div>
+          <div class="member-name">Marco Pfeiffer</div>
+          <div class="member-role">Graphic Designer</div>
+          <div class="member-location"><i class="fa fa-map-marker-alt"></i> Remote</div>
+          <div class="member-actions">
+            <a class="m-btn" href="mailto:m.pfeiffer@ccmeurope.com" title="Send Email"><i class="fa fa-envelope"></i></a>
+            <a class="m-btn" href="https://teams.microsoft.com/l/chat/0/0?users=m.pfeiffer@ccmeurope.com" target="_blank" title="Teams Message"><i class="fa fa-comment"></i></a>
+          </div>
+        </div>
+        <div class="member-card">
+          <div class="member-av av-green">AV</div>
+          <div class="member-badge">Events</div>
+          <div class="member-name">Anna Vermeer</div>
+          <div class="member-role">Events &amp; Trade Shows Coordinator</div>
+          <div class="member-location"><i class="fa fa-map-marker-alt"></i> Kampen</div>
+          <div class="member-actions">
+            <a class="m-btn" href="mailto:a.vermeer@ccmeurope.com" title="Send Email"><i class="fa fa-envelope"></i></a>
+            <a class="m-btn" href="https://teams.microsoft.com/l/chat/0/0?users=a.vermeer@ccmeurope.com" target="_blank" title="Teams Message"><i class="fa fa-comment"></i></a>
+          </div>
+        </div>
+        <div class="member-card">
+          <div class="member-av av-yellow">RN</div>
+          <div class="member-badge">PR</div>
+          <div class="member-name">Rachel Nolan</div>
+          <div class="member-role">PR &amp; Media Relations</div>
+          <div class="member-location"><i class="fa fa-map-marker-alt"></i> Remote</div>
+          <div class="member-actions">
+            <a class="m-btn" href="mailto:r.nolan@ccmeurope.com" title="Send Email"><i class="fa fa-envelope"></i></a>
+            <a class="m-btn" href="https://teams.microsoft.com/l/chat/0/0?users=r.nolan@ccmeurope.com" target="_blank" title="Teams Message"><i class="fa fa-comment"></i></a>
+          </div>
+        </div>
+        <div class="member-card">
+          <div class="member-av av-navy">TW</div>
+          <div class="member-badge">Social Media</div>
+          <div class="member-name">Tom Woudstra</div>
+          <div class="member-role">Social Media Manager</div>
+          <div class="member-location"><i class="fa fa-map-marker-alt"></i> Kampen</div>
+          <div class="member-actions">
+            <a class="m-btn" href="mailto:t.woudstra@ccmeurope.com" title="Send Email"><i class="fa fa-envelope"></i></a>
+            <a class="m-btn" href="https://teams.microsoft.com/l/chat/0/0?users=t.woudstra@ccmeurope.com" target="_blank" title="Teams Message"><i class="fa fa-comment"></i></a>
+          </div>
+        </div>
+        <div class="member-card">
+          <div class="member-av av-teal">SK</div>
+          <div class="member-badge">Internal Comms</div>
+          <div class="member-name">Sara König</div>
+          <div class="member-role">Internal Communications Specialist</div>
+          <div class="member-location"><i class="fa fa-map-marker-alt"></i> Hamburg</div>
+          <div class="member-actions">
+            <a class="m-btn" href="mailto:s.koenig@ccmeurope.com" title="Send Email"><i class="fa fa-envelope"></i></a>
+            <a class="m-btn" href="https://teams.microsoft.com/l/chat/0/0?users=s.koenig@ccmeurope.com" target="_blank" title="Teams Message"><i class="fa fa-comment"></i></a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DEPARTMENT NEWS -->
+    <div class="card">
+      <div class="card-hd">
+        <i class="fa fa-newspaper"></i>
+        <h3>Department News</h3>
+        <span class="see-all">All Marketing news →</span>
+      </div>
+      <div class="news-list">
+        <div class="news-item">
+          <div class="news-thumb" style="background:#e0f7fa;color:#006064"><i class="fa fa-rocket"></i></div>
+          <div class="news-body">
+            <div class="news-cat">Campaign</div>
+            <div class="news-title">Spring 2026 Campaign "Seal the Future" — Launch Confirmed for 1 April</div>
+            <div style="font-size:12px;color:var(--muted);line-height:1.4;margin-top:3px">All regional teams are asked to review the campaign brief and submit localised assets by 20 March. Media buy confirmed across DE, NL and UK.</div>
+            <div class="news-meta">
+              <span><i class="fa fa-user" style="opacity:.5;margin-right:3px"></i>Bianca Hartmann</span>
+              <span><i class="fa fa-clock" style="opacity:.5;margin-right:3px"></i>6 Mar 2026</span>
+              <span style="background:#e0f7fa;color:#006064;padding:1px 8px;border-radius:10px;font-size:10px;font-weight:700">Campaign</span>
+            </div>
+          </div>
+        </div>
+        <div class="news-item">
+          <div class="news-thumb" style="background:#fce4ec;color:#880e4f"><i class="fa fa-award"></i></div>
+          <div class="news-body">
+            <div class="news-cat">Brand</div>
+            <div class="news-title">CCM Europe Wins "Best B2B Brand Identity" at European Sealing Awards 2026</div>
+            <div style="font-size:12px;color:var(--muted);line-height:1.4;margin-top:3px">The award recognises our brand refresh project completed last year. Full press release and media kit available in the Documents library.</div>
+            <div class="news-meta">
+              <span><i class="fa fa-user" style="opacity:.5;margin-right:3px"></i>Rachel Nolan</span>
+              <span><i class="fa fa-clock" style="opacity:.5;margin-right:3px"></i>28 Feb 2026</span>
+              <span style="background:#fce4ec;color:#880e4f;padding:1px 8px;border-radius:10px;font-size:10px;font-weight:700">PR</span>
+            </div>
+          </div>
+        </div>
+        <div class="news-item">
+          <div class="news-thumb" style="background:#e8eaf6;color:#283593"><i class="fa fa-calendar-alt"></i></div>
+          <div class="news-body">
+            <div class="news-cat">Events</div>
+            <div class="news-title">CCM Europe Confirmed for Hannover Messe 2026 — Stand D42, Hall 6</div>
+            <div style="font-size:12px;color:var(--muted);line-height:1.4;margin-top:3px">Booth design approved. Anna Vermeer coordinating logistics. Invitation flyers available in the Marketing folder — please distribute to key customer contacts.</div>
+            <div class="news-meta">
+              <span><i class="fa fa-user" style="opacity:.5;margin-right:3px"></i>Anna Vermeer</span>
+              <span><i class="fa fa-clock" style="opacity:.5;margin-right:3px"></i>21 Feb 2026</span>
+              <span style="background:#e8eaf6;color:#283593;padding:1px 8px;border-radius:10px;font-size:10px;font-weight:700">Event</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- POLICIES & GUIDELINES -->
+    <div class="card">
+      <div class="card-hd">
+        <i class="fa fa-shield-alt"></i>
+        <h3>Policies &amp; Guidelines</h3>
+      </div>
+      <div class="policy-list">
+        <div class="policy-item">
+          <div class="policy-icon"><i class="fa fa-trademark"></i></div>
+          <div style="flex:1">
+            <div class="policy-name">Brand &amp; Visual Identity Policy</div>
+            <div class="policy-ver">v3.1 · Jan 2026</div>
+          </div>
+          <i class="fa fa-arrow-right policy-arrow"></i>
+        </div>
+        <div class="policy-item">
+          <div class="policy-icon"><i class="fa fa-share-alt"></i></div>
+          <div style="flex:1">
+            <div class="policy-name">Social Media Policy</div>
+            <div class="policy-ver">v2.0 · Oct 2025</div>
+          </div>
+          <i class="fa fa-arrow-right policy-arrow"></i>
+        </div>
+        <div class="policy-item">
+          <div class="policy-icon"><i class="fa fa-newspaper"></i></div>
+          <div style="flex:1">
+            <div class="policy-name">Media &amp; Press Relations Guidelines</div>
+            <div class="policy-ver">v1.4 · Sep 2025</div>
+          </div>
+          <i class="fa fa-arrow-right policy-arrow"></i>
+        </div>
+        <div class="policy-item">
+          <div class="policy-icon"><i class="fa fa-envelope-open-text"></i></div>
+          <div style="flex:1">
+            <div class="policy-name">Email Signature Standards</div>
+            <div class="policy-ver">v2.2 · Jan 2026</div>
+          </div>
+          <i class="fa fa-arrow-right policy-arrow"></i>
+        </div>
+        <div class="policy-item">
+          <div class="policy-icon"><i class="fa fa-camera"></i></div>
+          <div style="flex:1">
+            <div class="policy-name">Photography &amp; Media Usage Rights</div>
+            <div class="policy-ver">v1.1 · Jun 2025</div>
+          </div>
+          <i class="fa fa-arrow-right policy-arrow"></i>
+        </div>
+        <div class="policy-item">
+          <div class="policy-icon"><i class="fa fa-handshake"></i></div>
+          <div style="flex:1">
+            <div class="policy-name">Agency &amp; Supplier Briefing Process</div>
+            <div class="policy-ver">v1.0 · Mar 2025</div>
+          </div>
+          <i class="fa fa-arrow-right policy-arrow"></i>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ════ SIDEBAR ════ -->
+  <div class="side-col">
+
+    <!-- QUICK LINKS -->
+    <div class="card">
+      <div class="card-hd" style="margin-bottom:10px">
+        <i class="fa fa-th"></i>
+        <h3>Quick Links</h3>
+      </div>
+      <div class="ql-list">
+        <div class="ql-item"><div class="ql-icon"><i class="fa fa-photo-video"></i></div><span class="ql-label">Media Hub</span></div>
+        <div class="ql-item"><div class="ql-icon"><i class="fa fa-envelope-open-text"></i></div><span class="ql-label">Invitation Flyers</span></div>
+        <div class="ql-item"><div class="ql-icon"><i class="fa fa-calendar-alt"></i></div><span class="ql-label">Event Calendar</span></div>
+        <div class="ql-item"><div class="ql-icon"><i class="fa fa-file-alt"></i></div><span class="ql-label">Document Library</span></div>
+        <div class="ql-item"><div class="ql-icon"><i class="fa fa-chart-bar"></i></div><span class="ql-label">Campaign Reports</span></div>
+        <div class="ql-item"><div class="ql-icon"><i class="fa fa-magic"></i></div><span class="ql-label">MS Office Life Hacks</span></div>
+        <div class="ql-item"><div class="ql-icon"><i class="fa fa-headset"></i></div><span class="ql-label">IT Service Desk</span></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══ DOCUMENTS TAB ══ -->
+<div class="page-wrap" id="tab-docs" style="display:none">
+  <div class="main-col">
+    <div class="card">
+      <div class="card-hd">
+        <i class="fa fa-folder-open"></i>
+        <h3>Document Library</h3>
+      </div>
+      <div style="padding:48px 20px;text-align:center;color:var(--muted)">
+        <div style="font-size:40px;margin-bottom:14px;opacity:.25"><i class="fa fa-folder-open"></i></div>
+        <div style="font-size:14px;font-weight:700;color:var(--primary);margin-bottom:6px">SharePoint Document Library</div>
+        <div style="font-size:13px;max-width:420px;margin:0 auto;line-height:1.6">The document library will be embedded here from SharePoint. Content will be added once the SharePoint integration is configured.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// Task checkbox interaction
+document.querySelectorAll('.task-cb').forEach(cb=>{
+  cb.addEventListener('click',()=> cb.classList.toggle('done'));
+});
+
+// Sub-nav tab switching (Overview & Documents only)
+const tabPages = ['overview','docs'];
+document.querySelectorAll('.snav-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.snav-tab').forEach(t => t.classList.remove('active'));
+    // close tools dropdown if open
+    toolsTrigger.classList.remove('open');
+    toolsMegamenu.classList.remove('open');
+    tab.classList.add('active');
+    const target = tab.dataset.tab;
+    tabPages.forEach(id => {
+      const el = document.getElementById('tab-' + id);
+      if(el) el.style.display = id === target ? '' : 'none';
+    });
+  });
+});
+
+// Tools mega-menu toggle
+const toolsTrigger = document.getElementById('toolsTrigger');
+const toolsMegamenu = document.getElementById('toolsMegamenu');
+toolsTrigger.addEventListener('click', (e) => {
+  e.stopPropagation();
+  const isOpen = toolsMegamenu.classList.contains('open');
+  // deactivate tab highlights when tools is opened
+  if(!isOpen) document.querySelectorAll('.snav-tab').forEach(t => t.classList.remove('active'));
+  toolsTrigger.classList.toggle('open', !isOpen);
+  toolsMegamenu.classList.toggle('open', !isOpen);
+});
+// Close when clicking outside
+document.addEventListener('click', () => {
+  toolsTrigger.classList.remove('open');
+  toolsMegamenu.classList.remove('open');
+});
+toolsMegamenu.addEventListener('click', e => e.stopPropagation());
+</script>
+</body>
+</html>

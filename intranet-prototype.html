@@ -29,6 +29,19 @@
   .topnav{display:flex;gap:8px;align-items:center;margin-left:8px}
   .topnav a{padding:8px 10px;border-radius:6px;font-weight:600;color:#fff;opacity:.95}
   .topnav a:hover{background:rgba(255,255,255,.06)}
+  /* workspace dropdown */
+  .topnav-drop{position:relative}
+  .topnav-drop-trigger{padding:8px 10px;border-radius:6px;font-weight:600;color:#fff;opacity:.95;cursor:pointer;display:flex;align-items:center;gap:6px;font-size:13px;user-select:none}
+  .topnav-drop-trigger:hover{background:rgba(255,255,255,.06);opacity:1}
+  .topnav-drop-trigger.open{background:rgba(255,255,255,.12);opacity:1}
+  .topnav-drop-trigger .caret{font-size:9px;opacity:.7;transition:transform .18s}
+  .topnav-drop-trigger.open .caret{transform:rotate(180deg)}
+  .topnav-dropmenu{display:none;position:absolute;top:calc(100% + 8px);left:0;min-width:200px;background:#fff;border-radius:10px;box-shadow:0 10px 32px rgba(0,0,0,.18);border:1px solid #e6e6e6;padding:6px;z-index:300}
+  .topnav-dropmenu.open{display:block}
+  .topnav-drop-label{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:#999;padding:6px 10px 4px}
+  .topnav-drop-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:7px;cursor:pointer;text-decoration:none;color:#222 !important;font-size:13px;font-weight:600;transition:background .14s}
+  .topnav-drop-item:hover{background:#f0f4f9;color:#003366 !important}
+  .topnav-drop-item i{width:16px;text-align:center;color:#00509e;font-size:12px}
   .search{margin-left:12px;flex:1;max-width:520px;display:flex;gap:0}
   .search input{flex:1;padding:8px 14px;border-radius:20px 0 0 20px;border:none;outline:none;font-family:var(--font);font-size:13px}
   .search-btn{background:var(--bright);color:#fff;border:none;border-radius:0 20px 20px 0;padding:8px 16px;cursor:pointer;font-size:13px;transition:background .2s;flex-shrink:0}
@@ -396,9 +409,17 @@
   <nav class="topnav">
     <a href="#">Home</a>
     <a href="#">News</a>
-    <a href="#">Documents</a>
     <a href="#">Tools</a>
-    <a href="#">Sites</a>
+    <div class="topnav-drop" id="workspaceDrop">
+      <div class="topnav-drop-trigger" id="workspaceTrigger">
+        <span id="myDeptNav">My Workspace</span>
+        <i class="fa fa-chevron-down caret"></i>
+      </div>
+      <div class="topnav-dropmenu" id="workspaceMenu">
+        <div class="topnav-drop-label">My Workspace</div>
+        <a class="topnav-drop-item" href="workspace-marketing.html"><i class="fa fa-bullhorn"></i> Marketing</a>
+      </div>
+    </div>
   </nav>
 
   <div class="search">
@@ -408,7 +429,7 @@
 
   <div class="top-actions">
     <div class="controls">
-      <select class="topbar-select" id="regionSelect" title="Select your region">
+      <select class="topbar-select" id="regionSelect" title="Select your region" style="display:none">
         <option value="EU">🌍 EU (Global)</option>
         <option value="DE">🇩🇪 Germany</option>
         <option value="NL">🇳🇱 Netherlands</option>
@@ -416,6 +437,18 @@
         <option value="RO">🇷🇴 Romania</option>
         <option value="DK">🇩🇰 Denmark</option>
         <option value="FR">🇫🇷 France</option>
+      </select>
+      <select class="topbar-select" id="groupSelect" title="Simulate logged-in department (prototype only)" style="display:none">
+        <option value="Global">All Departments</option>
+        <option value="IT">IT &amp; Digital</option>
+        <option value="HR">Human Resources</option>
+        <option value="Finance">Finance</option>
+        <option value="Sales">Sales</option>
+        <option value="Marketing">Marketing</option>
+        <option value="Legal">Legal</option>
+        <option value="Operations">Operations</option>
+        <option value="EHS">EHS / Safety</option>
+        <option value="Commercial">Commercial</option>
       </select>
       <div class="lang-switcher" id="langSwitcher" title="Switch language">
         <button class="lang-btn active" data-lang="EN">🇬🇧 EN</button>
@@ -639,6 +672,31 @@ let currentLang = 'EN';
 let userGroups = ['Global'];
 let currentRegion = 'EU';
 
+// Dept label mapping — in real app this comes from Azure AD profile
+const deptLabels = {
+  IT:         'IT & Digital',
+  HR:         'Human Resources',
+  Finance:    'Finance',
+  Sales:      'Sales',
+  Marketing:  'Marketing',
+  Legal:      'Legal',
+  Operations: 'Operations',
+  EHS:        'EHS / Safety',
+  Commercial: 'Commercial',
+  Global:     null   // no specific dept
+};
+
+function updateMyDeptNav(){
+  const label = document.getElementById('myDeptNav');
+  if(!label) return;
+  const dept = userGroups.find(g => deptLabels[g] !== undefined && deptLabels[g] !== null);
+  if(dept){
+    label.textContent = deptLabels[dept];
+  } else {
+    label.textContent = 'My Workspace';
+  }
+}
+
 function renderNews(){
   const list = document.getElementById('newsList'); list.innerHTML='';
   const visible = newsItems.filter(n=>{
@@ -776,6 +834,14 @@ document.getElementById('regionSelect').addEventListener('change', e=>{
   renderNews(); renderQuickLinks();
 });
 
+// Group/Department selector (prototype simulation of Azure AD group)
+document.getElementById('groupSelect').addEventListener('change', e=>{
+  const g = e.target.value;
+  userGroups = g === 'Global' ? ['Global'] : [g, 'Global'];
+  renderQuickLinks();
+  updateMyDeptNav();
+});
+
 // Search CTA
 document.getElementById('searchBtn').addEventListener('click',()=>{
   const q = document.getElementById('searchInput').value.trim();
@@ -787,7 +853,21 @@ document.getElementById('searchInput').addEventListener('keydown', e=>{
 
 // init
 autoDetect();
-renderEHS(); renderLocations(); renderNews(); renderQuickLinks();
+renderEHS(); renderLocations(); renderNews(); renderQuickLinks(); updateMyDeptNav();
+
+// Workspace dropdown
+const wsTrigger = document.getElementById('workspaceTrigger');
+const wsMenu    = document.getElementById('workspaceMenu');
+wsTrigger.addEventListener('click', e => {
+  e.stopPropagation();
+  const open = wsMenu.classList.toggle('open');
+  wsTrigger.classList.toggle('open', open);
+});
+document.addEventListener('click', () => {
+  wsMenu.classList.remove('open');
+  wsTrigger.classList.remove('open');
+});
+wsMenu.addEventListener('click', e => e.stopPropagation());
 
 </script>
 </body>
