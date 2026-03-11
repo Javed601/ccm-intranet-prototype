@@ -781,7 +781,7 @@ function renderQuickLinks(){
     if(!allowed || !regionOk) return;
     const el = document.createElement('a'); el.className='ql-item';
     el.href = q.url || '#';
-    if(q.url && q.url !== '#' && q.url.startsWith('http')) el.target = '_blank';
+    if(q.url && q.url !== '#') el.target = '_blank';
     el.innerHTML = `
       <div class="ql-icon" style="background:${q.color||'#eaf6ff'};color:${q.iconColor||'#00509e'}">
         <i class="fa ${q.icon}"></i>
