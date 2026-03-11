@@ -149,6 +149,23 @@
   .av-navy   {background:linear-gradient(135deg,#003366,#07B4FF)}
   .av-purple {background:linear-gradient(135deg,#6b21a8,#c084fc)}
   .av-emerald{background:linear-gradient(135deg,#00695c,#6ee7b7)}
+
+  /* ── TOPNAV ── */
+  .topnav{display:flex;gap:8px;align-items:center;margin-left:8px}
+  .topnav a{padding:8px 10px;border-radius:6px;font-weight:600;color:#fff;opacity:.95;text-decoration:none;font-size:13px}
+  .topnav a:hover{background:rgba(255,255,255,.1);opacity:1}
+  .topnav-drop{position:relative}
+  .topnav-drop-trigger{padding:8px 10px;border-radius:6px;font-weight:600;color:#fff;opacity:.95;cursor:pointer;display:flex;align-items:center;gap:6px;font-size:13px;user-select:none}
+  .topnav-drop-trigger:hover{background:rgba(255,255,255,.1);opacity:1}
+  .topnav-drop-trigger.open{background:rgba(255,255,255,.15);opacity:1}
+  .topnav-drop-trigger .caret{font-size:9px;opacity:.7;transition:transform .18s}
+  .topnav-drop-trigger.open .caret{transform:rotate(180deg)}
+  .topnav-dropmenu{display:none;position:absolute;top:calc(100% + 8px);left:0;min-width:200px;background:#fff;border-radius:10px;box-shadow:0 10px 32px rgba(0,0,0,.18);border:1px solid #e6e6e6;padding:6px;z-index:300}
+  .topnav-dropmenu.open{display:block}
+  .topnav-drop-label{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:#999;padding:6px 10px 4px}
+  .topnav-drop-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:7px;cursor:pointer;text-decoration:none;color:#222 !important;font-size:13px;font-weight:600;transition:background .14s}
+  .topnav-drop-item:hover{background:#f0f4f9;color:#003366 !important}
+  .topnav-drop-item i{width:16px;text-align:center;color:#00509e;font-size:12px}
 </style>
 </head>
 <body>
@@ -162,6 +179,23 @@
       <div style="font-size:11px;opacity:.75">Company Intranet</div>
     </div>
   </div>
+
+  <nav class="topnav">
+    <a href="intranet-prototype.html"><i class="fa fa-home" style="margin-right:4px"></i>Home</a>
+    <a href="intranet-prototype.html#newsSection">News</a>
+    <a href="intranet-prototype.html#toolsSection">Tools</a>
+    <div class="topnav-drop" id="workspaceDrop">
+      <div class="topnav-drop-trigger" id="workspaceTrigger">
+        <span>My Workspace</span>
+        <i class="fa fa-chevron-down caret"></i>
+      </div>
+      <div class="topnav-dropmenu" id="workspaceMenu">
+        <div class="topnav-drop-label">My Workspace</div>
+        <a class="topnav-drop-item" href="workspace-marketing.html"><i class="fa fa-bullhorn"></i> Marketing</a>
+      </div>
+    </div>
+  </nav>
+
   <div class="breadcrumb">
     <span class="sep">/</span>
     <a href="intranet-prototype.html"><i class="fa fa-map-marked-alt" style="margin-right:4px"></i> Our Locations</a>
@@ -221,8 +255,8 @@
           <span>Schellerdamm 16</span>
           <span>21079 Hamburg</span>
           <span>Germany</span>
-          <span style="margin-top:6px;display:block"><i class="fa fa-phone" style="opacity:.5;margin-right:4px"></i>+49 40 7654 3210</span>
-          <span><i class="fa fa-envelope" style="opacity:.5;margin-right:4px"></i>hq.hamburg@ccmeurope.com</span>
+          <span style="margin-top:6px;display:block"><i class="fa fa-phone" style="opacity:.5;margin-right:4px"></i>T +49 40-788 9330</span>
+          <span><i class="fa fa-envelope" style="opacity:.5;margin-right:4px"></i>info@ccm-europe.com</span>
         </div>
       </div>
       <a class="addr-map-link" href="https://maps.google.com/?q=Schellerdamm+16+21079+Hamburg" target="_blank">
@@ -428,6 +462,20 @@ function filterTable(){
 
 // Initial render
 renderTable(employees);
+
+// Topnav dropdown toggle
+document.getElementById('workspaceTrigger').addEventListener('click', function(){
+  const trigger = this;
+  const menu = document.getElementById('workspaceMenu');
+  trigger.classList.toggle('open');
+  menu.classList.toggle('open');
+});
+document.addEventListener('click', function(e){
+  if(!document.getElementById('workspaceDrop').contains(e.target)){
+    document.getElementById('workspaceTrigger').classList.remove('open');
+    document.getElementById('workspaceMenu').classList.remove('open');
+  }
+});
 </script>
 </body>
 </html>
