@@ -1,0 +1,2390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CCM Europe — Locations Widget · Design Concepts</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+/* ===================== RESET & TOKENS ===================== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --primary:   #003366;
+  --primary-dk:#001e3c;
+  --accent:    #00509e;
+  --bright:    #05B4FF;
+  --gray-lt:   #e6e6e6;
+  --gray-mid:  #b0b8c1;
+  --bg:        #eef1f5;
+  --white:     #ffffff;
+  --text:      #1a1f2e;
+  --muted:     #6b7280;
+  --radius:    10px;
+  --radius-lg: 16px;
+  --shadow:    0 2px 8px rgba(0,0,0,.08);
+  --shadow-md: 0 8px 28px rgba(0,51,102,.14);
+  --font:      'Segoe UI', Arial, sans-serif;
+  /* Country accent colors */
+  --de: #1a237e;  --de-lt: #e8eaf6;
+  --nl: #e65100;  --nl-lt: #fff3e0;
+  --uk: #b71c1c;  --uk-lt: #ffebee;
+  --ro: #1b5e20;  --ro-lt: #e8f5e9;
+}
+html { scroll-behavior: smooth; }
+body { font-family: var(--font); background: var(--bg); color: var(--text); font-size: 14px; line-height: 1.55; }
+a { text-decoration: none; color: inherit; }
+
+/* ===================== SHOWCASE HEADER ===================== */
+.showcase-hdr {
+  background: linear-gradient(135deg, #001020 0%, #002244 50%, #003d80 100%);
+  color: #fff;
+  padding: 32px 32px 0;
+  position: sticky; top: 0; z-index: 200;
+  box-shadow: 0 4px 24px rgba(0,0,0,.4);
+}
+.showcase-hdr-inner {
+  max-width: 1200px; margin: 0 auto;
+  display: flex; align-items: flex-end; justify-content: space-between; gap: 24px;
+  margin-bottom: 22px;
+}
+.shdr-kicker { font-size: 10px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: var(--bright); margin-bottom: 6px; display: flex; align-items: center; gap: 8px; }
+.shdr-kicker::before { content: ''; display: block; width: 20px; height: 2px; background: var(--bright); border-radius: 2px; }
+.shdr-title { font-size: 22px; font-weight: 900; letter-spacing: -.02em; margin-bottom: 4px; }
+.shdr-sub { font-size: 13px; color: rgba(255,255,255,.6); }
+.shdr-stats { display: flex; gap: 32px; align-items: flex-end; flex-shrink: 0; }
+.shdr-stat { text-align: center; padding-bottom: 4px; }
+.shdr-stat .n { font-size: 30px; font-weight: 900; color: var(--bright); line-height: 1; display: block; }
+.shdr-stat .l { font-size: 10px; color: rgba(255,255,255,.55); text-transform: uppercase; letter-spacing: .07em; margin-top: 3px; display: block; }
+
+/* Tab navigation */
+.tab-nav { max-width: 1200px; margin: 0 auto; display: flex; gap: 0; overflow-x: auto; }
+.tab-btn {
+  flex: 0 0 auto;
+  background: transparent; border: none;
+  color: rgba(255,255,255,.5);
+  font-family: var(--font); font-size: 12px; font-weight: 700;
+  padding: 10px 16px 13px;
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  transition: color .2s, border-color .2s;
+  white-space: nowrap; letter-spacing: .01em;
+}
+.tab-btn:hover { color: rgba(255,255,255,.85); }
+.tab-btn.active { color: var(--bright); border-bottom-color: var(--bright); }
+
+/* ===================== MAIN LAYOUT ===================== */
+.showcase-main { max-width: 1200px; margin: 0 auto; padding: 36px 24px 60px; }
+.opt-section { display: none; animation: fadeSlide .3s ease; }
+.opt-section.active { display: block; }
+@keyframes fadeSlide { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+/* Option meta card */
+.opt-meta {
+  display: flex; align-items: flex-start; gap: 16px;
+  padding: 18px 22px; margin-bottom: 28px;
+  background: var(--white); border-radius: var(--radius-lg);
+  box-shadow: var(--shadow); border-left: 4px solid var(--bright);
+}
+.opt-badge {
+  background: var(--primary); color: #fff;
+  font-size: 10px; font-weight: 900; letter-spacing: .1em; text-transform: uppercase;
+  padding: 4px 12px; border-radius: 20px; flex-shrink: 0; margin-top: 2px;
+}
+.opt-title { font-size: 17px; font-weight: 800; color: var(--primary); margin-bottom: 4px; }
+.opt-desc { font-size: 13px; color: var(--muted); line-height: 1.6; }
+.opt-desc strong { color: var(--primary); }
+
+/* ============================================================
+   OPTION A — GLASSMORPHISM GRADIENT GRID
+   ============================================================ */
+.optA-wrap {
+  background: linear-gradient(135deg, #001122 0%, #002244 55%, #004080 100%);
+  border-radius: 18px; padding: 28px;
+  box-shadow: 0 12px 40px rgba(0,0,0,.3);
+}
+.optA-hdr {
+  display: flex; align-items: center; justify-content: space-between; margin-bottom: 22px;
+}
+.optA-hdr-left { display: flex; align-items: center; gap: 14px; }
+.optA-icon {
+  width: 48px; height: 48px; border-radius: 50%;
+  background: rgba(5,180,255,.15); border: 2px solid rgba(5,180,255,.35);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--bright); font-size: 20px;
+}
+.optA-hdr h2 { font-size: 15px; font-weight: 800; color: #fff; }
+.optA-hdr p { font-size: 12px; color: rgba(255,255,255,.55); margin-top: 2px; }
+.optA-hdr-link {
+  display: flex; align-items: center; gap: 6px;
+  color: var(--bright); font-size: 12px; font-weight: 700;
+  padding: 7px 16px; border-radius: 20px;
+  border: 1.5px solid rgba(5,180,255,.4);
+  transition: background .2s;
+}
+.optA-hdr-link:hover { background: rgba(5,180,255,.12); }
+
+.optA-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px;
+}
+.optA-card {
+  background: rgba(255,255,255,.08);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: 14px; overflow: hidden;
+  cursor: pointer; display: flex; flex-direction: column;
+  transition: transform .25s, box-shadow .25s, border-color .25s;
+}
+.optA-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 48px rgba(0,0,0,.4);
+  border-color: rgba(5,180,255,.45);
+}
+.optA-card-head {
+  padding: 18px 16px 12px; position: relative;
+  display: flex; flex-direction: column; gap: 5px;
+  min-height: 120px;
+}
+.optA-card-head::after {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(to bottom, rgba(0,0,0,0) 40%, rgba(0,0,0,.35) 100%);
+  pointer-events: none;
+}
+.optA-flag { font-size: 36px; filter: drop-shadow(0 3px 8px rgba(0,0,0,.3)); z-index: 1; }
+.optA-hq { position: absolute; top: 12px; right: 12px; background: #fff; color: var(--primary); font-size: 9px; font-weight: 900; padding: 2px 8px; border-radius: 10px; text-transform: uppercase; letter-spacing: .07em; z-index: 1; }
+.optA-city { font-size: 14px; font-weight: 800; color: #fff; z-index: 1; line-height: 1.2; margin-top: 4px; }
+.optA-country-lbl { font-size: 10px; color: rgba(255,255,255,.65); font-weight: 600; text-transform: uppercase; letter-spacing: .06em; z-index: 1; }
+.optA-sep { height: 1px; background: rgba(255,255,255,.1); }
+.optA-card-body {
+  padding: 11px 16px; display: flex; align-items: center;
+  justify-content: space-between; flex: 1;
+}
+.optA-type { font-size: 11px; padding: 3px 9px; border-radius: 10px; background: rgba(255,255,255,.12); color: rgba(255,255,255,.8); font-weight: 600; }
+.optA-emp { font-size: 12px; color: rgba(255,255,255,.7); display: flex; align-items: center; gap: 5px; }
+.optA-emp i { color: var(--bright); font-size: 10px; }
+.optA-card-foot { padding: 10px 16px; border-top: 1px solid rgba(255,255,255,.08); display: flex; justify-content: flex-end; }
+.optA-view { font-size: 11px; font-weight: 700; color: var(--bright); display: flex; align-items: center; gap: 5px; transition: gap .2s; }
+.optA-card:hover .optA-view { gap: 9px; }
+
+/* ============================================================
+   OPTION B — COUNTRY PILLAR LAYOUT
+   ============================================================ */
+.optB-wrap { background: var(--white); border-radius: 18px; padding: 28px; box-shadow: var(--shadow-md); }
+.optB-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 22px; padding-bottom: 18px; border-bottom: 2px solid var(--gray-lt); }
+.optB-top-left { display: flex; align-items: center; gap: 12px; }
+.optB-icon { width: 40px; height: 40px; background: #e8f0f8; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: var(--primary); font-size: 16px; }
+.optB-top h2 { font-size: 15px; font-weight: 800; color: var(--primary); }
+.optB-top p { font-size: 12px; color: var(--muted); }
+.optB-all-link { font-size: 12px; font-weight: 700; color: var(--accent); display: flex; align-items: center; gap: 5px; padding: 6px 14px; border-radius: 20px; border: 1.5px solid var(--gray-lt); transition: all .2s; }
+.optB-all-link:hover { background: var(--primary); color: #fff; border-color: var(--primary); }
+.optB-pillars { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.optB-pillar { border-radius: 14px; overflow: hidden; border: 1.5px solid var(--gray-lt); }
+.optB-pillar-hdr {
+  padding: 16px 14px 12px;
+  display: flex; flex-direction: column; gap: 4px;
+  position: relative;
+}
+.optB-pflag { font-size: 28px; }
+.optB-pname { font-size: 13px; font-weight: 800; color: #fff; margin-top: 4px; }
+.optB-ptotal { font-size: 11px; color: rgba(255,255,255,.7); font-weight: 600; }
+.optB-pbadge { position: absolute; top: 10px; right: 10px; background: rgba(255,255,255,.2); border: 1px solid rgba(255,255,255,.3); color: #fff; font-size: 9px; font-weight: 800; padding: 2px 8px; border-radius: 10px; text-transform: uppercase; letter-spacing: .06em; }
+
+.optB-cities { background: var(--white); padding: 10px; display: flex; flex-direction: column; gap: 6px; }
+.optB-city-row {
+  padding: 10px 12px; border-radius: 8px; background: #f7f9fd;
+  display: flex; align-items: center; gap: 10px;
+  cursor: pointer; transition: background .2s;
+}
+.optB-city-row:hover { background: #eaf2ff; }
+.optB-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.optB-cr-info { flex: 1; min-width: 0; }
+.optB-cr-city { font-size: 12px; font-weight: 700; color: var(--primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.optB-cr-type { font-size: 10px; color: var(--muted); margin-top: 1px; }
+.optB-cr-emp { font-size: 11px; font-weight: 700; color: var(--accent); flex-shrink: 0; }
+
+.optB-de-hdr { background: linear-gradient(135deg, #1a237e, #3949ab); }
+.optB-nl-hdr { background: linear-gradient(135deg, #bf360c, #f4511e); }
+.optB-uk-hdr { background: linear-gradient(135deg, #880e4f, #c2185b); }
+.optB-ro-hdr { background: linear-gradient(135deg, #1b5e20, #388e3c); }
+.optB-de-dot { background: var(--de); }
+.optB-nl-dot { background: var(--nl); }
+.optB-uk-dot { background: var(--uk); }
+.optB-ro-dot { background: var(--ro); }
+
+/* ============================================================
+   OPTION C — 3D FLIP CARDS
+   ============================================================ */
+.optC-wrap { background: var(--white); border-radius: 18px; padding: 28px; box-shadow: var(--shadow-md); }
+.optC-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 22px; }
+.optC-top-left { display: flex; align-items: center; gap: 12px; }
+.optC-icon { width: 40px; height: 40px; border-radius: 10px; background: linear-gradient(135deg, var(--primary), var(--bright)); display: flex; align-items: center; justify-content: center; color: #fff; font-size: 16px; }
+.optC-top h2 { font-size: 15px; font-weight: 800; color: var(--primary); }
+.optC-top p { font-size: 12px; color: var(--muted); }
+.optC-hint { font-size: 12px; color: var(--muted); display: flex; align-items: center; gap: 6px; border: 1px dashed var(--gray-lt); padding: 6px 14px; border-radius: 20px; }
+.optC-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.flip-card { perspective: 900px; height: 220px; cursor: pointer; }
+.flip-inner { position: relative; width: 100%; height: 100%; transform-style: preserve-3d; transition: transform .55s cubic-bezier(.4,0,.2,1); }
+.flip-card:hover .flip-inner { transform: rotateY(180deg); }
+.flip-face { position: absolute; inset: 0; border-radius: 14px; overflow: hidden; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+.flip-front { display: flex; flex-direction: column; justify-content: flex-end; padding: 18px; }
+.flip-front .f-flag { font-size: 42px; filter: drop-shadow(0 3px 10px rgba(0,0,0,.35)); margin-bottom: 8px; }
+.flip-front .f-hq { background: rgba(255,255,255,.25); border: 1px solid rgba(255,255,255,.5); color: #fff; font-size: 9px; font-weight: 900; padding: 2px 8px; border-radius: 10px; display: inline-block; margin-bottom: 5px; letter-spacing: .07em; }
+.flip-front .f-city { font-size: 16px; font-weight: 900; color: #fff; line-height: 1.2; text-shadow: 0 2px 8px rgba(0,0,0,.3); }
+.flip-front .f-cc { font-size: 10px; color: rgba(255,255,255,.7); text-transform: uppercase; letter-spacing: .07em; margin-top: 3px; font-weight: 600; }
+.flip-back { background: var(--white); transform: rotateY(180deg); display: flex; flex-direction: column; padding: 20px; border: 2px solid var(--gray-lt); }
+.flip-back .b-flag { font-size: 24px; margin-bottom: 4px; }
+.flip-back .b-city { font-size: 14px; font-weight: 800; color: var(--primary); }
+.flip-back .b-country { font-size: 11px; color: var(--muted); margin-bottom: 12px; font-weight: 600; }
+.flip-back .b-row { display: flex; align-items: center; gap: 8px; margin-bottom: 7px; font-size: 12px; color: var(--text); }
+.flip-back .b-row i { width: 18px; color: var(--bright); font-size: 11px; text-align: center; }
+.flip-back .b-row strong { color: var(--primary); }
+.flip-back .b-spacer { flex: 1; }
+.flip-back .b-btn {
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  padding: 8px; border-radius: 8px;
+  background: var(--primary); color: #fff;
+  font-size: 12px; font-weight: 700;
+  transition: background .2s;
+}
+.flip-back .b-btn:hover { background: var(--accent); }
+
+/* ============================================================
+   OPTION D — BENTO / FEATURE CARD GRID
+   ============================================================ */
+.optD-wrap { background: var(--white); border-radius: 18px; padding: 28px; box-shadow: var(--shadow-md); }
+.optD-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 22px; }
+.optD-top-left { display: flex; align-items: center; gap: 12px; }
+.optD-icon { width: 40px; height: 40px; border-radius: 10px; background: #001e3c; display: flex; align-items: center; justify-content: center; color: var(--bright); font-size: 16px; }
+.optD-top h2 { font-size: 15px; font-weight: 800; color: var(--primary); }
+.optD-top p { font-size: 12px; color: var(--muted); }
+.optD-view { font-size: 12px; font-weight: 700; color: var(--accent); display: flex; align-items: center; gap: 5px; }
+
+/* Country filter tabs */
+.optD-filters { display: flex; gap: 6px; margin-bottom: 18px; flex-wrap: wrap; }
+.optD-f-btn {
+  background: var(--gray-lt); color: var(--primary);
+  border: none; cursor: pointer; font-family: var(--font);
+  font-size: 12px; font-weight: 700; padding: 5px 14px;
+  border-radius: 20px; transition: all .2s; display: flex; align-items: center; gap: 5px;
+}
+.optD-f-btn:hover { background: #d8e2f0; }
+.optD-f-btn.active { background: var(--primary); color: #fff; }
+
+.optD-bento { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+/* Featured HQ card spans 2 col × 2 row */
+.bento-hq { grid-column: span 2; grid-row: span 2; }
+
+.bento-card {
+  border-radius: 14px; overflow: hidden; cursor: pointer;
+  transition: transform .22s, box-shadow .22s;
+  display: flex; flex-direction: column;
+  border: 1.5px solid transparent;
+}
+.bento-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); border-color: rgba(5,180,255,.3); }
+
+/* HQ big card */
+.bento-hq .bento-inner {
+  height: 100%; padding: 24px; display: flex; flex-direction: column;
+  justify-content: flex-end; position: relative;
+  min-height: 280px;
+}
+.bento-hq .bento-inner::before {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,.65) 0%, rgba(0,0,0,.0) 55%);
+}
+.bento-hq-flag { font-size: 48px; position: absolute; top: 20px; right: 20px; filter: drop-shadow(0 4px 12px rgba(0,0,0,.3)); }
+.bento-hq-badge { display: inline-flex; align-items: center; gap: 5px; background: var(--bright); color: var(--primary-dk); font-size: 10px; font-weight: 900; padding: 3px 10px; border-radius: 10px; margin-bottom: 10px; position: relative; z-index: 1; letter-spacing: .05em; text-transform: uppercase; }
+.bento-hq-city { font-size: 22px; font-weight: 900; color: #fff; line-height: 1.2; position: relative; z-index: 1; text-shadow: 0 2px 12px rgba(0,0,0,.4); }
+.bento-hq-cc { font-size: 12px; color: rgba(255,255,255,.7); margin-top: 3px; position: relative; z-index: 1; font-weight: 600; }
+.bento-hq-stats { display: flex; gap: 16px; margin-top: 14px; position: relative; z-index: 1; }
+.bento-hq-stat { text-align: center; }
+.bento-hq-stat strong { display: block; font-size: 18px; font-weight: 900; color: #fff; line-height: 1; }
+.bento-hq-stat span { font-size: 10px; color: rgba(255,255,255,.65); text-transform: uppercase; letter-spacing: .06em; }
+.bento-hq-link { margin-top: 16px; display: inline-flex; align-items: center; gap: 7px; background: #fff; color: var(--primary); font-size: 12px; font-weight: 800; padding: 9px 18px; border-radius: 10px; position: relative; z-index: 1; transition: background .2s; }
+.bento-hq-link:hover { background: var(--bright); }
+
+/* Small bento card */
+.bento-sm .bento-inner { padding: 16px; display: flex; flex-direction: column; height: 130px; justify-content: space-between; }
+.bento-sm .b-top { display: flex; align-items: flex-start; justify-content: space-between; }
+.bento-sm .b-flag { font-size: 24px; }
+.bento-sm .b-type-pill { font-size: 9px; padding: 2px 8px; border-radius: 8px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; }
+.bento-sm .b-city { font-size: 13px; font-weight: 800; color: #fff; line-height: 1.2; }
+.bento-sm .b-country { font-size: 10px; color: rgba(255,255,255,.65); margin-top: 2px; }
+.bento-sm .b-emp { font-size: 11px; color: rgba(255,255,255,.8); display: flex; align-items: center; gap: 5px; }
+.bento-sm .b-emp i { font-size: 9px; color: var(--bright); }
+
+/* ============================================================
+   OPTION E — SPLIT PANEL (Stat Sidebar + Compact Grid)
+   ============================================================ */
+.optE-wrap { background: var(--white); border-radius: 18px; overflow: hidden; box-shadow: var(--shadow-md); display: grid; grid-template-columns: 280px 1fr; }
+.optE-sidebar {
+  background: linear-gradient(175deg, #001833 0%, #003366 60%, #004d99 100%);
+  padding: 32px 24px;
+  display: flex; flex-direction: column; gap: 24px;
+  position: relative; overflow: hidden;
+}
+.optE-sidebar::before {
+  content: ''; position: absolute; inset: 0;
+  background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='30' cy='30' r='1' fill='rgba(255,255,255,.04)'/%3E%3C/svg%3E") repeat;
+  pointer-events: none;
+}
+.optE-sb-kicker { font-size: 10px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: var(--bright); display: flex; align-items: center; gap: 8px; position: relative; }
+.optE-sb-kicker::before { content: ''; width: 16px; height: 2px; background: var(--bright); border-radius: 2px; }
+.optE-sb-title { font-size: 20px; font-weight: 900; color: #fff; line-height: 1.25; position: relative; }
+.optE-sb-sub { font-size: 12px; color: rgba(255,255,255,.6); position: relative; line-height: 1.5; }
+.optE-sb-divider { height: 1px; background: rgba(255,255,255,.1); }
+.optE-sb-stats { display: flex; flex-direction: column; gap: 14px; position: relative; }
+.optE-sb-stat { display: flex; align-items: center; gap: 14px; }
+.optE-sb-stat .icon { width: 36px; height: 36px; border-radius: 8px; background: rgba(5,180,255,.15); border: 1px solid rgba(5,180,255,.25); display: flex; align-items: center; justify-content: center; color: var(--bright); font-size: 14px; flex-shrink: 0; }
+.optE-sb-stat .val { font-size: 22px; font-weight: 900; color: #fff; line-height: 1; }
+.optE-sb-stat .lbl { font-size: 11px; color: rgba(255,255,255,.55); margin-top: 1px; }
+.optE-countries { display: flex; flex-wrap: wrap; gap: 6px; position: relative; }
+.optE-cc { display: flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 10px; background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.12); }
+.optE-cc span { font-size: 18px; }
+.optE-cc strong { font-size: 11px; color: #fff; font-weight: 700; }
+.optE-sb-link { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 11px; border-radius: 10px; background: var(--bright); color: var(--primary-dk); font-size: 13px; font-weight: 800; transition: background .2s; margin-top: auto; position: relative; }
+.optE-sb-link:hover { background: #fff; }
+
+.optE-grid-wrap { padding: 24px; }
+.optE-grid-hdr { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+.optE-grid-title { font-size: 14px; font-weight: 700; color: var(--primary); }
+.optE-sort { font-size: 12px; color: var(--muted); display: flex; align-items: center; gap: 5px; cursor: pointer; }
+.optE-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+.optE-card {
+  border-radius: 10px; padding: 14px; border: 1.5px solid var(--gray-lt);
+  display: flex; align-items: center; gap: 12px;
+  cursor: pointer; transition: border-color .2s, background .2s;
+  background: #fafbfd;
+}
+.optE-card:hover { border-color: var(--bright); background: #f0f7ff; }
+.optE-card-accent { width: 4px; height: 46px; border-radius: 4px; flex-shrink: 0; }
+.optE-flag-circle { width: 46px; height: 46px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0; background: #eef2f6; }
+.optE-card-info { flex: 1; min-width: 0; }
+.optE-card-city { font-size: 13px; font-weight: 700; color: var(--primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.optE-card-type { font-size: 11px; color: var(--muted); margin-top: 1px; }
+.optE-card-meta { display: flex; align-items: center; gap: 10px; margin-top: 5px; }
+.optE-emp-badge { font-size: 11px; font-weight: 700; border-radius: 8px; padding: 1px 8px; }
+.optE-card-hq { font-size: 9px; font-weight: 800; background: var(--primary); color: #fff; border-radius: 8px; padding: 1px 7px; text-transform: uppercase; letter-spacing: .06em; }
+.optE-card-link { margin-left: auto; color: var(--gray-mid); font-size: 11px; }
+.optE-card:hover .optE-card-link { color: var(--bright); }
+
+/* ============================================================
+   OPTION F — DATA TABLE
+   ============================================================ */
+.optF-wrap { background: var(--white); border-radius: 18px; padding: 28px; box-shadow: var(--shadow-md); }
+.optF-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+.optF-top-left { display: flex; flex-direction: column; gap: 4px; }
+.optF-top h2 { font-size: 15px; font-weight: 800; color: var(--primary); }
+.optF-top p { font-size: 12px; color: var(--muted); }
+.optF-chips { display: flex; gap: 6px; }
+.optF-chip { font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 16px; background: #f0f2f6; color: var(--primary); border: 1.5px solid var(--gray-lt); }
+.optF-chip i { margin-right: 4px; }
+
+/* Country filter */
+.optF-filters { display: flex; gap: 6px; margin-bottom: 16px; }
+.optF-fb {
+  background: var(--white); border: 1.5px solid var(--gray-lt); color: var(--primary);
+  font-family: var(--font); font-size: 12px; font-weight: 700; padding: 5px 14px;
+  border-radius: 20px; cursor: pointer; transition: all .18s; display: flex; align-items: center; gap: 6px;
+}
+.optF-fb:hover { border-color: var(--accent); color: var(--accent); }
+.optF-fb.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+
+.optF-table-wrap { border-radius: 12px; overflow: hidden; border: 1.5px solid var(--gray-lt); }
+.optF-table { width: 100%; border-collapse: collapse; }
+.optF-table thead tr { background: #f4f6fb; }
+.optF-table th { padding: 11px 14px; text-align: left; font-size: 10px; font-weight: 800; letter-spacing: .09em; text-transform: uppercase; color: var(--muted); border-bottom: 1.5px solid var(--gray-lt); }
+.optF-table td { padding: 13px 14px; border-bottom: 1px solid #f0f2f6; vertical-align: middle; }
+.optF-table tbody tr:last-child td { border-bottom: none; }
+.optF-table tbody tr { transition: background .15s; cursor: pointer; }
+.optF-table tbody tr:hover { background: #f5f8ff; }
+/* Country left-border accent via box-shadow on first cell */
+.optF-table .row-de td:first-child { box-shadow: inset 4px 0 0 var(--de); }
+.optF-table .row-nl td:first-child { box-shadow: inset 4px 0 0 var(--nl); }
+.optF-table .row-uk td:first-child { box-shadow: inset 4px 0 0 var(--uk); }
+.optF-table .row-ro td:first-child { box-shadow: inset 4px 0 0 var(--ro); }
+
+.tbl-site { display: flex; align-items: center; gap: 10px; }
+.tbl-flag { font-size: 22px; flex-shrink: 0; }
+.tbl-city { font-size: 13px; font-weight: 700; color: var(--primary); }
+.tbl-sub { font-size: 11px; color: var(--muted); margin-top: 1px; }
+.tbl-hq { background: var(--primary); color: #fff; font-size: 9px; font-weight: 900; padding: 1px 7px; border-radius: 8px; text-transform: uppercase; letter-spacing: .06em; display: inline-block; margin-top: 2px; }
+.tbl-type { font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 10px; display: inline-block; }
+.type-mfg  { background: #ede9fe; color: #5b21b6; }
+.type-dist { background: #e0f7fa; color: #00695c; }
+.type-ops  { background: #fef3c7; color: #92400e; }
+.type-hq   { background: #dbeafe; color: #1e3a8a; }
+.tbl-emp-bar { display: flex; align-items: center; gap: 10px; }
+.tbl-bar-bg { flex: 1; height: 6px; background: var(--gray-lt); border-radius: 3px; overflow: hidden; max-width: 100px; }
+.tbl-bar-fill { height: 100%; border-radius: 3px; }
+.tbl-emp-num { font-size: 12px; font-weight: 700; color: var(--primary); min-width: 28px; text-align: right; }
+.tbl-action { display: flex; align-items: center; gap: 5px; color: var(--accent); font-size: 12px; font-weight: 700; white-space: nowrap; }
+.tbl-action i { font-size: 10px; }
+tr:hover .tbl-action { color: var(--primary); }
+
+/* ============================================================
+   OPTION G — INTERACTIVE EXPLORER PANEL
+   ============================================================ */
+.optG-wrap { background: var(--white); border-radius: 18px; overflow: hidden; box-shadow: var(--shadow-md); display: flex; min-height: 520px; }
+.optG-list { width: 290px; flex-shrink: 0; border-right: 1.5px solid var(--gray-lt); display: flex; flex-direction: column; }
+.optG-list-hdr { padding: 22px 20px 16px; border-bottom: 1.5px solid var(--gray-lt); }
+.optG-list-title { font-size: 13px; font-weight: 800; color: var(--primary); }
+.optG-list-sub { font-size: 11px; color: var(--muted); margin-top: 3px; }
+.optG-list-items { flex: 1; overflow-y: auto; }
+.optG-item { padding: 13px 20px; display: flex; align-items: center; gap: 12px; cursor: pointer; border-left: 3px solid transparent; transition: all .18s; }
+.optG-item:hover { background: #f5f8ff; }
+.optG-item.active { background: #eef5ff; border-left-color: var(--bright); }
+.optG-item-flag { font-size: 22px; flex-shrink: 0; line-height: 1; }
+.optG-item-info { flex: 1; min-width: 0; }
+.optG-item-city { font-size: 12px; font-weight: 700; color: var(--primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.optG-item-type { font-size: 10px; color: var(--muted); margin-top: 1px; }
+.optG-item-arrow { color: var(--gray-mid); font-size: 10px; transition: color .18s, transform .18s; flex-shrink: 0; }
+.optG-item.active .optG-item-arrow { color: var(--bright); transform: translateX(3px); }
+.optG-preview { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+.optG-preview-head { padding: 32px 36px 28px; display: flex; flex-direction: column; justify-content: flex-end; min-height: 230px; position: relative; overflow: hidden; transition: background .4s; }
+.optG-preview-head::before { content: ''; position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(0,0,0,0) 30%, rgba(0,0,0,.6) 100%); pointer-events: none; }
+.optG-ph-flag { font-size: 110px; position: absolute; top: -20px; right: 10px; opacity: .12; line-height: 1; pointer-events: none; transition: all .5s; filter: blur(1px); }
+.optG-ph-hq { display: inline-flex; align-items: center; gap: 6px; background: var(--bright); color: var(--primary-dk); font-size: 10px; font-weight: 900; padding: 3px 12px; border-radius: 20px; margin-bottom: 10px; text-transform: uppercase; letter-spacing: .06em; position: relative; z-index: 1; align-self: flex-start; }
+.optG-ph-city { font-size: 26px; font-weight: 900; color: #fff; line-height: 1.15; position: relative; z-index: 1; text-shadow: 0 2px 16px rgba(0,0,0,.5); }
+.optG-ph-sub { font-size: 13px; color: rgba(255,255,255,.7); margin-top: 5px; position: relative; z-index: 1; font-weight: 600; display: flex; align-items: center; gap: 7px; }
+.optG-preview-body { padding: 22px 36px 28px; flex: 1; display: flex; flex-direction: column; }
+.optG-stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 18px; }
+.optG-stat { background: #f5f8fd; border-radius: 10px; padding: 14px 12px; text-align: center; }
+.optG-stat .sv { font-size: 22px; font-weight: 900; color: var(--primary); display: block; line-height: 1; }
+.optG-stat .sl { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: .07em; margin-top: 4px; display: block; }
+.optG-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px; }
+.optG-tag { font-size: 10px; font-weight: 700; padding: 3px 10px; border-radius: 20px; background: #eaf1fb; color: var(--accent); display: flex; align-items: center; gap: 4px; }
+.optG-desc { font-size: 13px; color: var(--muted); line-height: 1.65; margin-bottom: 20px; flex: 1; }
+.optG-cta { display: inline-flex; align-self: flex-start; align-items: center; gap: 8px; background: var(--primary); color: #fff; font-size: 13px; font-weight: 700; padding: 10px 22px; border-radius: 10px; transition: background .2s; }
+.optG-cta:hover { background: var(--accent); }
+
+/* ============================================================
+   OPTION H — DARK TYPOGRAPHY-FIRST GRID
+   ============================================================ */
+.optH-wrap { background: #080c14; border-radius: 18px; padding: 28px; box-shadow: 0 20px 60px rgba(0,0,0,.5); }
+.optH-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
+.optH-top-left h2 { font-size: 15px; font-weight: 900; color: #fff; }
+.optH-top-left p { font-size: 12px; color: rgba(255,255,255,.4); margin-top: 2px; }
+.optH-viewall { font-size: 12px; font-weight: 700; color: rgba(255,255,255,.5); display: flex; align-items: center; gap: 6px; padding: 7px 16px; border-radius: 20px; border: 1px solid rgba(255,255,255,.15); transition: all .2s; }
+.optH-viewall:hover { color: #fff; border-color: rgba(255,255,255,.4); background: rgba(255,255,255,.06); }
+.optH-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5px; background: rgba(255,255,255,.07); border-radius: 14px; overflow: hidden; }
+.optH-card { position: relative; overflow: hidden; cursor: pointer; min-height: 190px; display: flex; align-items: flex-end; transition: background .25s; }
+.optH-card:hover { background: rgba(255,255,255,.05); }
+.optH-accent-bar { position: absolute; top: 0; left: 0; right: 0; height: 3px; }
+.optH-bg-city { position: absolute; bottom: -5px; left: 0; right: 0; font-size: clamp(26px,3.5vw,46px); font-weight: 900; color: #fff; opacity: .04; white-space: nowrap; letter-spacing: -.04em; line-height: 1; padding-left: 14px; text-transform: uppercase; transition: opacity .4s, transform .4s; pointer-events: none; overflow: hidden; }
+.optH-card:hover .optH-bg-city { opacity: .10; transform: scale(1.04) translateY(-3px); }
+.optH-hq-badge { position: absolute; top: 12px; right: 12px; background: var(--bright); color: var(--primary-dk); font-size: 9px; font-weight: 900; padding: 2px 9px; border-radius: 8px; letter-spacing: .05em; text-transform: uppercase; }
+.optH-content { position: relative; z-index: 1; padding: 14px 14px 16px; width: 100%; }
+.optH-flag { font-size: 30px; margin-bottom: 6px; display: block; filter: drop-shadow(0 2px 6px rgba(0,0,0,.5)); }
+.optH-city-name { font-size: 14px; font-weight: 800; color: #fff; line-height: 1.2; margin-bottom: 3px; }
+.optH-country-lbl { font-size: 10px; color: rgba(255,255,255,.45); font-weight: 600; text-transform: uppercase; letter-spacing: .07em; margin-bottom: 10px; }
+.optH-card-footer { display: flex; align-items: center; justify-content: space-between; }
+.optH-type-pill { font-size: 10px; font-weight: 700; padding: 3px 9px; border-radius: 8px; background: rgba(255,255,255,.11); color: rgba(255,255,255,.75); }
+.optH-emp-lbl { font-size: 11px; color: rgba(255,255,255,.5); display: flex; align-items: center; gap: 5px; }
+.optH-emp-lbl i { font-size: 9px; }
+
+/* ============================================================
+   OPTION I — SNAP SCROLL PORTRAIT CAROUSEL
+   ============================================================ */
+.optI-wrap { background: var(--white); border-radius: 18px; padding: 28px; box-shadow: var(--shadow-md); }
+.optI-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+.optI-top-left { display: flex; align-items: center; gap: 12px; }
+.optI-icon { width: 40px; height: 40px; border-radius: 10px; background: linear-gradient(135deg,var(--primary) 0%,var(--bright) 100%); display: flex; align-items: center; justify-content: center; color: #fff; font-size: 16px; }
+.optI-top h2 { font-size: 15px; font-weight: 800; color: var(--primary); }
+.optI-top p { font-size: 12px; color: var(--muted); }
+.optI-controls { display: flex; align-items: center; gap: 8px; }
+.optI-pos-label { font-size: 12px; color: var(--muted); font-weight: 600; min-width: 48px; text-align: center; }
+.optI-arr { width: 34px; height: 34px; border-radius: 50%; border: 1.5px solid var(--gray-lt); background: var(--white); color: var(--primary); font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all .2s; font-family: var(--font); }
+.optI-arr:hover { background: var(--primary); color: #fff; border-color: var(--primary); }
+.optI-track-outer { overflow: hidden; }
+.optI-track { display: flex; gap: 12px; overflow-x: auto; scroll-behavior: smooth; scroll-snap-type: x mandatory; padding: 4px 2px 8px; scrollbar-width: none; -ms-overflow-style: none; }
+.optI-track::-webkit-scrollbar { display: none; }
+.optI-card { scroll-snap-align: start; flex: 0 0 190px; border-radius: 14px; overflow: hidden; cursor: pointer; height: 290px; display: flex; flex-direction: column; transition: transform .3s, box-shadow .3s; }
+.optI-card:hover { transform: translateY(-7px); box-shadow: 0 20px 48px rgba(0,0,0,.25); }
+.optI-card-body { flex: 1; display: flex; flex-direction: column; justify-content: space-between; padding: 18px 14px; position: relative; overflow: hidden; }
+.optI-card-body::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(0,0,0,0) 25%, rgba(0,0,0,.58) 100%); pointer-events: none; }
+.optI-c-flag { font-size: 42px; display: block; filter: drop-shadow(0 4px 10px rgba(0,0,0,.35)); position: relative; z-index: 1; }
+.optI-c-bottom { position: relative; z-index: 1; }
+.optI-c-hq { font-size: 9px; font-weight: 900; text-transform: uppercase; letter-spacing: .07em; background: rgba(255,255,255,.22); color: #fff; padding: 2px 8px; border-radius: 6px; display: inline-block; margin-bottom: 5px; }
+.optI-c-city { font-size: 14px; font-weight: 900; color: #fff; line-height: 1.2; text-shadow: 0 2px 8px rgba(0,0,0,.5); }
+.optI-c-country { font-size: 10px; color: rgba(255,255,255,.65); font-weight: 600; text-transform: uppercase; letter-spacing: .06em; margin-top: 3px; }
+.optI-c-emp { display: flex; align-items: center; gap: 4px; margin-top: 7px; font-size: 11px; color: rgba(255,255,255,.75); }
+.optI-c-emp i { font-size: 9px; color: var(--bright); }
+.optI-progress { margin-top: 16px; display: flex; align-items: center; gap: 10px; }
+.optI-dots { display: flex; gap: 4px; flex: 1; }
+.optI-dot { flex: 1; height: 3px; border-radius: 2px; background: var(--gray-lt); transition: background .25s; max-width: 44px; }
+.optI-dot.active { background: var(--primary); }
+.optI-count { font-size: 12px; font-weight: 700; color: var(--muted); white-space: nowrap; }
+
+/* ============================================================
+   OPTION J — EDITORIAL HERO + LIVE TICKER
+   ============================================================ */
+.optJ-wrap { border-radius: 18px; overflow: hidden; box-shadow: var(--shadow-md); }
+.optJ-hero { padding: 48px 44px; background: linear-gradient(135deg,#00091a 0%,#001a40 45%,#003080 80%,#004da6 100%); position: relative; display: grid; grid-template-columns: 1fr 260px; gap: 32px; align-items: center; min-height: 300px; overflow: hidden; }
+.optJ-hero::before { content: ''; position: absolute; top: -80px; right: -80px; width: 380px; height: 380px; border-radius: 50%; background: radial-gradient(circle, rgba(5,180,255,.18) 0%, transparent 65%); pointer-events: none; }
+.optJ-hero::after { content: ''; position: absolute; bottom: -120px; left: 10%; width: 500px; height: 500px; border-radius: 50%; background: radial-gradient(circle, rgba(0,60,140,.22) 0%, transparent 60%); pointer-events: none; }
+.optJ-left { position: relative; z-index: 1; }
+.optJ-kicker { font-size: 10px; font-weight: 800; letter-spacing: .15em; text-transform: uppercase; color: var(--bright); display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+.optJ-kicker::before { content: ''; width: 28px; height: 2px; background: var(--bright); border-radius: 2px; }
+.optJ-headline { font-size: 32px; font-weight: 900; color: #fff; line-height: 1.1; letter-spacing: -.03em; margin-bottom: 14px; }
+.optJ-headline em { color: var(--bright); font-style: normal; }
+.optJ-sub { font-size: 13px; color: rgba(255,255,255,.6); line-height: 1.7; margin-bottom: 22px; }
+.optJ-meta-row { display: flex; gap: 28px; margin-bottom: 26px; }
+.optJ-meta-stat strong { display: block; font-size: 24px; font-weight: 900; color: #fff; line-height: 1; }
+.optJ-meta-stat span { font-size: 10px; color: rgba(255,255,255,.45); text-transform: uppercase; letter-spacing: .08em; }
+.optJ-cta-row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.optJ-cta-primary { display: inline-flex; align-items: center; gap: 8px; background: var(--bright); color: var(--primary-dk); font-size: 13px; font-weight: 800; padding: 11px 22px; border-radius: 10px; transition: background .2s; }
+.optJ-cta-primary:hover { background: #fff; }
+.optJ-cta-ghost { display: inline-flex; align-items: center; gap: 8px; color: rgba(255,255,255,.65); font-size: 12px; font-weight: 700; padding: 11px 16px; border-radius: 10px; border: 1px solid rgba(255,255,255,.2); transition: all .2s; }
+.optJ-cta-ghost:hover { color: #fff; border-color: rgba(255,255,255,.45); }
+.optJ-right { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+.optJ-flag-anim { font-size: 90px; display: block; filter: drop-shadow(0 8px 28px rgba(0,0,0,.6)); animation: jFloat 5s ease-in-out infinite; line-height: 1; }
+@keyframes jFloat { 0%,100% { transform: translateY(0) rotate(-2deg); } 50% { transform: translateY(-14px) rotate(2deg); } }
+.optJ-right-city { font-size: 16px; font-weight: 900; color: #fff; text-align: center; }
+.optJ-right-badge { background: rgba(5,180,255,.18); border: 1px solid rgba(5,180,255,.3); color: var(--bright); font-size: 10px; font-weight: 800; padding: 4px 14px; border-radius: 20px; text-transform: uppercase; letter-spacing: .07em; }
+.optJ-right-meta { display: flex; gap: 14px; }
+.optJ-right-met { text-align: center; }
+.optJ-right-met strong { display: block; font-size: 16px; font-weight: 900; color: #fff; line-height: 1; }
+.optJ-right-met span { font-size: 10px; color: rgba(255,255,255,.45); text-transform: uppercase; letter-spacing: .06em; }
+.optJ-ticker-bar { background: #f7f8fb; border-top: 1.5px solid var(--gray-lt); display: flex; align-items: stretch; overflow: hidden; }
+.optJ-t-label { flex: 0 0 auto; background: var(--primary); color: #fff; font-size: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: .1em; padding: 0 20px; white-space: nowrap; display: flex; align-items: center; gap: 8px; }
+.optJ-t-label i { color: var(--bright); }
+.optJ-t-viewport { overflow: hidden; flex: 1; }
+.optJ-t-inner { display: inline-flex; white-space: nowrap; animation: jTicker 34s linear infinite; }
+.optJ-t-inner:hover { animation-play-state: paused; cursor: pointer; }
+@keyframes jTicker { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+.optJ-t-item { display: inline-flex; align-items: center; gap: 10px; padding: 13px 22px; font-size: 13px; font-weight: 700; color: var(--primary); cursor: pointer; border-right: 1px solid var(--gray-lt); transition: background .15s; }
+.optJ-t-item:hover { background: #e8f1ff; }
+.optJ-t-item .tj-flag { font-size: 18px; }
+.optJ-t-item .tj-emp { font-size: 10px; color: var(--muted); font-weight: 600; }
+.optJ-t-sep { display: inline-flex; align-items: center; padding: 0 6px; color: var(--gray-mid); }
+
+/* ============================================================
+   SPFx GUIDE PANEL
+   ============================================================ */
+.spfx-guide { margin-top: 48px; background: var(--white); border-radius: var(--radius-lg); box-shadow: var(--shadow); overflow: hidden; }
+.spfx-guide-hdr { background: linear-gradient(135deg,#001833,#003366); padding: 22px 28px; display: flex; align-items: center; gap: 14px; cursor: pointer; user-select: none; }
+.spfx-guide-hdr-icon { width: 42px; height: 42px; background: rgba(5,180,255,.2); border: 1.5px solid rgba(5,180,255,.35); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: var(--bright); font-size: 17px; flex-shrink: 0; }
+.spfx-guide-hdr-text h2 { font-size: 15px; font-weight: 800; color: #fff; }
+.spfx-guide-hdr-text p { font-size: 12px; color: rgba(255,255,255,.55); margin-top: 2px; }
+.spfx-guide-hdr-toggle { margin-left: auto; color: rgba(255,255,255,.5); font-size: 16px; transition: transform .3s; }
+.spfx-guide-hdr.open .spfx-guide-hdr-toggle { transform: rotate(180deg); }
+.spfx-guide-body { padding: 28px; display: none; }
+.spfx-guide-body.open { display: block; }
+.spfx-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-bottom: 24px; }
+.spfx-card { border: 1.5px solid var(--gray-lt); border-radius: 12px; overflow: hidden; }
+.spfx-card-hdr { background: #f4f6fb; padding: 12px 16px; display: flex; align-items: center; gap: 10px; border-bottom: 1.5px solid var(--gray-lt); }
+.spfx-card-opt { background: var(--primary); color: #fff; font-size: 10px; font-weight: 900; padding: 2px 9px; border-radius: 10px; letter-spacing: .07em; flex-shrink: 0; }
+.spfx-card-title { font-size: 13px; font-weight: 700; color: var(--primary); }
+.spfx-card-body { padding: 14px 16px; }
+.spfx-card-body ul { list-style: none; display: flex; flex-direction: column; gap: 7px; }
+.spfx-card-body li { font-size: 12px; color: var(--text); display: flex; align-items: flex-start; gap: 8px; }
+.spfx-card-body li code { background: #eef2f8; color: var(--accent); padding: 0 4px; border-radius: 4px; font-family: Consolas, monospace; font-size: 11px; }
+.spfx-card-body li::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--bright); flex-shrink: 0; margin-top: 5px; }
+.spfx-code { background: #1e1e2e; color: #cdd6f4; font-family: Consolas, monospace; font-size: 11px; padding: 16px 18px; border-radius: 10px; line-height: 1.8; overflow-x: auto; margin-top: 8px; white-space: pre; }
+.spfx-code .sc-kw { color: #cba6f7; }
+.spfx-code .sc-str { color: #a6e3a1; }
+.spfx-code .sc-cm { color: #6c7086; }
+.spfx-compat-row { display: flex; gap: 8px; flex-wrap: wrap; }
+.spfx-compat-chip { font-size: 11px; font-weight: 700; padding: 5px 12px; border-radius: 20px; display: flex; align-items: center; gap: 5px; }
+.spfx-compat-ok { background: #e8f5e9; color: #1b5e20; }
+.spfx-compat-warn { background: #fff3e0; color: #e65100; }
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 900px) {
+  .optA-grid, .optC-grid { grid-template-columns: repeat(2, 1fr); }
+  .optB-pillars { grid-template-columns: repeat(2, 1fr); }
+  .optD-bento { grid-template-columns: repeat(2, 1fr); }
+  .bento-hq { grid-column: span 2; }
+  .optE-wrap { grid-template-columns: 1fr; }
+  .optE-sidebar { padding: 24px; }
+  .optE-grid { grid-template-columns: 1fr; }
+  .optG-wrap { flex-direction: column; min-height: auto; }
+  .optG-list { width: 100%; border-right: none; border-bottom: 1.5px solid var(--gray-lt); max-height: 200px; }
+  .optH-grid { grid-template-columns: repeat(2, 1fr); }
+  .optJ-hero { grid-template-columns: 1fr; }
+  .optJ-right { display: none; }
+  .spfx-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 600px) {
+  .showcase-hdr { padding: 20px 16px 0; }
+  .shdr-stats { display: none; }
+  .showcase-main { padding: 20px 12px 40px; }
+  .optA-grid, .optC-grid, .optE-grid { grid-template-columns: 1fr; }
+  .optB-pillars { grid-template-columns: 1fr; }
+  .optD-bento { grid-template-columns: 1fr; }
+  .bento-hq { grid-column: span 1; }
+  .optH-grid { grid-template-columns: 1fr; }
+  .tab-btn { font-size: 11px; padding: 8px 10px 11px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ===================== SHOWCASE HEADER ===================== -->
+<header class="showcase-hdr">
+  <div class="showcase-hdr-inner">
+    <div class="shdr-left">
+      <div class="shdr-kicker">CCM Europe Intranet · Design Review</div>
+      <h1 class="shdr-title">Our Locations — Widget Design Concepts</h1>
+      <p class="shdr-sub">10 homepage widget designs. Compare and select the best fit for your intranet. SPFx implementation guide included.</p>
+    </div>
+    <div class="shdr-stats">
+      <div class="shdr-stat"><span class="n">10</span><span class="l">Options</span></div>
+      <div class="shdr-stat"><span class="n">9</span><span class="l">Sites</span></div>
+      <div class="shdr-stat"><span class="n">4</span><span class="l">Countries</span></div>
+      <div class="shdr-stat"><span class="n">1,105</span><span class="l">Employees</span></div>
+    </div>
+  </div>
+  <nav class="tab-nav">
+    <button class="tab-btn active" data-target="optA">A — Glassmorphism Cards</button>
+    <button class="tab-btn" data-target="optB">B — Country Pillars</button>
+    <button class="tab-btn" data-target="optC">C — 3D Flip Cards</button>
+    <button class="tab-btn" data-target="optD">D — Bento Grid</button>
+    <button class="tab-btn" data-target="optE">E — Split Panel</button>
+    <button class="tab-btn" data-target="optF">F — Data Table</button>
+    <button class="tab-btn" data-target="optG">G — Explorer Panel</button>
+    <button class="tab-btn" data-target="optH">H — Dark Typography</button>
+    <button class="tab-btn" data-target="optI">I — Portrait Carousel</button>
+    <button class="tab-btn" data-target="optJ">J — Editorial + Ticker</button>
+  </nav>
+</header>
+
+<main class="showcase-main">
+
+  <!-- ============================
+       OPTION A — GLASSMORPHISM CARDS
+       ============================ -->
+  <section id="optA" class="opt-section active">
+    <div class="opt-meta">
+      <span class="opt-badge">Option A</span>
+      <div>
+        <div class="opt-title">Glassmorphism Gradient Cards</div>
+        <div class="opt-desc">A <strong>dark navy section backdrop</strong> with frosted-glass cards. Each card has a unique gradient overlay, large emoji flag, employee count, and a hover reveal effect. <strong>Best for</strong>: hero/featured placement on homepage where visual impact is the priority.</div>
+      </div>
+    </div>
+
+    <div class="optA-wrap">
+      <div class="optA-hdr">
+        <div class="optA-hdr-left">
+          <div class="optA-icon"><i class="fa fa-map-marked-alt"></i></div>
+          <div>
+            <h2>Our CCM Europe Locations</h2>
+            <p>9 sites across 4 countries &nbsp;·&nbsp; 1,105 employees</p>
+          </div>
+        </div>
+        <a href="#" class="optA-hdr-link"><i class="fa fa-globe-europe"></i> All Locations</a>
+      </div>
+
+      <div class="optA-grid">
+        <!-- Hamburg HQ -->
+        <div class="optA-card" onclick="location.href='site-schellerdam-hq.html'">
+          <div class="optA-card-head" style="background: linear-gradient(135deg,#1a237e,#3949ab,#5c6bc0);">
+            <div class="optA-flag">🇩🇪</div>
+            <div class="optA-hq"><i class="fa fa-star"></i> HQ</div>
+            <div class="optA-city">Hamburg Schellerdam</div>
+            <div class="optA-country-lbl">Germany</div>
+          </div>
+          <div class="optA-sep"></div>
+          <div class="optA-card-body">
+            <span class="optA-type">Corporate HQ</span>
+            <span class="optA-emp"><i class="fa fa-users"></i> 120</span>
+          </div>
+          <div class="optA-card-foot"><span class="optA-view">View Site <i class="fa fa-arrow-right"></i></span></div>
+        </div>
+
+        <!-- Hamburg Noeldekestr -->
+        <div class="optA-card">
+          <div class="optA-card-head" style="background: linear-gradient(135deg,#0d47a1,#1976d2,#42a5f5);">
+            <div class="optA-flag">🇩🇪</div>
+            <div class="optA-city">Hamburg Noeldekestr.</div>
+            <div class="optA-country-lbl">Germany</div>
+          </div>
+          <div class="optA-sep"></div>
+          <div class="optA-card-body">
+            <span class="optA-type">Manufacturing</span>
+            <span class="optA-emp"><i class="fa fa-users"></i> 200</span>
+          </div>
+          <div class="optA-card-foot"><span class="optA-view">View Site <i class="fa fa-arrow-right"></i></span></div>
+        </div>
+
+        <!-- Kaufbeuren -->
+        <div class="optA-card">
+          <div class="optA-card-head" style="background: linear-gradient(135deg,#4a148c,#7b1fa2,#ab47bc);">
+            <div class="optA-flag">🇩🇪</div>
+            <div class="optA-city">Kaufbeuren</div>
+            <div class="optA-country-lbl">Germany</div>
+          </div>
+          <div class="optA-sep"></div>
+          <div class="optA-card-body">
+            <span class="optA-type">Manufacturing</span>
+            <span class="optA-emp"><i class="fa fa-users"></i> 130</span>
+          </div>
+          <div class="optA-card-foot"><span class="optA-view">View Site <i class="fa fa-arrow-right"></i></span></div>
+        </div>
+
+        <!-- Waltershausen -->
+        <div class="optA-card">
+          <div class="optA-card-head" style="background: linear-gradient(135deg,#bf360c,#e64a19,#ff7043);">
+            <div class="optA-flag">🇩🇪</div>
+            <div class="optA-city">Waltershausen</div>
+            <div class="optA-country-lbl">Germany</div>
+          </div>
+          <div class="optA-sep"></div>
+          <div class="optA-card-body">
+            <span class="optA-type">Operations</span>
+            <span class="optA-emp"><i class="fa fa-users"></i> 115</span>
+          </div>
+          <div class="optA-card-foot"><span class="optA-view">View Site <i class="fa fa-arrow-right"></i></span></div>
+        </div>
+
+        <!-- Kampen NL -->
+        <div class="optA-card">
+          <div class="optA-card-head" style="background: linear-gradient(135deg,#006064,#00838f,#26c6da);">
+            <div class="optA-flag">🇳🇱</div>
+            <div class="optA-city">Kampen</div>
+            <div class="optA-country-lbl">Netherlands</div>
+          </div>
+          <div class="optA-sep"></div>
+          <div class="optA-card-body">
+            <span class="optA-type">Distribution</span>
+            <span class="optA-emp"><i class="fa fa-users"></i> 95</span>
+          </div>
+          <div class="optA-card-foot"><span class="optA-view">View Site <i class="fa fa-arrow-right"></i></span></div>
+        </div>
+
+        <!-- Weesp NL -->
+        <div class="optA-card">
+          <div class="optA-card-head" style="background: linear-gradient(135deg,#004d40,#00695c,#26a69a);">
+            <div class="optA-flag">🇳🇱</div>
+            <div class="optA-city">Weesp</div>
+            <div class="optA-country-lbl">Netherlands</div>
+          </div>
+          <div class="optA-sep"></div>
+          <div class="optA-card-body">
+            <span class="optA-type">Operations</span>
+            <span class="optA-emp"><i class="fa fa-users"></i> 110</span>
+          </div>
+          <div class="optA-card-foot"><span class="optA-view">View Site <i class="fa fa-arrow-right"></i></span></div>
+        </div>
+
+        <!-- Mansfield UK -->
+        <div class="optA-card">
+          <div class="optA-card-head" style="background: linear-gradient(135deg,#880e4f,#c2185b,#f06292);">
+            <div class="optA-flag">🇬🇧</div>
+            <div class="optA-city">Mansfield</div>
+            <div class="optA-country-lbl">United Kingdom</div>
+          </div>
+          <div class="optA-sep"></div>
+          <div class="optA-card-body">
+            <span class="optA-type">Manufacturing</span>
+            <span class="optA-emp"><i class="fa fa-users"></i> 75</span>
+          </div>
+          <div class="optA-card-foot"><span class="optA-view">View Site <i class="fa fa-arrow-right"></i></span></div>
+        </div>
+
+        <!-- Kirby UK -->
+        <div class="optA-card">
+          <div class="optA-card-head" style="background: linear-gradient(135deg,#4527a0,#5e35b1,#7e57c2);">
+            <div class="optA-flag">🇬🇧</div>
+            <div class="optA-city">Kirby</div>
+            <div class="optA-country-lbl">United Kingdom</div>
+          </div>
+          <div class="optA-sep"></div>
+          <div class="optA-card-body">
+            <span class="optA-type">Distribution</span>
+            <span class="optA-emp"><i class="fa fa-users"></i> 80</span>
+          </div>
+          <div class="optA-card-foot"><span class="optA-view">View Site <i class="fa fa-arrow-right"></i></span></div>
+        </div>
+
+        <!-- Baia Mare RO -->
+        <div class="optA-card">
+          <div class="optA-card-head" style="background: linear-gradient(135deg,#1b5e20,#388e3c,#66bb6a);">
+            <div class="optA-flag">🇷🇴</div>
+            <div class="optA-city">Baia Mare</div>
+            <div class="optA-country-lbl">Romania</div>
+          </div>
+          <div class="optA-sep"></div>
+          <div class="optA-card-body">
+            <span class="optA-type">Manufacturing</span>
+            <span class="optA-emp"><i class="fa fa-users"></i> 180</span>
+          </div>
+          <div class="optA-card-foot"><span class="optA-view">View Site <i class="fa fa-arrow-right"></i></span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================
+       OPTION B — COUNTRY PILLARS
+       ============================ -->
+  <section id="optB" class="opt-section">
+    <div class="opt-meta">
+      <span class="opt-badge">Option B</span>
+      <div>
+        <div class="opt-title">Country Pillars — Grouped by Nation</div>
+        <div class="opt-desc">Sites are <strong>grouped into 4 country columns</strong> with a colored country header (flag + total). Each city row shows role type and employee count. <strong>Best for</strong>: users who think in terms of national teams and want to navigate by country quickly.</div>
+      </div>
+    </div>
+
+    <div class="optB-wrap">
+      <div class="optB-top">
+        <div class="optB-top-left">
+          <div class="optB-icon"><i class="fa fa-map-marked-alt"></i></div>
+          <div>
+            <h2>Our CCM Europe Locations</h2>
+            <p>4 countries &nbsp;·&nbsp; 9 sites &nbsp;·&nbsp; 1,105 employees</p>
+          </div>
+        </div>
+        <a href="#" class="optB-all-link"><i class="fa fa-external-link-alt"></i> View All Locations</a>
+      </div>
+
+      <div class="optB-pillars">
+        <!-- Germany -->
+        <div class="optB-pillar">
+          <div class="optB-pillar-hdr optB-de-hdr">
+            <div class="optB-pflag">🇩🇪</div>
+            <div class="optB-pname">Germany</div>
+            <div class="optB-ptotal"><i class="fa fa-users"></i> 565 employees &nbsp;· 4 sites</div>
+            <div class="optB-pbadge">DE</div>
+          </div>
+          <div class="optB-cities">
+            <div class="optB-city-row" onclick="location.href='site-schellerdam-hq.html'">
+              <div class="optB-dot optB-de-dot"></div>
+              <div class="optB-cr-info">
+                <div class="optB-cr-city">Hamburg Schellerdam</div>
+                <div class="optB-cr-type">⭐ Corporate HQ</div>
+              </div>
+              <div class="optB-cr-emp">120</div>
+            </div>
+            <div class="optB-city-row">
+              <div class="optB-dot optB-de-dot"></div>
+              <div class="optB-cr-info">
+                <div class="optB-cr-city">Hamburg Noeldekestr.</div>
+                <div class="optB-cr-type">Manufacturing</div>
+              </div>
+              <div class="optB-cr-emp">200</div>
+            </div>
+            <div class="optB-city-row">
+              <div class="optB-dot optB-de-dot"></div>
+              <div class="optB-cr-info">
+                <div class="optB-cr-city">Kaufbeuren</div>
+                <div class="optB-cr-type">Manufacturing</div>
+              </div>
+              <div class="optB-cr-emp">130</div>
+            </div>
+            <div class="optB-city-row">
+              <div class="optB-dot optB-de-dot"></div>
+              <div class="optB-cr-info">
+                <div class="optB-cr-city">Waltershausen</div>
+                <div class="optB-cr-type">Operations</div>
+              </div>
+              <div class="optB-cr-emp">115</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Netherlands -->
+        <div class="optB-pillar">
+          <div class="optB-pillar-hdr optB-nl-hdr">
+            <div class="optB-pflag">🇳🇱</div>
+            <div class="optB-pname">Netherlands</div>
+            <div class="optB-ptotal"><i class="fa fa-users"></i> 205 employees &nbsp;· 2 sites</div>
+            <div class="optB-pbadge">NL</div>
+          </div>
+          <div class="optB-cities">
+            <div class="optB-city-row">
+              <div class="optB-dot optB-nl-dot"></div>
+              <div class="optB-cr-info">
+                <div class="optB-cr-city">Kampen</div>
+                <div class="optB-cr-type">Distribution</div>
+              </div>
+              <div class="optB-cr-emp">95</div>
+            </div>
+            <div class="optB-city-row">
+              <div class="optB-dot optB-nl-dot"></div>
+              <div class="optB-cr-info">
+                <div class="optB-cr-city">Weesp</div>
+                <div class="optB-cr-type">Operations</div>
+              </div>
+              <div class="optB-cr-emp">110</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- United Kingdom -->
+        <div class="optB-pillar">
+          <div class="optB-pillar-hdr optB-uk-hdr">
+            <div class="optB-pflag">🇬🇧</div>
+            <div class="optB-pname">United Kingdom</div>
+            <div class="optB-ptotal"><i class="fa fa-users"></i> 155 employees &nbsp;· 2 sites</div>
+            <div class="optB-pbadge">UK</div>
+          </div>
+          <div class="optB-cities">
+            <div class="optB-city-row">
+              <div class="optB-dot optB-uk-dot"></div>
+              <div class="optB-cr-info">
+                <div class="optB-cr-city">Mansfield</div>
+                <div class="optB-cr-type">Manufacturing</div>
+              </div>
+              <div class="optB-cr-emp">75</div>
+            </div>
+            <div class="optB-city-row">
+              <div class="optB-dot optB-uk-dot"></div>
+              <div class="optB-cr-info">
+                <div class="optB-cr-city">Kirby</div>
+                <div class="optB-cr-type">Distribution</div>
+              </div>
+              <div class="optB-cr-emp">80</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Romania -->
+        <div class="optB-pillar">
+          <div class="optB-pillar-hdr optB-ro-hdr">
+            <div class="optB-pflag">🇷🇴</div>
+            <div class="optB-pname">Romania</div>
+            <div class="optB-ptotal"><i class="fa fa-users"></i> 180 employees &nbsp;· 1 site</div>
+            <div class="optB-pbadge">RO</div>
+          </div>
+          <div class="optB-cities">
+            <div class="optB-city-row">
+              <div class="optB-dot optB-ro-dot"></div>
+              <div class="optB-cr-info">
+                <div class="optB-cr-city">Baia Mare</div>
+                <div class="optB-cr-type">Manufacturing</div>
+              </div>
+              <div class="optB-cr-emp">180</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================
+       OPTION C — 3D FLIP CARDS
+       ============================ -->
+  <section id="optC" class="opt-section">
+    <div class="opt-meta">
+      <span class="opt-badge">Option C</span>
+      <div>
+        <div class="opt-title">3D Flip Cards — Hover to Reveal</div>
+        <div class="opt-desc">Cards show only the city and flag on the <strong>front face</strong>. Hovering flips to reveal site type, employee count, and a direct link. <strong>Best for</strong>: interactive intranet pages where engagement and discovery are key. Hover on any card to try it.</div>
+      </div>
+    </div>
+
+    <div class="optC-wrap">
+      <div class="optC-top">
+        <div class="optC-top-left">
+          <div class="optC-icon"><i class="fa fa-map-marked-alt"></i></div>
+          <div>
+            <h2>Our CCM Europe Locations</h2>
+            <p>9 sites across Europe — hover to discover</p>
+          </div>
+        </div>
+        <div class="optC-hint"><i class="fa fa-hand-pointer"></i> Hover any card to flip</div>
+      </div>
+
+      <div class="optC-grid">
+        <!-- Hamburg HQ -->
+        <div class="flip-card">
+          <div class="flip-inner">
+            <div class="flip-face flip-front" style="background: linear-gradient(150deg,#1a237e 0%,#3949ab 60%,#5c6bc0 100%);">
+              <div class="f-flag">🇩🇪</div>
+              <div class="f-hq"><i class="fa fa-star"></i> Corporate HQ</div>
+              <div class="f-city">Hamburg Schellerdam</div>
+              <div class="f-cc">Germany · DE</div>
+            </div>
+            <div class="flip-face flip-back">
+              <div class="b-flag">🇩🇪</div>
+              <div class="b-city">Hamburg Schellerdam</div>
+              <div class="b-country">Germany &nbsp;·&nbsp; Corporate HQ</div>
+              <div class="b-row"><i class="fa fa-users"></i><span><strong>120</strong> employees</span></div>
+              <div class="b-row"><i class="fa fa-building"></i><span>Headquarters &amp; Management</span></div>
+              <div class="b-row"><i class="fa fa-map-marker-alt"></i><span>Hamburg, Germany</span></div>
+              <div class="b-spacer"></div>
+              <a href="site-schellerdam-hq.html" class="b-btn"><i class="fa fa-arrow-right"></i> Open Site Page</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Hamburg Noeldekestr -->
+        <div class="flip-card">
+          <div class="flip-inner">
+            <div class="flip-face flip-front" style="background: linear-gradient(150deg,#0d47a1 0%,#1976d2 60%,#42a5f5 100%);">
+              <div class="f-flag">🇩🇪</div>
+              <div class="f-city">Hamburg Noeldekestr.</div>
+              <div class="f-cc">Germany · DE</div>
+            </div>
+            <div class="flip-face flip-back">
+              <div class="b-flag">🇩🇪</div>
+              <div class="b-city">Hamburg Noeldekestr.</div>
+              <div class="b-country">Germany &nbsp;·&nbsp; Manufacturing</div>
+              <div class="b-row"><i class="fa fa-users"></i><span><strong>200</strong> employees</span></div>
+              <div class="b-row"><i class="fa fa-industry"></i><span>Manufacturing Plant</span></div>
+              <div class="b-row"><i class="fa fa-map-marker-alt"></i><span>Hamburg, Germany</span></div>
+              <div class="b-spacer"></div>
+              <a href="#" class="b-btn"><i class="fa fa-arrow-right"></i> Open Site Page</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Kaufbeuren -->
+        <div class="flip-card">
+          <div class="flip-inner">
+            <div class="flip-face flip-front" style="background: linear-gradient(150deg,#4a148c 0%,#7b1fa2 60%,#ab47bc 100%);">
+              <div class="f-flag">🇩🇪</div>
+              <div class="f-city">Kaufbeuren</div>
+              <div class="f-cc">Germany · DE</div>
+            </div>
+            <div class="flip-face flip-back">
+              <div class="b-flag">🇩🇪</div>
+              <div class="b-city">Kaufbeuren</div>
+              <div class="b-country">Germany &nbsp;·&nbsp; Manufacturing</div>
+              <div class="b-row"><i class="fa fa-users"></i><span><strong>130</strong> employees</span></div>
+              <div class="b-row"><i class="fa fa-cogs"></i><span>Manufacturing Plant</span></div>
+              <div class="b-row"><i class="fa fa-map-marker-alt"></i><span>Bavaria, Germany</span></div>
+              <div class="b-spacer"></div>
+              <a href="#" class="b-btn"><i class="fa fa-arrow-right"></i> Open Site Page</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Waltershausen -->
+        <div class="flip-card">
+          <div class="flip-inner">
+            <div class="flip-face flip-front" style="background: linear-gradient(150deg,#bf360c 0%,#e64a19 60%,#ff7043 100%);">
+              <div class="f-flag">🇩🇪</div>
+              <div class="f-city">Waltershausen</div>
+              <div class="f-cc">Germany · DE</div>
+            </div>
+            <div class="flip-face flip-back">
+              <div class="b-flag">🇩🇪</div>
+              <div class="b-city">Waltershausen</div>
+              <div class="b-country">Germany &nbsp;·&nbsp; Operations</div>
+              <div class="b-row"><i class="fa fa-users"></i><span><strong>115</strong> employees</span></div>
+              <div class="b-row"><i class="fa fa-industry"></i><span>Operations Centre</span></div>
+              <div class="b-row"><i class="fa fa-map-marker-alt"></i><span>Thuringia, Germany</span></div>
+              <div class="b-spacer"></div>
+              <a href="#" class="b-btn"><i class="fa fa-arrow-right"></i> Open Site Page</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Kampen -->
+        <div class="flip-card">
+          <div class="flip-inner">
+            <div class="flip-face flip-front" style="background: linear-gradient(150deg,#006064 0%,#00838f 60%,#26c6da 100%);">
+              <div class="f-flag">🇳🇱</div>
+              <div class="f-city">Kampen</div>
+              <div class="f-cc">Netherlands · NL</div>
+            </div>
+            <div class="flip-face flip-back">
+              <div class="b-flag">🇳🇱</div>
+              <div class="b-city">Kampen</div>
+              <div class="b-country">Netherlands &nbsp;·&nbsp; Distribution</div>
+              <div class="b-row"><i class="fa fa-users"></i><span><strong>95</strong> employees</span></div>
+              <div class="b-row"><i class="fa fa-warehouse"></i><span>Distribution Centre</span></div>
+              <div class="b-row"><i class="fa fa-map-marker-alt"></i><span>Overijssel, Netherlands</span></div>
+              <div class="b-spacer"></div>
+              <a href="#" class="b-btn"><i class="fa fa-arrow-right"></i> Open Site Page</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Weesp -->
+        <div class="flip-card">
+          <div class="flip-inner">
+            <div class="flip-face flip-front" style="background: linear-gradient(150deg,#004d40 0%,#00695c 60%,#26a69a 100%);">
+              <div class="f-flag">🇳🇱</div>
+              <div class="f-city">Weesp</div>
+              <div class="f-cc">Netherlands · NL</div>
+            </div>
+            <div class="flip-face flip-back">
+              <div class="b-flag">🇳🇱</div>
+              <div class="b-city">Weesp</div>
+              <div class="b-country">Netherlands &nbsp;·&nbsp; Operations</div>
+              <div class="b-row"><i class="fa fa-users"></i><span><strong>110</strong> employees</span></div>
+              <div class="b-row"><i class="fa fa-cogs"></i><span>Operations Centre</span></div>
+              <div class="b-row"><i class="fa fa-map-marker-alt"></i><span>North Holland, Netherlands</span></div>
+              <div class="b-spacer"></div>
+              <a href="#" class="b-btn"><i class="fa fa-arrow-right"></i> Open Site Page</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mansfield -->
+        <div class="flip-card">
+          <div class="flip-inner">
+            <div class="flip-face flip-front" style="background: linear-gradient(150deg,#880e4f 0%,#c2185b 60%,#f06292 100%);">
+              <div class="f-flag">🇬🇧</div>
+              <div class="f-city">Mansfield</div>
+              <div class="f-cc">United Kingdom · UK</div>
+            </div>
+            <div class="flip-face flip-back">
+              <div class="b-flag">🇬🇧</div>
+              <div class="b-city">Mansfield</div>
+              <div class="b-country">United Kingdom &nbsp;·&nbsp; Manufacturing</div>
+              <div class="b-row"><i class="fa fa-users"></i><span><strong>75</strong> employees</span></div>
+              <div class="b-row"><i class="fa fa-boxes"></i><span>Manufacturing Plant</span></div>
+              <div class="b-row"><i class="fa fa-map-marker-alt"></i><span>Nottinghamshire, UK</span></div>
+              <div class="b-spacer"></div>
+              <a href="#" class="b-btn"><i class="fa fa-arrow-right"></i> Open Site Page</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Kirby -->
+        <div class="flip-card">
+          <div class="flip-inner">
+            <div class="flip-face flip-front" style="background: linear-gradient(150deg,#4527a0 0%,#5e35b1 60%,#7e57c2 100%);">
+              <div class="f-flag">🇬🇧</div>
+              <div class="f-city">Kirby</div>
+              <div class="f-cc">United Kingdom · UK</div>
+            </div>
+            <div class="flip-face flip-back">
+              <div class="b-flag">🇬🇧</div>
+              <div class="b-city">Kirby</div>
+              <div class="b-country">United Kingdom &nbsp;·&nbsp; Distribution</div>
+              <div class="b-row"><i class="fa fa-users"></i><span><strong>80</strong> employees</span></div>
+              <div class="b-row"><i class="fa fa-truck"></i><span>Distribution Centre</span></div>
+              <div class="b-row"><i class="fa fa-map-marker-alt"></i><span>Merseyside, UK</span></div>
+              <div class="b-spacer"></div>
+              <a href="#" class="b-btn"><i class="fa fa-arrow-right"></i> Open Site Page</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Baia Mare -->
+        <div class="flip-card">
+          <div class="flip-inner">
+            <div class="flip-face flip-front" style="background: linear-gradient(150deg,#1b5e20 0%,#388e3c 60%,#66bb6a 100%);">
+              <div class="f-flag">🇷🇴</div>
+              <div class="f-city">Baia Mare</div>
+              <div class="f-cc">Romania · RO</div>
+            </div>
+            <div class="flip-face flip-back">
+              <div class="b-flag">🇷🇴</div>
+              <div class="b-city">Baia Mare</div>
+              <div class="b-country">Romania &nbsp;·&nbsp; Manufacturing</div>
+              <div class="b-row"><i class="fa fa-users"></i><span><strong>180</strong> employees</span></div>
+              <div class="b-row"><i class="fa fa-industry"></i><span>Manufacturing Plant</span></div>
+              <div class="b-row"><i class="fa fa-map-marker-alt"></i><span>Maramureș, Romania</span></div>
+              <div class="b-spacer"></div>
+              <a href="#" class="b-btn"><i class="fa fa-arrow-right"></i> Open Site Page</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================
+       OPTION D — BENTO GRID
+       ============================ -->
+  <section id="optD" class="opt-section">
+    <div class="opt-meta">
+      <span class="opt-badge">Option D</span>
+      <div>
+        <div class="opt-title">Bento Grid — HQ Featured Large</div>
+        <div class="opt-desc">An editorial <strong>mosaic/bento layout</strong>: the HQ card spans 2×2 with rich details and a CTA, while all other sites are compact tiles. Country filter tabs let users narrow down. <strong>Best for</strong>: modern, magazine-style intranets where HQ prominence matters.</div>
+      </div>
+    </div>
+
+    <div class="optD-wrap">
+      <div class="optD-top">
+        <div class="optD-top-left">
+          <div class="optD-icon"><i class="fa fa-th-large"></i></div>
+          <div>
+            <h2>Our CCM Europe Locations</h2>
+            <p>9 sites &nbsp;·&nbsp; 4 countries</p>
+          </div>
+        </div>
+        <a href="#" class="optD-view"><i class="fa fa-external-link-alt"></i> All Sites</a>
+      </div>
+
+      <div class="optD-filters">
+        <button class="optD-f-btn active" data-filter="all">All Countries</button>
+        <button class="optD-f-btn" data-filter="de">🇩🇪 Germany</button>
+        <button class="optD-f-btn" data-filter="nl">🇳🇱 Netherlands</button>
+        <button class="optD-f-btn" data-filter="uk">🇬🇧 United Kingdom</button>
+        <button class="optD-f-btn" data-filter="ro">🇷🇴 Romania</button>
+      </div>
+
+      <div class="optD-bento" id="bentogrid">
+        <!-- HQ featured -->
+        <div class="bento-card bento-hq" data-country="de">
+          <div class="bento-inner" style="background: linear-gradient(135deg,#001a3d 0%,#1a237e 50%,#283593 100%);">
+            <div class="bento-hq-flag">🇩🇪</div>
+            <div class="bento-hq-badge"><i class="fa fa-star"></i> Corporate HQ</div>
+            <div class="bento-hq-city">Hamburg Schellerdam</div>
+            <div class="bento-hq-cc"><i class="fa fa-map-marker-alt"></i> Hamburg, Germany</div>
+            <div class="bento-hq-stats">
+              <div class="bento-hq-stat"><strong>120</strong><span>Employees</span></div>
+              <div class="bento-hq-stat"><strong>4</strong><span>Floors</span></div>
+              <div class="bento-hq-stat"><strong>1994</strong><span>Founded</span></div>
+            </div>
+            <a href="site-schellerdam-hq.html" class="bento-hq-link"><i class="fa fa-building"></i> Explore HQ Site</a>
+          </div>
+        </div>
+
+        <!-- Hamburg Noeldekestr -->
+        <div class="bento-card bento-sm" data-country="de">
+          <div class="bento-inner" style="background: linear-gradient(135deg,#0d47a1,#1976d2);">
+            <div class="b-top">
+              <div class="b-flag">🇩🇪</div>
+              <span class="b-type-pill" style="background:rgba(255,255,255,.2);color:#fff;">Mfg</span>
+            </div>
+            <div>
+              <div class="b-city">Hamburg Noeldekestr.</div>
+              <div class="b-country">Germany</div>
+            </div>
+            <div class="b-emp"><i class="fa fa-users"></i> 200 employees</div>
+          </div>
+        </div>
+
+        <!-- Kaufbeuren -->
+        <div class="bento-card bento-sm" data-country="de">
+          <div class="bento-inner" style="background: linear-gradient(135deg,#4a148c,#7b1fa2);">
+            <div class="b-top">
+              <div class="b-flag">🇩🇪</div>
+              <span class="b-type-pill" style="background:rgba(255,255,255,.2);color:#fff;">Mfg</span>
+            </div>
+            <div>
+              <div class="b-city">Kaufbeuren</div>
+              <div class="b-country">Germany</div>
+            </div>
+            <div class="b-emp"><i class="fa fa-users"></i> 130 employees</div>
+          </div>
+        </div>
+
+        <!-- Waltershausen -->
+        <div class="bento-card bento-sm" data-country="de">
+          <div class="bento-inner" style="background: linear-gradient(135deg,#bf360c,#e64a19);">
+            <div class="b-top">
+              <div class="b-flag">🇩🇪</div>
+              <span class="b-type-pill" style="background:rgba(255,255,255,.2);color:#fff;">Ops</span>
+            </div>
+            <div>
+              <div class="b-city">Waltershausen</div>
+              <div class="b-country">Germany</div>
+            </div>
+            <div class="b-emp"><i class="fa fa-users"></i> 115 employees</div>
+          </div>
+        </div>
+
+        <!-- Kampen -->
+        <div class="bento-card bento-sm" data-country="nl">
+          <div class="bento-inner" style="background: linear-gradient(135deg,#006064,#00838f);">
+            <div class="b-top">
+              <div class="b-flag">🇳🇱</div>
+              <span class="b-type-pill" style="background:rgba(255,255,255,.2);color:#fff;">Dist</span>
+            </div>
+            <div>
+              <div class="b-city">Kampen</div>
+              <div class="b-country">Netherlands</div>
+            </div>
+            <div class="b-emp"><i class="fa fa-users"></i> 95 employees</div>
+          </div>
+        </div>
+
+        <!-- Weesp -->
+        <div class="bento-card bento-sm" data-country="nl">
+          <div class="bento-inner" style="background: linear-gradient(135deg,#004d40,#00695c);">
+            <div class="b-top">
+              <div class="b-flag">🇳🇱</div>
+              <span class="b-type-pill" style="background:rgba(255,255,255,.2);color:#fff;">Ops</span>
+            </div>
+            <div>
+              <div class="b-city">Weesp</div>
+              <div class="b-country">Netherlands</div>
+            </div>
+            <div class="b-emp"><i class="fa fa-users"></i> 110 employees</div>
+          </div>
+        </div>
+
+        <!-- Mansfield -->
+        <div class="bento-card bento-sm" data-country="uk">
+          <div class="bento-inner" style="background: linear-gradient(135deg,#880e4f,#c2185b);">
+            <div class="b-top">
+              <div class="b-flag">🇬🇧</div>
+              <span class="b-type-pill" style="background:rgba(255,255,255,.2);color:#fff;">Mfg</span>
+            </div>
+            <div>
+              <div class="b-city">Mansfield</div>
+              <div class="b-country">United Kingdom</div>
+            </div>
+            <div class="b-emp"><i class="fa fa-users"></i> 75 employees</div>
+          </div>
+        </div>
+
+        <!-- Kirby -->
+        <div class="bento-card bento-sm" data-country="uk">
+          <div class="bento-inner" style="background: linear-gradient(135deg,#4527a0,#5e35b1);">
+            <div class="b-top">
+              <div class="b-flag">🇬🇧</div>
+              <span class="b-type-pill" style="background:rgba(255,255,255,.2);color:#fff;">Dist</span>
+            </div>
+            <div>
+              <div class="b-city">Kirby</div>
+              <div class="b-country">United Kingdom</div>
+            </div>
+            <div class="b-emp"><i class="fa fa-users"></i> 80 employees</div>
+          </div>
+        </div>
+
+        <!-- Baia Mare -->
+        <div class="bento-card bento-sm" data-country="ro">
+          <div class="bento-inner" style="background: linear-gradient(135deg,#1b5e20,#388e3c);">
+            <div class="b-top">
+              <div class="b-flag">🇷🇴</div>
+              <span class="b-type-pill" style="background:rgba(255,255,255,.2);color:#fff;">Mfg</span>
+            </div>
+            <div>
+              <div class="b-city">Baia Mare</div>
+              <div class="b-country">Romania</div>
+            </div>
+            <div class="b-emp"><i class="fa fa-users"></i> 180 employees</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================
+       OPTION E — SPLIT PANEL
+       ============================ -->
+  <section id="optE" class="opt-section">
+    <div class="opt-meta">
+      <span class="opt-badge">Option E</span>
+      <div>
+        <div class="opt-title">Split Panel — Stats Sidebar + Compact Grid</div>
+        <div class="opt-desc">A <strong>two-column layout</strong>: a dark stat sidebar establishing presence ("1,105 people across Europe") beside a compact card grid. Uses color-coded left accents per country. <strong>Best for</strong>: data-forward homepages that balance visual impact with scannability.</div>
+      </div>
+    </div>
+
+    <div class="optE-wrap">
+      <!-- Left sidebar -->
+      <div class="optE-sidebar">
+        <div class="optE-sb-kicker">Our Presence</div>
+        <div class="optE-sb-title">A European Network of Excellence</div>
+        <div class="optE-sb-sub">CCM Europe operates from 9 strategically placed sites, connecting manufacturing, distribution and operations across 4 countries.</div>
+        <div class="optE-sb-divider"></div>
+        <div class="optE-sb-stats">
+          <div class="optE-sb-stat">
+            <div class="icon"><i class="fa fa-map-marker-alt"></i></div>
+            <div><div class="val">9</div><div class="lbl">Locations</div></div>
+          </div>
+          <div class="optE-sb-stat">
+            <div class="icon"><i class="fa fa-flag"></i></div>
+            <div><div class="val">4</div><div class="lbl">Countries</div></div>
+          </div>
+          <div class="optE-sb-stat">
+            <div class="icon"><i class="fa fa-users"></i></div>
+            <div><div class="val">1,105</div><div class="lbl">Employees</div></div>
+          </div>
+        </div>
+        <div class="optE-sb-divider"></div>
+        <div class="optE-countries">
+          <div class="optE-cc"><span>🇩🇪</span><strong>Germany · 4 sites</strong></div>
+          <div class="optE-cc"><span>🇳🇱</span><strong>Netherlands · 2 sites</strong></div>
+          <div class="optE-cc"><span>🇬🇧</span><strong>UK · 2 sites</strong></div>
+          <div class="optE-cc"><span>🇷🇴</span><strong>Romania · 1 site</strong></div>
+        </div>
+        <a href="#" class="optE-sb-link"><i class="fa fa-globe-europe"></i> View All Locations</a>
+      </div>
+
+      <!-- Right grid -->
+      <div class="optE-grid-wrap">
+        <div class="optE-grid-hdr">
+          <div class="optE-grid-title">All Sites</div>
+          <div class="optE-sort"><i class="fa fa-sort"></i> Sort by country</div>
+        </div>
+        <div class="optE-grid">
+
+          <div class="optE-card" onclick="location.href='site-schellerdam-hq.html'">
+            <div class="optE-card-accent" style="background:#1a237e;"></div>
+            <div class="optE-flag-circle">🇩🇪</div>
+            <div class="optE-card-info">
+              <div class="optE-card-city">Hamburg Schellerdam</div>
+              <div class="optE-card-type">Corporate Headquarters</div>
+              <div class="optE-card-meta">
+                <span class="optE-emp-badge" style="background:#e8eaf6;color:#1a237e;">120 emp</span>
+                <span class="optE-card-hq">HQ</span>
+              </div>
+            </div>
+            <div class="optE-card-link"><i class="fa fa-chevron-right"></i></div>
+          </div>
+
+          <div class="optE-card">
+            <div class="optE-card-accent" style="background:#1a237e;"></div>
+            <div class="optE-flag-circle">🇩🇪</div>
+            <div class="optE-card-info">
+              <div class="optE-card-city">Hamburg Noeldekestr.</div>
+              <div class="optE-card-type">Manufacturing · Germany</div>
+              <div class="optE-card-meta">
+                <span class="optE-emp-badge" style="background:#e8eaf6;color:#1a237e;">200 emp</span>
+              </div>
+            </div>
+            <div class="optE-card-link"><i class="fa fa-chevron-right"></i></div>
+          </div>
+
+          <div class="optE-card">
+            <div class="optE-card-accent" style="background:#1a237e;"></div>
+            <div class="optE-flag-circle">🇩🇪</div>
+            <div class="optE-card-info">
+              <div class="optE-card-city">Kaufbeuren</div>
+              <div class="optE-card-type">Manufacturing · Germany</div>
+              <div class="optE-card-meta">
+                <span class="optE-emp-badge" style="background:#e8eaf6;color:#1a237e;">130 emp</span>
+              </div>
+            </div>
+            <div class="optE-card-link"><i class="fa fa-chevron-right"></i></div>
+          </div>
+
+          <div class="optE-card">
+            <div class="optE-card-accent" style="background:#1a237e;"></div>
+            <div class="optE-flag-circle">🇩🇪</div>
+            <div class="optE-card-info">
+              <div class="optE-card-city">Waltershausen</div>
+              <div class="optE-card-type">Operations · Germany</div>
+              <div class="optE-card-meta">
+                <span class="optE-emp-badge" style="background:#e8eaf6;color:#1a237e;">115 emp</span>
+              </div>
+            </div>
+            <div class="optE-card-link"><i class="fa fa-chevron-right"></i></div>
+          </div>
+
+          <div class="optE-card">
+            <div class="optE-card-accent" style="background:#e65100;"></div>
+            <div class="optE-flag-circle">🇳🇱</div>
+            <div class="optE-card-info">
+              <div class="optE-card-city">Kampen</div>
+              <div class="optE-card-type">Distribution · Netherlands</div>
+              <div class="optE-card-meta">
+                <span class="optE-emp-badge" style="background:#fff3e0;color:#e65100;">95 emp</span>
+              </div>
+            </div>
+            <div class="optE-card-link"><i class="fa fa-chevron-right"></i></div>
+          </div>
+
+          <div class="optE-card">
+            <div class="optE-card-accent" style="background:#e65100;"></div>
+            <div class="optE-flag-circle">🇳🇱</div>
+            <div class="optE-card-info">
+              <div class="optE-card-city">Weesp</div>
+              <div class="optE-card-type">Operations · Netherlands</div>
+              <div class="optE-card-meta">
+                <span class="optE-emp-badge" style="background:#fff3e0;color:#e65100;">110 emp</span>
+              </div>
+            </div>
+            <div class="optE-card-link"><i class="fa fa-chevron-right"></i></div>
+          </div>
+
+          <div class="optE-card">
+            <div class="optE-card-accent" style="background:#b71c1c;"></div>
+            <div class="optE-flag-circle">🇬🇧</div>
+            <div class="optE-card-info">
+              <div class="optE-card-city">Mansfield</div>
+              <div class="optE-card-type">Manufacturing · United Kingdom</div>
+              <div class="optE-card-meta">
+                <span class="optE-emp-badge" style="background:#ffebee;color:#b71c1c;">75 emp</span>
+              </div>
+            </div>
+            <div class="optE-card-link"><i class="fa fa-chevron-right"></i></div>
+          </div>
+
+          <div class="optE-card">
+            <div class="optE-card-accent" style="background:#b71c1c;"></div>
+            <div class="optE-flag-circle">🇬🇧</div>
+            <div class="optE-card-info">
+              <div class="optE-card-city">Kirby</div>
+              <div class="optE-card-type">Distribution · United Kingdom</div>
+              <div class="optE-card-meta">
+                <span class="optE-emp-badge" style="background:#ffebee;color:#b71c1c;">80 emp</span>
+              </div>
+            </div>
+            <div class="optE-card-link"><i class="fa fa-chevron-right"></i></div>
+          </div>
+
+          <div class="optE-card">
+            <div class="optE-card-accent" style="background:#1b5e20;"></div>
+            <div class="optE-flag-circle">🇷🇴</div>
+            <div class="optE-card-info">
+              <div class="optE-card-city">Baia Mare</div>
+              <div class="optE-card-type">Manufacturing · Romania</div>
+              <div class="optE-card-meta">
+                <span class="optE-emp-badge" style="background:#e8f5e9;color:#1b5e20;">180 emp</span>
+              </div>
+            </div>
+            <div class="optE-card-link"><i class="fa fa-chevron-right"></i></div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================
+       OPTION F — DATA TABLE
+       ============================ -->
+  <section id="optF" class="opt-section">
+    <div class="opt-meta">
+      <span class="opt-badge">Option F</span>
+      <div>
+        <div class="opt-title">Data Table — Clean Structured Overview</div>
+        <div class="opt-desc">A <strong>modern styled table</strong> with country-coded left-border accents, type badges, employee progress bars, and hover highlights. Country filter pills let you narrow the view. <strong>Best for</strong>: power-users and data-heavy intranet pages who want maximum information density.</div>
+      </div>
+    </div>
+
+    <div class="optF-wrap">
+      <div class="optF-top">
+        <div class="optF-top-left">
+          <h2>Our CCM Europe Locations</h2>
+          <p>9 sites · 4 countries · 1,105 total employees</p>
+        </div>
+        <div class="optF-chips">
+          <span class="optF-chip"><i class="fa fa-map-marker-alt"></i> 9 Sites</span>
+          <span class="optF-chip"><i class="fa fa-flag"></i> 4 Countries</span>
+          <span class="optF-chip"><i class="fa fa-users"></i> 1,105 People</span>
+        </div>
+      </div>
+
+      <div class="optF-filters">
+        <button class="optF-fb active" data-f="all">All</button>
+        <button class="optF-fb" data-f="de">🇩🇪 Germany</button>
+        <button class="optF-fb" data-f="nl">🇳🇱 Netherlands</button>
+        <button class="optF-fb" data-f="uk">🇬🇧 UK</button>
+        <button class="optF-fb" data-f="ro">🇷🇴 Romania</button>
+      </div>
+
+      <div class="optF-table-wrap">
+        <table class="optF-table" id="optF-tbl">
+          <thead>
+            <tr>
+              <th style="width:36%">Site</th>
+              <th style="width:18%">Country</th>
+              <th style="width:18%">Type</th>
+              <th style="width:18%">Employees</th>
+              <th style="width:10%"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="row-de" data-c="de" onclick="location.href='site-schellerdam-hq.html'">
+              <td>
+                <div class="tbl-site">
+                  <div class="tbl-flag">🇩🇪</div>
+                  <div>
+                    <div class="tbl-city">Hamburg Schellerdam</div>
+                    <div><span class="tbl-hq">HQ</span></div>
+                  </div>
+                </div>
+              </td>
+              <td><span style="font-size:12px;font-weight:600;color:var(--primary);">Germany</span></td>
+              <td><span class="tbl-type type-hq">Corporate HQ</span></td>
+              <td>
+                <div class="tbl-emp-bar">
+                  <div class="tbl-bar-bg"><div class="tbl-bar-fill" style="width:60%;background:#1a237e;"></div></div>
+                  <div class="tbl-emp-num">120</div>
+                </div>
+              </td>
+              <td><span class="tbl-action">Open <i class="fa fa-arrow-right"></i></span></td>
+            </tr>
+            <tr class="row-de" data-c="de">
+              <td>
+                <div class="tbl-site">
+                  <div class="tbl-flag">🇩🇪</div>
+                  <div><div class="tbl-city">Hamburg Noeldekestr.</div></div>
+                </div>
+              </td>
+              <td><span style="font-size:12px;font-weight:600;color:var(--primary);">Germany</span></td>
+              <td><span class="tbl-type type-mfg">Manufacturing</span></td>
+              <td>
+                <div class="tbl-emp-bar">
+                  <div class="tbl-bar-bg"><div class="tbl-bar-fill" style="width:100%;background:#1976d2;"></div></div>
+                  <div class="tbl-emp-num">200</div>
+                </div>
+              </td>
+              <td><span class="tbl-action">Open <i class="fa fa-arrow-right"></i></span></td>
+            </tr>
+            <tr class="row-de" data-c="de">
+              <td>
+                <div class="tbl-site">
+                  <div class="tbl-flag">🇩🇪</div>
+                  <div><div class="tbl-city">Kaufbeuren</div></div>
+                </div>
+              </td>
+              <td><span style="font-size:12px;font-weight:600;color:var(--primary);">Germany</span></td>
+              <td><span class="tbl-type type-mfg">Manufacturing</span></td>
+              <td>
+                <div class="tbl-emp-bar">
+                  <div class="tbl-bar-bg"><div class="tbl-bar-fill" style="width:65%;background:#7b1fa2;"></div></div>
+                  <div class="tbl-emp-num">130</div>
+                </div>
+              </td>
+              <td><span class="tbl-action">Open <i class="fa fa-arrow-right"></i></span></td>
+            </tr>
+            <tr class="row-de" data-c="de">
+              <td>
+                <div class="tbl-site">
+                  <div class="tbl-flag">🇩🇪</div>
+                  <div><div class="tbl-city">Waltershausen</div></div>
+                </div>
+              </td>
+              <td><span style="font-size:12px;font-weight:600;color:var(--primary);">Germany</span></td>
+              <td><span class="tbl-type type-ops">Operations</span></td>
+              <td>
+                <div class="tbl-emp-bar">
+                  <div class="tbl-bar-bg"><div class="tbl-bar-fill" style="width:57%;background:#e64a19;"></div></div>
+                  <div class="tbl-emp-num">115</div>
+                </div>
+              </td>
+              <td><span class="tbl-action">Open <i class="fa fa-arrow-right"></i></span></td>
+            </tr>
+            <tr class="row-nl" data-c="nl">
+              <td>
+                <div class="tbl-site">
+                  <div class="tbl-flag">🇳🇱</div>
+                  <div><div class="tbl-city">Kampen</div></div>
+                </div>
+              </td>
+              <td><span style="font-size:12px;font-weight:600;color:var(--nl);">Netherlands</span></td>
+              <td><span class="tbl-type type-dist">Distribution</span></td>
+              <td>
+                <div class="tbl-emp-bar">
+                  <div class="tbl-bar-bg"><div class="tbl-bar-fill" style="width:47%;background:#00838f;"></div></div>
+                  <div class="tbl-emp-num">95</div>
+                </div>
+              </td>
+              <td><span class="tbl-action">Open <i class="fa fa-arrow-right"></i></span></td>
+            </tr>
+            <tr class="row-nl" data-c="nl">
+              <td>
+                <div class="tbl-site">
+                  <div class="tbl-flag">🇳🇱</div>
+                  <div><div class="tbl-city">Weesp</div></div>
+                </div>
+              </td>
+              <td><span style="font-size:12px;font-weight:600;color:var(--nl);">Netherlands</span></td>
+              <td><span class="tbl-type type-ops">Operations</span></td>
+              <td>
+                <div class="tbl-emp-bar">
+                  <div class="tbl-bar-bg"><div class="tbl-bar-fill" style="width:55%;background:#00695c;"></div></div>
+                  <div class="tbl-emp-num">110</div>
+                </div>
+              </td>
+              <td><span class="tbl-action">Open <i class="fa fa-arrow-right"></i></span></td>
+            </tr>
+            <tr class="row-uk" data-c="uk">
+              <td>
+                <div class="tbl-site">
+                  <div class="tbl-flag">🇬🇧</div>
+                  <div><div class="tbl-city">Mansfield</div></div>
+                </div>
+              </td>
+              <td><span style="font-size:12px;font-weight:600;color:var(--uk);">United Kingdom</span></td>
+              <td><span class="tbl-type type-mfg">Manufacturing</span></td>
+              <td>
+                <div class="tbl-emp-bar">
+                  <div class="tbl-bar-bg"><div class="tbl-bar-fill" style="width:37%;background:#c2185b;"></div></div>
+                  <div class="tbl-emp-num">75</div>
+                </div>
+              </td>
+              <td><span class="tbl-action">Open <i class="fa fa-arrow-right"></i></span></td>
+            </tr>
+            <tr class="row-uk" data-c="uk">
+              <td>
+                <div class="tbl-site">
+                  <div class="tbl-flag">🇬🇧</div>
+                  <div><div class="tbl-city">Kirby</div></div>
+                </div>
+              </td>
+              <td><span style="font-size:12px;font-weight:600;color:var(--uk);">United Kingdom</span></td>
+              <td><span class="tbl-type type-dist">Distribution</span></td>
+              <td>
+                <div class="tbl-emp-bar">
+                  <div class="tbl-bar-bg"><div class="tbl-bar-fill" style="width:40%;background:#5e35b1;"></div></div>
+                  <div class="tbl-emp-num">80</div>
+                </div>
+              </td>
+              <td><span class="tbl-action">Open <i class="fa fa-arrow-right"></i></span></td>
+            </tr>
+            <tr class="row-ro" data-c="ro">
+              <td>
+                <div class="tbl-site">
+                  <div class="tbl-flag">🇷🇴</div>
+                  <div><div class="tbl-city">Baia Mare</div></div>
+                </div>
+              </td>
+              <td><span style="font-size:12px;font-weight:600;color:var(--ro);">Romania</span></td>
+              <td><span class="tbl-type type-mfg">Manufacturing</span></td>
+              <td>
+                <div class="tbl-emp-bar">
+                  <div class="tbl-bar-bg"><div class="tbl-bar-fill" style="width:90%;background:#388e3c;"></div></div>
+                  <div class="tbl-emp-num">180</div>
+                </div>
+              </td>
+              <td><span class="tbl-action">Open <i class="fa fa-arrow-right"></i></span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ============================
+       OPTION G — EXPLORER PANEL
+       ============================ -->
+  <section id="optG" class="opt-section">
+    <div class="opt-meta">
+      <span class="opt-badge">Option G</span>
+      <div>
+        <div class="opt-title">Interactive Explorer Panel</div>
+        <div class="opt-desc">Left-side location list + large animated preview panel. <strong>Click any site</strong> to see the preview update with gradient, stats, tags and a CTA. <strong>Best for</strong>: SPFx web part where users want depth — like an Azure Portal experience — without leaving the homepage. SPFx: two sibling React components with lifted state.</div>
+      </div>
+    </div>
+    <div class="optG-wrap">
+      <div class="optG-list">
+        <div class="optG-list-hdr">
+          <div class="optG-list-title">All Locations</div>
+          <div class="optG-list-sub">9 sites · 4 countries</div>
+        </div>
+        <div class="optG-list-items" id="gList"></div>
+      </div>
+      <div class="optG-preview" id="gPreview"></div>
+    </div>
+  </section>
+
+  <!-- ============================
+       OPTION H — DARK TYPOGRAPHY GRID
+       ============================ -->
+  <section id="optH" class="opt-section">
+    <div class="opt-meta">
+      <span class="opt-badge">Option H</span>
+      <div>
+        <div class="opt-title">Dark Typography-First Grid</div>
+        <div class="opt-desc">Ultra-modern <strong>near-black canvas</strong> where city names appear as giant ghosted background text on hover. Country-colour accent bars at top, large emoji flags, and subtle parallax depth. <strong>Best for</strong>: premium brand-forward intranets wanting a design-agency aesthetic. SPFx: purely CSS-driven, zero JS required.</div>
+      </div>
+    </div>
+    <div class="optH-wrap">
+      <div class="optH-top">
+        <div class="optH-top-left">
+          <h2>Our CCM Europe Locations</h2>
+          <p>9 sites across 4 countries — hover to feel the depth</p>
+        </div>
+        <a href="#" class="optH-viewall"><i class="fa fa-globe-europe"></i> View All Sites</a>
+      </div>
+      <div class="optH-grid">
+        <div class="optH-card" onclick="location.href='site-schellerdam-hq.html'">
+          <div class="optH-accent-bar" style="background:linear-gradient(90deg,#3949ab,#7e92d4);"></div>
+          <div class="optH-bg-city">HAMBURG SCHELLERDAM</div>
+          <div class="optH-hq-badge"><i class="fa fa-star"></i> HQ</div>
+          <div class="optH-content">
+            <span class="optH-flag">🇩🇪</span>
+            <div class="optH-city-name">Hamburg Schellerdam</div>
+            <div class="optH-country-lbl">Germany</div>
+            <div class="optH-card-footer">
+              <span class="optH-type-pill">Corporate HQ</span>
+              <span class="optH-emp-lbl"><i class="fa fa-users"></i> 120</span>
+            </div>
+          </div>
+        </div>
+        <div class="optH-card">
+          <div class="optH-accent-bar" style="background:linear-gradient(90deg,#1976d2,#64b5f6);"></div>
+          <div class="optH-bg-city">HAMBURG</div>
+          <div class="optH-content">
+            <span class="optH-flag">🇩🇪</span>
+            <div class="optH-city-name">Hamburg Noeldekestr.</div>
+            <div class="optH-country-lbl">Germany</div>
+            <div class="optH-card-footer">
+              <span class="optH-type-pill">Manufacturing</span>
+              <span class="optH-emp-lbl"><i class="fa fa-users"></i> 200</span>
+            </div>
+          </div>
+        </div>
+        <div class="optH-card">
+          <div class="optH-accent-bar" style="background:linear-gradient(90deg,#7b1fa2,#ce93d8);"></div>
+          <div class="optH-bg-city">KAUFBEUREN</div>
+          <div class="optH-content">
+            <span class="optH-flag">🇩🇪</span>
+            <div class="optH-city-name">Kaufbeuren</div>
+            <div class="optH-country-lbl">Germany</div>
+            <div class="optH-card-footer">
+              <span class="optH-type-pill">Manufacturing</span>
+              <span class="optH-emp-lbl"><i class="fa fa-users"></i> 130</span>
+            </div>
+          </div>
+        </div>
+        <div class="optH-card">
+          <div class="optH-accent-bar" style="background:linear-gradient(90deg,#e64a19,#ff8a65);"></div>
+          <div class="optH-bg-city">WALTERSHAUSEN</div>
+          <div class="optH-content">
+            <span class="optH-flag">🇩🇪</span>
+            <div class="optH-city-name">Waltershausen</div>
+            <div class="optH-country-lbl">Germany</div>
+            <div class="optH-card-footer">
+              <span class="optH-type-pill">Operations</span>
+              <span class="optH-emp-lbl"><i class="fa fa-users"></i> 115</span>
+            </div>
+          </div>
+        </div>
+        <div class="optH-card">
+          <div class="optH-accent-bar" style="background:linear-gradient(90deg,#00838f,#4dd0e1);"></div>
+          <div class="optH-bg-city">KAMPEN</div>
+          <div class="optH-content">
+            <span class="optH-flag">🇳🇱</span>
+            <div class="optH-city-name">Kampen</div>
+            <div class="optH-country-lbl">Netherlands</div>
+            <div class="optH-card-footer">
+              <span class="optH-type-pill">Distribution</span>
+              <span class="optH-emp-lbl"><i class="fa fa-users"></i> 95</span>
+            </div>
+          </div>
+        </div>
+        <div class="optH-card">
+          <div class="optH-accent-bar" style="background:linear-gradient(90deg,#00695c,#4db6ac);"></div>
+          <div class="optH-bg-city">WEESP</div>
+          <div class="optH-content">
+            <span class="optH-flag">🇳🇱</span>
+            <div class="optH-city-name">Weesp</div>
+            <div class="optH-country-lbl">Netherlands</div>
+            <div class="optH-card-footer">
+              <span class="optH-type-pill">Operations</span>
+              <span class="optH-emp-lbl"><i class="fa fa-users"></i> 110</span>
+            </div>
+          </div>
+        </div>
+        <div class="optH-card">
+          <div class="optH-accent-bar" style="background:linear-gradient(90deg,#c2185b,#f48fb1);"></div>
+          <div class="optH-bg-city">MANSFIELD</div>
+          <div class="optH-content">
+            <span class="optH-flag">🇬🇧</span>
+            <div class="optH-city-name">Mansfield</div>
+            <div class="optH-country-lbl">United Kingdom</div>
+            <div class="optH-card-footer">
+              <span class="optH-type-pill">Manufacturing</span>
+              <span class="optH-emp-lbl"><i class="fa fa-users"></i> 75</span>
+            </div>
+          </div>
+        </div>
+        <div class="optH-card">
+          <div class="optH-accent-bar" style="background:linear-gradient(90deg,#5e35b1,#b39ddb);"></div>
+          <div class="optH-bg-city">KIRBY</div>
+          <div class="optH-content">
+            <span class="optH-flag">🇬🇧</span>
+            <div class="optH-city-name">Kirby</div>
+            <div class="optH-country-lbl">United Kingdom</div>
+            <div class="optH-card-footer">
+              <span class="optH-type-pill">Distribution</span>
+              <span class="optH-emp-lbl"><i class="fa fa-users"></i> 80</span>
+            </div>
+          </div>
+        </div>
+        <div class="optH-card">
+          <div class="optH-accent-bar" style="background:linear-gradient(90deg,#388e3c,#81c784);"></div>
+          <div class="optH-bg-city">BAIA MARE</div>
+          <div class="optH-content">
+            <span class="optH-flag">🇷🇴</span>
+            <div class="optH-city-name">Baia Mare</div>
+            <div class="optH-country-lbl">Romania</div>
+            <div class="optH-card-footer">
+              <span class="optH-type-pill">Manufacturing</span>
+              <span class="optH-emp-lbl"><i class="fa fa-users"></i> 180</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================
+       OPTION I — PORTRAIT CAROUSEL
+       ============================ -->
+  <section id="optI" class="opt-section">
+    <div class="opt-meta">
+      <span class="opt-badge">Option I</span>
+      <div>
+        <div class="opt-title">Portrait Snap-Scroll Carousel</div>
+        <div class="opt-desc">A <strong>horizontal scroll-snap carousel</strong> with portrait-format location cards. Arrow buttons navigate, a progress track updates live. Cards hover-lift with big gradient and flag. <strong>Best for</strong>: homepage rows with limited vertical space. SPFx: CSS scroll-snap + <code>useRef.scrollBy()</code> + <code>IntersectionObserver</code> for dots.</div>
+      </div>
+    </div>
+    <div class="optI-wrap">
+      <div class="optI-top">
+        <div class="optI-top-left">
+          <div class="optI-icon"><i class="fa fa-map-marked-alt"></i></div>
+          <div>
+            <h2>Our CCM Europe Locations</h2>
+            <p>Scroll to explore all 9 sites</p>
+          </div>
+        </div>
+        <div class="optI-controls">
+          <button class="optI-arr" id="iPrev"><i class="fa fa-chevron-left"></i></button>
+          <span class="optI-pos-label" id="iPos">1 / 9</span>
+          <button class="optI-arr" id="iNext"><i class="fa fa-chevron-right"></i></button>
+        </div>
+      </div>
+      <div class="optI-track-outer">
+        <div class="optI-track" id="iTrack">
+          <div class="optI-card" onclick="location.href='site-schellerdam-hq.html'">
+            <div class="optI-card-body" style="background:linear-gradient(165deg,#1a237e 0%,#3949ab 55%,#5c6bc0 100%);">
+              <span class="optI-c-flag">🇩🇪</span>
+              <div class="optI-c-bottom">
+                <div class="optI-c-hq">⭐ HQ</div>
+                <div class="optI-c-city">Hamburg Schellerdam</div>
+                <div class="optI-c-country">Germany</div>
+                <div class="optI-c-emp"><i class="fa fa-users"></i> 120 employees</div>
+              </div>
+            </div>
+          </div>
+          <div class="optI-card">
+            <div class="optI-card-body" style="background:linear-gradient(165deg,#0d47a1 0%,#1976d2 60%,#42a5f5 100%);">
+              <span class="optI-c-flag">🇩🇪</span>
+              <div class="optI-c-bottom">
+                <div class="optI-c-city">Hamburg Noeldekestr.</div>
+                <div class="optI-c-country">Germany</div>
+                <div class="optI-c-emp"><i class="fa fa-users"></i> 200 employees</div>
+              </div>
+            </div>
+          </div>
+          <div class="optI-card">
+            <div class="optI-card-body" style="background:linear-gradient(165deg,#4a148c 0%,#7b1fa2 60%,#ab47bc 100%);">
+              <span class="optI-c-flag">🇩🇪</span>
+              <div class="optI-c-bottom">
+                <div class="optI-c-city">Kaufbeuren</div>
+                <div class="optI-c-country">Germany</div>
+                <div class="optI-c-emp"><i class="fa fa-users"></i> 130 employees</div>
+              </div>
+            </div>
+          </div>
+          <div class="optI-card">
+            <div class="optI-card-body" style="background:linear-gradient(165deg,#bf360c 0%,#e64a19 60%,#ff7043 100%);">
+              <span class="optI-c-flag">🇩🇪</span>
+              <div class="optI-c-bottom">
+                <div class="optI-c-city">Waltershausen</div>
+                <div class="optI-c-country">Germany</div>
+                <div class="optI-c-emp"><i class="fa fa-users"></i> 115 employees</div>
+              </div>
+            </div>
+          </div>
+          <div class="optI-card">
+            <div class="optI-card-body" style="background:linear-gradient(165deg,#006064 0%,#00838f 60%,#26c6da 100%);">
+              <span class="optI-c-flag">🇳🇱</span>
+              <div class="optI-c-bottom">
+                <div class="optI-c-city">Kampen</div>
+                <div class="optI-c-country">Netherlands</div>
+                <div class="optI-c-emp"><i class="fa fa-users"></i> 95 employees</div>
+              </div>
+            </div>
+          </div>
+          <div class="optI-card">
+            <div class="optI-card-body" style="background:linear-gradient(165deg,#004d40 0%,#00695c 60%,#26a69a 100%);">
+              <span class="optI-c-flag">🇳🇱</span>
+              <div class="optI-c-bottom">
+                <div class="optI-c-city">Weesp</div>
+                <div class="optI-c-country">Netherlands</div>
+                <div class="optI-c-emp"><i class="fa fa-users"></i> 110 employees</div>
+              </div>
+            </div>
+          </div>
+          <div class="optI-card">
+            <div class="optI-card-body" style="background:linear-gradient(165deg,#880e4f 0%,#c2185b 60%,#f06292 100%);">
+              <span class="optI-c-flag">🇬🇧</span>
+              <div class="optI-c-bottom">
+                <div class="optI-c-city">Mansfield</div>
+                <div class="optI-c-country">United Kingdom</div>
+                <div class="optI-c-emp"><i class="fa fa-users"></i> 75 employees</div>
+              </div>
+            </div>
+          </div>
+          <div class="optI-card">
+            <div class="optI-card-body" style="background:linear-gradient(165deg,#4527a0 0%,#5e35b1 60%,#7e57c2 100%);">
+              <span class="optI-c-flag">🇬🇧</span>
+              <div class="optI-c-bottom">
+                <div class="optI-c-city">Kirby</div>
+                <div class="optI-c-country">United Kingdom</div>
+                <div class="optI-c-emp"><i class="fa fa-users"></i> 80 employees</div>
+              </div>
+            </div>
+          </div>
+          <div class="optI-card">
+            <div class="optI-card-body" style="background:linear-gradient(165deg,#1b5e20 0%,#388e3c 60%,#66bb6a 100%);">
+              <span class="optI-c-flag">🇷🇴</span>
+              <div class="optI-c-bottom">
+                <div class="optI-c-city">Baia Mare</div>
+                <div class="optI-c-country">Romania</div>
+                <div class="optI-c-emp"><i class="fa fa-users"></i> 180 employees</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="optI-progress">
+        <div class="optI-dots" id="iDots">
+          <div class="optI-dot active"></div><div class="optI-dot"></div><div class="optI-dot"></div>
+          <div class="optI-dot"></div><div class="optI-dot"></div><div class="optI-dot"></div>
+          <div class="optI-dot"></div><div class="optI-dot"></div><div class="optI-dot"></div>
+        </div>
+        <span class="optI-count" id="iCount">9 locations</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================
+       OPTION J — EDITORIAL + TICKER
+       ============================ -->
+  <section id="optJ" class="opt-section">
+    <div class="opt-meta">
+      <span class="opt-badge">Option J</span>
+      <div>
+        <div class="opt-title">Editorial Hero + Live Location Ticker</div>
+        <div class="opt-desc">A <strong>dramatic dark editorial hero</strong> features Hamburg HQ with a floating animated flag and key metrics, while a <strong>continuous CSS ticker</strong> at the bottom scrolls through all other sites — hover to pause it. <strong>Best for</strong>: large-screen intranet displays, digital signage, or full-width homepage sections. SPFx: set <code>isFullWidth: true</code> in web part manifest; ticker uses pure CSS animation.</div>
+      </div>
+    </div>
+    <div class="optJ-wrap">
+      <div class="optJ-hero">
+        <div class="optJ-left">
+          <div class="optJ-kicker">Our European Presence</div>
+          <h2 class="optJ-headline">Where CCM <em>Europe</em><br>Comes Alive</h2>
+          <p class="optJ-sub">9 strategically placed sites — from manufacturing plants to distribution hubs — forming one connected European network of 1,105 people.</p>
+          <div class="optJ-meta-row">
+            <div class="optJ-meta-stat"><strong>9</strong><span>Locations</span></div>
+            <div class="optJ-meta-stat"><strong>4</strong><span>Countries</span></div>
+            <div class="optJ-meta-stat"><strong>1,105</strong><span>Employees</span></div>
+          </div>
+          <div class="optJ-cta-row">
+            <a href="site-schellerdam-hq.html" class="optJ-cta-primary"><i class="fa fa-building"></i> Visit HQ Site</a>
+            <a href="#" class="optJ-cta-ghost"><i class="fa fa-globe-europe"></i> All Locations</a>
+          </div>
+        </div>
+        <div class="optJ-right">
+          <span class="optJ-flag-anim">🇩🇪</span>
+          <div class="optJ-right-city">Hamburg Schellerdam</div>
+          <div class="optJ-right-badge"><i class="fa fa-star"></i> Corporate HQ</div>
+          <div class="optJ-right-meta">
+            <div class="optJ-right-met"><strong>120</strong><span>People</span></div>
+            <div class="optJ-right-met"><strong>4</strong><span>Floors</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="optJ-ticker-bar">
+        <div class="optJ-t-label"><i class="fa fa-satellite-dish"></i>&nbsp; Other Sites</div>
+        <div class="optJ-t-viewport">
+          <div class="optJ-t-inner">
+            <div class="optJ-t-item"><span class="tj-flag">🇩🇪</span>Hamburg Noeldekestr.<span class="tj-emp">200 emp</span></div>
+            <span class="optJ-t-sep">·</span>
+            <div class="optJ-t-item"><span class="tj-flag">🇩🇪</span>Kaufbeuren<span class="tj-emp">130 emp</span></div>
+            <span class="optJ-t-sep">·</span>
+            <div class="optJ-t-item"><span class="tj-flag">🇩🇪</span>Waltershausen<span class="tj-emp">115 emp</span></div>
+            <span class="optJ-t-sep">·</span>
+            <div class="optJ-t-item"><span class="tj-flag">🇳🇱</span>Kampen<span class="tj-emp">95 emp</span></div>
+            <span class="optJ-t-sep">·</span>
+            <div class="optJ-t-item"><span class="tj-flag">🇳🇱</span>Weesp<span class="tj-emp">110 emp</span></div>
+            <span class="optJ-t-sep">·</span>
+            <div class="optJ-t-item"><span class="tj-flag">🇬🇧</span>Mansfield<span class="tj-emp">75 emp</span></div>
+            <span class="optJ-t-sep">·</span>
+            <div class="optJ-t-item"><span class="tj-flag">🇬🇧</span>Kirby<span class="tj-emp">80 emp</span></div>
+            <span class="optJ-t-sep">·</span>
+            <div class="optJ-t-item"><span class="tj-flag">🇷🇴</span>Baia Mare<span class="tj-emp">180 emp</span></div>
+            <span class="optJ-t-sep">·</span>
+            <!-- Duplicate for seamless loop -->
+            <div class="optJ-t-item"><span class="tj-flag">🇩🇪</span>Hamburg Noeldekestr.<span class="tj-emp">200 emp</span></div>
+            <span class="optJ-t-sep">·</span>
+            <div class="optJ-t-item"><span class="tj-flag">🇩🇪</span>Kaufbeuren<span class="tj-emp">130 emp</span></div>
+            <span class="optJ-t-sep">·</span>
+            <div class="optJ-t-item"><span class="tj-flag">🇩🇪</span>Waltershausen<span class="tj-emp">115 emp</span></div>
+            <span class="optJ-t-sep">·</span>
+            <div class="optJ-t-item"><span class="tj-flag">🇳🇱</span>Kampen<span class="tj-emp">95 emp</span></div>
+            <span class="optJ-t-sep">·</span>
+            <div class="optJ-t-item"><span class="tj-flag">🇳🇱</span>Weesp<span class="tj-emp">110 emp</span></div>
+            <span class="optJ-t-sep">·</span>
+            <div class="optJ-t-item"><span class="tj-flag">🇬🇧</span>Mansfield<span class="tj-emp">75 emp</span></div>
+            <span class="optJ-t-sep">·</span>
+            <div class="optJ-t-item"><span class="tj-flag">🇬🇧</span>Kirby<span class="tj-emp">80 emp</span></div>
+            <span class="optJ-t-sep">·</span>
+            <div class="optJ-t-item"><span class="tj-flag">🇷🇴</span>Baia Mare<span class="tj-emp">180 emp</span></div>
+            <span class="optJ-t-sep">·</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================
+       SPFx IMPLEMENTATION GUIDE
+       ============================ -->
+  <div class="spfx-guide">
+    <div class="spfx-guide-hdr" id="spfxToggle">
+      <div class="spfx-guide-hdr-icon"><i class="fa fa-code"></i></div>
+      <div class="spfx-guide-hdr-text">
+        <h2>SPFx Implementation Guide</h2>
+        <p>How to port any design concept into a SharePoint Framework web part — click to expand</p>
+      </div>
+      <i class="fa fa-chevron-down spfx-guide-hdr-toggle"></i>
+    </div>
+    <div class="spfx-guide-body" id="spfxBody">
+      <div class="spfx-grid">
+        <div class="spfx-card">
+          <div class="spfx-card-hdr"><span class="spfx-card-opt">A · B · C · D</span><span class="spfx-card-title">Gradient Card Layouts</span></div>
+          <div class="spfx-card-body"><ul>
+            <li>Create a React SPFx web part. One <code>LocationsGrid.tsx</code> component, map over locations array returned by PnP.</li>
+            <li>Store data in a SharePoint List <code>CCM_Locations</code> — see schema below.</li>
+            <li>Fetch with <code>@pnp/sp</code>: <code>sp.web.lists.getByTitle('CCM_Locations').items.getAll()</code></li>
+            <li>Gradients stored as two columns (GradientFrom, GradientTo) and interpolated in JSX: <code>style={{background: `linear-gradient(135deg,${item.GradientFrom},${item.GradientTo})`}}</code></li>
+            <li>CSS custom properties (<code>--primary</code>, etc.) work natively in SPFx CSS Modules — wrap in <code>:global()</code> if needed.</li>
+          </ul></div>
+        </div>
+        <div class="spfx-card">
+          <div class="spfx-card-hdr"><span class="spfx-card-opt">E · F</span><span class="spfx-card-title">Split Panel &amp; Data Table</span></div>
+          <div class="spfx-card-body"><ul>
+            <li>Option E sidebar totals: compute from fetched array using <code>Array.reduce</code> inside <code>useMemo</code>.</li>
+            <li>Option F: use Fluent UI <code>DetailsList</code> component for built-in sort/filter — maps directly to SharePoint data.</li>
+            <li>Country filter: <code>useState&lt;string&gt;('all')</code> + <code>items.filter(i =&gt; filter === 'all' || i.CountryCode === filter)</code>.</li>
+            <li>Left-border accents: define a <code>countryStyles</code> map object, apply via <code>className={styles[item.CountryCode]}</code>.</li>
+          </ul></div>
+        </div>
+        <div class="spfx-card">
+          <div class="spfx-card-hdr"><span class="spfx-card-opt">G</span><span class="spfx-card-title">Explorer Panel</span></div>
+          <div class="spfx-card-body"><ul>
+            <li>Two sibling components: <code>&lt;LocationList /&gt;</code> and <code>&lt;LocationPreview /&gt;</code>, lift <code>selectedId</code> state to parent.</li>
+            <li>Pass <code>onSelect(id)</code> and <code>selectedId</code> as props — no state management library needed.</li>
+            <li>Preview transitions: CSS <code>transition: background 0.4s</code> on the header div — browser handles the animation.</li>
+            <li>Deep-link CTA: use <code>this.context.pageContext.web.absoluteUrl + '/SitePage'</code> for site page links.</li>
+            <li>Responsive: collapse list to a horizontal tabs on mobile using a CSS <code>@media</code> query.</li>
+          </ul></div>
+        </div>
+        <div class="spfx-card">
+          <div class="spfx-card-hdr"><span class="spfx-card-opt">H</span><span class="spfx-card-title">Dark Typography Grid</span></div>
+          <div class="spfx-card-body"><ul>
+            <li>Purely CSS-driven — no JavaScript needed in the component beyond rendering the list.</li>
+            <li>The ghosted background city text uses <code>opacity: 0.04</code> on a <code>::before</code> pseudo-element with <code>content: attr(data-city)</code>.</li>
+            <li>SPFx: set the web part theme to dark/custom via <code>ThemeProvider</code> if needed, or override background inline.</li>
+            <li>Accent top bar uses inline style with gradient from list columns — no hardcoded colours in the component.</li>
+          </ul></div>
+        </div>
+        <div class="spfx-card">
+          <div class="spfx-card-hdr"><span class="spfx-card-opt">I</span><span class="spfx-card-title">Portrait Carousel</span></div>
+          <div class="spfx-card-body"><ul>
+            <li>Attach a <code>useRef</code> to the scroll track div. Arrow buttons call <code>trackRef.current.scrollBy()</code>.</li>
+            <li>Use <code>IntersectionObserver</code> on each card (threshold: 0.6) to detect the active card and update dot state.</li>
+            <li>CSS <code>scroll-snap-type: x mandatory</code> and <code>scroll-snap-align: start</code> handle the snapping — no JS snap logic needed.</li>
+            <li>Note: CSS scroll-snap is not supported in IE11. For SharePoint modern pages this is fine.</li>
+          </ul></div>
+        </div>
+        <div class="spfx-card">
+          <div class="spfx-card-hdr"><span class="spfx-card-opt">J</span><span class="spfx-card-title">Editorial Hero + Ticker</span></div>
+          <div class="spfx-card-body"><ul>
+            <li>Set <code>"isFullWidth": true</code> in the web part manifest JSON for an edge-to-edge editorial look.</li>
+            <li>Ticker: duplicate the items array in JSX (<code>[...items, ...items]</code>) and animate with <code>@keyframes translateX(-50%)</code> — no JS needed.</li>
+            <li>Pause on hover: CSS <code>animation-play-state: paused</code> on <code>:hover</code> on the inner container.</li>
+            <li>The floating flag animation (<code>jFloat</code>) requires no <code>transform</code> on ancestor elements — check your SPFx zone wrapper.</li>
+            <li>Hero content (HQ data) can be hardcoded or fetched from a single filtered list item where <code>IsHQ = true</code>.</li>
+          </ul></div>
+        </div>
+      </div>
+      <div style="margin-bottom:20px;">
+        <div style="font-size:13px;font-weight:800;color:var(--primary);margin-bottom:10px;"><i class="fa fa-database" style="margin-right:6px;color:var(--bright);"></i>SharePoint List Schema — <code style="font-weight:400;background:#eef2f8;color:var(--accent);padding:1px 6px;border-radius:4px;">CCM_Locations</code></div>
+        <div class="spfx-code"><span class="sc-cm">// SharePoint List: CCM_Locations (visible to all authenticated users)</span>
+<span class="sc-kw">const</span> listColumns = {
+  Title:        <span class="sc-str">"Single line of text"</span>,  <span class="sc-cm">// City display name</span>
+  Country:      <span class="sc-str">"Choice"</span>,               <span class="sc-cm">// Germany | Netherlands | United Kingdom | Romania</span>
+  CountryCode:  <span class="sc-str">"Single line of text"</span>,  <span class="sc-cm">// DE | NL | UK | RO</span>
+  FlagEmoji:    <span class="sc-str">"Single line of text"</span>,  <span class="sc-cm">// 🇩🇪 — stored as Unicode emoji string</span>
+  SiteType:     <span class="sc-str">"Choice"</span>,               <span class="sc-cm">// HQ | Manufacturing | Distribution | Operations</span>
+  Employees:    <span class="sc-str">"Number"</span>,
+  GradientFrom: <span class="sc-str">"Single line of text"</span>,  <span class="sc-cm">// e.g. #1a237e</span>
+  GradientTo:   <span class="sc-str">"Single line of text"</span>,  <span class="sc-cm">// e.g. #5c6bc0</span>
+  SitePageURL:  <span class="sc-str">"Hyperlink"</span>,            <span class="sc-cm">// deep-link to site intranet page</span>
+  IsHQ:         <span class="sc-str">"Yes/No"</span>,
+  SortOrder:    <span class="sc-str">"Number"</span>,               <span class="sc-cm">// controls display sequence</span>
+  Description:  <span class="sc-str">"Multiple lines of text"</span> <span class="sc-cm">// used in Option G preview panel</span>
+};</div>
+      </div>
+      <div>
+        <div style="font-size:13px;font-weight:800;color:var(--primary);margin-bottom:10px;"><i class="fa fa-check-circle" style="margin-right:6px;color:var(--bright);"></i>Compatibility Matrix</div>
+        <div class="spfx-compat-row">
+          <span class="spfx-compat-chip spfx-compat-ok"><i class="fa fa-check"></i> SPFx 1.18+</span>
+          <span class="spfx-compat-chip spfx-compat-ok"><i class="fa fa-check"></i> React 17/18</span>
+          <span class="spfx-compat-chip spfx-compat-ok"><i class="fa fa-check"></i> CSS Modules</span>
+          <span class="spfx-compat-chip spfx-compat-ok"><i class="fa fa-check"></i> Modern Sites only</span>
+          <span class="spfx-compat-chip spfx-compat-ok"><i class="fa fa-check"></i> No jQuery</span>
+          <span class="spfx-compat-chip spfx-compat-ok"><i class="fa fa-check"></i> Segoe UI native</span>
+          <span class="spfx-compat-chip spfx-compat-ok"><i class="fa fa-check"></i> Font Awesome via npm</span>
+          <span class="spfx-compat-chip spfx-compat-ok"><i class="fa fa-check"></i> PnPjs for data</span>
+          <span class="spfx-compat-chip spfx-compat-warn"><i class="fa fa-exclamation-circle"></i> CSS scroll-snap (IE11 ✗)</span>
+          <span class="spfx-compat-chip spfx-compat-warn"><i class="fa fa-exclamation-circle"></i> 3D transforms (Edge legacy ✗)</span>
+          <span class="spfx-compat-chip spfx-compat-warn"><i class="fa fa-exclamation-circle"></i> backdrop-filter (partial IE/Edge support)</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+/* ============================================================
+   TAB SWITCHING
+   ============================================================ */
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.opt-section').forEach(s => s.classList.remove('active'));
+    btn.classList.add('active');
+    const target = document.getElementById(btn.dataset.target);
+    if (target) target.classList.add('active');
+  });
+});
+
+/* ============================================================
+   OPTION D — BENTO FILTER
+   ============================================================ */
+document.querySelectorAll('.optD-f-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.optD-f-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const filter = btn.dataset.filter;
+    document.querySelectorAll('#bentogrid .bento-card').forEach(card => {
+      if (filter === 'all' || card.dataset.country === filter) {
+        card.style.display = '';
+      } else {
+        card.style.display = 'none';
+      }
+    });
+    // Always show the HQ card when filter is DE or ALL
+    const hqCard = document.querySelector('.bento-hq');
+    if (hqCard) {
+      hqCard.style.display = (filter === 'all' || filter === 'de') ? '' : 'none';
+    }
+  });
+});
+
+/* ============================================================
+   OPTION F — TABLE FILTER
+   ============================================================ */
+document.querySelectorAll('.optF-fb').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.optF-fb').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const filter = btn.dataset.f;
+    document.querySelectorAll('#optF-tbl tbody tr').forEach(row => {
+      row.style.display = (filter === 'all' || row.dataset.c === filter) ? '' : 'none';
+    });
+  });
+});
+
+/* ============================================================
+   OPTION G — INTERACTIVE EXPLORER PANEL
+   ============================================================ */
+const gLocations = [
+  { city: 'Hamburg Schellerdam', country: 'Germany', flag: '🇩🇪', type: 'Corporate HQ', employees: 120, s1v: '4', s1l: 'Floors', s2v: '1994', s2l: 'Founded', s3v: '6+', s3l: 'Departments', gradient: 'linear-gradient(135deg,#1a237e 0%,#3949ab 60%,#5c6bc0 100%)', isHQ: true,  desc: 'The European headquarters, housing corporate management, HR, Finance, Legal, IT and Sales leadership teams.', tags: ['Management','IT','Finance','HR','Legal'], url: 'site-schellerdam-hq.html' },
+  { city: 'Hamburg Noeldekestr.', country: 'Germany', flag: '🇩🇪', type: 'Manufacturing', employees: 200, s1v: '5', s1l: 'Prod. Lines', s2v: 'ISO', s2l: '9001', s3v: '24/5', s3l: 'Operations', gradient: 'linear-gradient(135deg,#0d47a1 0%,#1976d2 60%,#42a5f5 100%)', isHQ: false, desc: "CCM's largest German manufacturing facility, producing core product lines for the European market.", tags: ['Production','Quality','Engineering'], url: '#' },
+  { city: 'Kaufbeuren', country: 'Germany', flag: '🇩🇪', type: 'Manufacturing', employees: 130, s1v: '3', s1l: 'Prod. Lines', s2v: 'ISO', s2l: '14001', s3v: '2015', s3l: 'Opened', gradient: 'linear-gradient(135deg,#4a148c 0%,#7b1fa2 60%,#ab47bc 100%)', isHQ: false, desc: 'Specialised manufacturing hub for precision components, operating to ISO 14001 environmental standards.', tags: ['Production','EHS','Engineering'], url: '#' },
+  { city: 'Waltershausen', country: 'Germany', flag: '🇩🇪', type: 'Operations', employees: 115, s1v: '2', s1l: 'Warehouses', s2v: '2003', s2l: 'Founded', s3v: 'DACH', s3l: 'Region', gradient: 'linear-gradient(135deg,#bf360c 0%,#e64a19 60%,#ff7043 100%)', isHQ: false, desc: 'Operations centre managing logistics, warehousing and domestic distribution across Central Germany.', tags: ['Logistics','Operations','Warehouse'], url: '#' },
+  { city: 'Kampen', country: 'Netherlands', flag: '🇳🇱', type: 'Distribution', employees: 95, s1v: '1', s1l: 'Dist. Hub', s2v: 'Benelux', s2l: 'Coverage', s3v: '2010', s3l: 'Opened', gradient: 'linear-gradient(135deg,#006064 0%,#00838f 60%,#26c6da 100%)', isHQ: false, desc: 'Primary Benelux distribution hub, serving the Netherlands, Belgium and Luxembourg markets efficiently.', tags: ['Distribution','Logistics'], url: '#' },
+  { city: 'Weesp', country: 'Netherlands', flag: '🇳🇱', type: 'Operations', employees: 110, s1v: '2', s1l: 'Offices', s2v: '2008', s2l: 'Founded', s3v: 'NL', s3l: 'Accounts', gradient: 'linear-gradient(135deg,#004d40 0%,#00695c 60%,#26a69a 100%)', isHQ: false, desc: 'NL operations team managing customer service, order management and regional accounts for the Dutch market.', tags: ['Customer Service','Operations'], url: '#' },
+  { city: 'Mansfield', country: 'United Kingdom', flag: '🇬🇧', type: 'Manufacturing', employees: 75, s1v: '2', s1l: 'Prod. Lines', s2v: 'ISO', s2l: '9001', s3v: '1999', s3l: 'Founded', gradient: 'linear-gradient(135deg,#880e4f 0%,#c2185b 60%,#f06292 100%)', isHQ: false, desc: 'CCM UK manufacturing base providing localised production capacity for British and Irish markets.', tags: ['Production','Quality'], url: '#' },
+  { city: 'Kirby', country: 'United Kingdom', flag: '🇬🇧', type: 'Distribution', employees: 80, s1v: '1', s1l: 'Warehouse', s2v: 'UK', s2l: 'Hub', s3v: '2012', s3l: 'Opened', gradient: 'linear-gradient(135deg,#4527a0 0%,#5e35b1 60%,#7e57c2 100%)', isHQ: false, desc: 'UK distribution centre serving all British regions, with direct supply chain links to Mansfield manufacturing.', tags: ['Distribution','Logistics'], url: '#' },
+  { city: 'Baia Mare', country: 'Romania', flag: '🇷🇴', type: 'Manufacturing', employees: 180, s1v: '6', s1l: 'Prod. Lines', s2v: 'Largest', s2l: 'Site', s3v: 'Export', s3l: 'Focus', gradient: 'linear-gradient(135deg,#1b5e20 0%,#388e3c 60%,#66bb6a 100%)', isHQ: false, desc: "CCM's largest single manufacturing facility by headcount, specialising in high-volume production for export.", tags: ['Production','Export','Engineering'], url: '#' }
+];
+
+function renderGExplorer() {
+  const list    = document.getElementById('gList');
+  const preview = document.getElementById('gPreview');
+  if (!list || !preview) return;
+  gLocations.forEach((loc, i) => {
+    const item = document.createElement('div');
+    item.className = 'optG-item' + (i === 0 ? ' active' : '');
+    item.innerHTML = `
+      <div class="optG-item-flag">${loc.flag}</div>
+      <div class="optG-item-info">
+        <div class="optG-item-city">${loc.city}</div>
+        <div class="optG-item-type">${loc.type} &middot; ${loc.country}</div>
+      </div>
+      <div class="optG-item-arrow"><i class="fa fa-chevron-right"></i></div>`;
+    item.addEventListener('click', () => {
+      document.querySelectorAll('.optG-item').forEach(el => el.classList.remove('active'));
+      item.classList.add('active');
+      updateGPreview(loc);
+    });
+    list.appendChild(item);
+  });
+  updateGPreview(gLocations[0]);
+}
+
+function updateGPreview(loc) {
+  const preview = document.getElementById('gPreview');
+  if (!preview) return;
+  const hqBadge = loc.isHQ ? `<div class="optG-ph-hq"><i class="fa fa-star"></i> Corporate HQ</div>` : '';
+  const tagsHtml = loc.tags.map(t => `<span class="optG-tag"><i class="fa fa-circle" style="font-size:5px"></i> ${t}</span>`).join('');
+  preview.innerHTML = `
+    <div class="optG-preview-head" style="background:${loc.gradient}">
+      <div class="optG-ph-flag">${loc.flag}</div>
+      ${hqBadge}
+      <div class="optG-ph-city">${loc.city}</div>
+      <div class="optG-ph-sub"><i class="fa fa-map-marker-alt"></i> ${loc.country} &nbsp;&middot;&nbsp; ${loc.type}</div>
+    </div>
+    <div class="optG-preview-body">
+      <div class="optG-stats-row">
+        <div class="optG-stat"><span class="sv">${loc.employees}</span><span class="sl">Employees</span></div>
+        <div class="optG-stat"><span class="sv">${loc.s1v}</span><span class="sl">${loc.s1l}</span></div>
+        <div class="optG-stat"><span class="sv">${loc.s2v}</span><span class="sl">${loc.s2l}</span></div>
+      </div>
+      <div class="optG-tags">${tagsHtml}</div>
+      <div class="optG-desc">${loc.desc}</div>
+      <a href="${loc.url}" class="optG-cta"><i class="fa fa-building"></i> Open Site Page &nbsp;<i class="fa fa-arrow-right"></i></a>
+    </div>`;
+}
+
+/* ============================================================
+   OPTION I — CAROUSEL ARROWS & PROGRESS DOTS
+   ============================================================ */
+function initICarousel() {
+  const track = document.getElementById('iTrack');
+  const dots  = document.querySelectorAll('.optI-dot');
+  const pos   = document.getElementById('iPos');
+  if (!track) return;
+  const CARD_W = 202;
+  let current  = 0;
+
+  function goTo(idx) {
+    current = Math.max(0, Math.min(8, idx));
+    track.scrollTo({ left: current * CARD_W, behavior: 'smooth' });
+    dots.forEach((d, i) => d.classList.toggle('active', i === current));
+    if (pos) pos.textContent = (current + 1) + ' / 9';
+  }
+
+  const prevBtn = document.getElementById('iPrev');
+  const nextBtn = document.getElementById('iNext');
+  if (prevBtn) prevBtn.addEventListener('click', () => goTo(current - 1));
+  if (nextBtn) nextBtn.addEventListener('click', () => goTo(current + 1));
+
+  track.addEventListener('scroll', () => {
+    const idx = Math.round(track.scrollLeft / CARD_W);
+    dots.forEach((d, i) => d.classList.toggle('active', i === idx));
+    if (pos) pos.textContent = (idx + 1) + ' / 9';
+    current = idx;
+  }, { passive: true });
+}
+
+/* ============================================================
+   SPFx GUIDE ACCORDION TOGGLE
+   ============================================================ */
+const spfxToggle = document.getElementById('spfxToggle');
+const spfxBody   = document.getElementById('spfxBody');
+if (spfxToggle && spfxBody) {
+  spfxToggle.addEventListener('click', () => {
+    spfxToggle.classList.toggle('open');
+    spfxBody.classList.toggle('open');
+  });
+}
+
+/* Init all dynamic components */
+renderGExplorer();
+initICarousel();
+</script>
+</body>
+</html>
