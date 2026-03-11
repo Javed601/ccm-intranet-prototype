@@ -85,7 +85,7 @@
   /* Rightbar */
   .rightbar{position:fixed;top:calc(var(--topbar-h) + 20px);right:18px;width:var(--rightbar-w);bottom:18px;background:transparent;padding:8px;overflow:auto}
   .quicklinks{display:grid;grid-template-columns:1fr;gap:8px}
-  .ql-item{background:var(--card);padding:12px;border-radius:8px;display:flex;gap:10px;align-items:center;box-shadow:var(--shadow);cursor:pointer}
+  .ql-item{background:var(--card);padding:12px;border-radius:8px;display:flex;gap:10px;align-items:center;box-shadow:var(--shadow);cursor:pointer;text-decoration:none;color:inherit}
   .ql-icon{width:44px;height:44px;border-radius:8px;display:flex;align-items:center;justify-content:center;background:#eaf6ff;color:var(--accent);font-size:18px}
   .ql-label{font-weight:700;font-size:13px}
   .ql-meta{font-size:12px;color:var(--muted)}
@@ -779,7 +779,9 @@ function renderQuickLinks(){
     const allowed = q.allowedGroups.some(g=>userGroups.includes(g));
     const regionOk = q.regions.includes('EU') || q.regions.includes(currentRegion);
     if(!allowed || !regionOk) return;
-    const el = document.createElement('div'); el.className='ql-item';
+    const el = document.createElement('a'); el.className='ql-item';
+    el.href = q.url || '#';
+    if(q.url && q.url !== '#' && q.url.startsWith('http')) el.target = '_blank';
     el.innerHTML = `
       <div class="ql-icon" style="background:${q.color||'#eaf6ff'};color:${q.iconColor||'#00509e'}">
         <i class="fa ${q.icon}"></i>
