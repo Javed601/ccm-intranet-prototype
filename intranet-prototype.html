@@ -524,7 +524,7 @@
 
     <section class="section" id="newsSection">
       <div class="card">
-        <div class="card-header"><i class="fa fa-newspaper"></i><h3>Company News & Announcements</h3><div style="margin-left:auto" class="muted">Showing: <span id="currentFilter">Global / EN</span></div></div>
+        <div class="card-header"><i class="fa fa-newspaper"></i><h3>Company News & Announcements</h3></div>
         <div class="news-list" id="newsList">
           <!-- news items injected by JS -->
         </div>
@@ -728,7 +728,6 @@ function renderNews(){
       </div>`;
     list.appendChild(el);
   });
-  document.getElementById('currentFilter').textContent = currentRegion + ' / ' + currentLang;
 }
 
 function renderEHS(){
