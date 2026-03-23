@@ -6,6 +6,7 @@
 <title>CCM Europe — Intranet Prototype</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
+  .fi { border-radius: 2px; width: 1.3em; height: 1em; display: inline-block; vertical-align: middle; }
   :root{
     /* ── CCM Europe Brand Palette (from Design System) ── */
     --primary:#003366;          /* CCM Blue */
@@ -51,7 +52,7 @@
   .topbar-select option{background:#003366;color:#fff}
   /* ── Language pill switcher ── */
   .lang-switcher{display:flex;gap:2px;background:rgba(255,255,255,.12);border-radius:20px;padding:3px;align-items:center}
-  .lang-btn{background:transparent;border:none;color:rgba(255,255,255,.75);padding:5px 10px;border-radius:16px;cursor:pointer;font-size:12px;font-family:var(--font);font-weight:600;transition:background .18s,color .18s;white-space:nowrap;line-height:1}
+  .lang-btn{background:transparent;border:none;color:rgba(255,255,255,.75);padding:5px 10px;border-radius:16px;cursor:pointer;font-size:12px;font-family:var(--font);font-weight:600;transition:background .18s,color .18s;white-space:nowrap;line-height:1;display:inline-flex;align-items:center;gap:5px}
   .lang-btn:hover{background:rgba(255,255,255,.18);color:#fff}
   .lang-btn.active{background:#fff;color:var(--primary);box-shadow:0 1px 4px rgba(0,0,0,.15)}
 
@@ -71,16 +72,28 @@
   .card-header{display:flex;align-items:center;gap:10px;margin-bottom:10px}
   .card-header h3{margin:0;font-size:15px;color:var(--primary)}
 
-  /* News list */
-  .news-list{display:flex;flex-direction:column;gap:10px}
-  .news-item{display:flex;gap:14px;padding:14px;border-radius:8px;border:1px solid var(--border);cursor:pointer;transition:box-shadow .15s}
-  .news-item:hover{box-shadow:0 4px 14px rgba(0,0,0,.08)}
-  .news-thumb{width:70px;height:60px;border-radius:8px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:22px}
-  .news-body{flex:1;min-width:0}
-  .news-cat{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px}
-  .news-title{font-size:13px;font-weight:700;line-height:1.35;margin-bottom:4px;color:var(--text)}
-  .news-excerpt{font-size:12px;color:var(--muted);line-height:1.4}
-  .news-meta{font-size:11px;color:var(--muted);margin-top:5px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  /* News Cards */
+  .news-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  .news-card{border-radius:10px;overflow:hidden;cursor:pointer;transition:transform .15s,box-shadow .15s;background:var(--card);display:flex;flex-direction:column;box-shadow:0 2px 8px rgba(0,0,0,.07);border:1px solid var(--border)}
+  .news-card:hover{transform:translateY(-3px);box-shadow:0 8px 22px rgba(0,53,145,.13)}
+  .news-card-img{width:100%;height:130px;object-fit:cover;display:block;flex-shrink:0}
+  .news-card-stripe{height:5px;flex-shrink:0}
+  .news-card-inner{padding:13px 14px 10px;flex:1;display:flex;flex-direction:column}
+  .news-card-top{display:flex;align-items:center;gap:9px;margin-bottom:8px}
+  .news-card-icon{width:32px;height:32px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+  .news-card-cat{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em}
+  .news-card-title{font-size:13px;font-weight:700;line-height:1.35;color:var(--text);margin-bottom:6px}
+  .news-card-excerpt{font-size:12px;color:var(--muted);line-height:1.45;flex:1}
+  .news-card-footer{margin-top:10px;padding-top:8px;border-top:1px solid var(--border);display:flex;align-items:center;gap:8px;font-size:11px;color:var(--muted);flex-wrap:wrap}
+  .news-card-footer .tag{font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;margin-left:auto}
+  /* Featured card — first item */
+  .news-card.featured{grid-column:1/-1;flex-direction:row;max-height:210px}
+  .news-card.featured .news-card-feat-img{width:280px;min-width:280px;height:210px;object-fit:cover;flex-shrink:0}
+  .news-card.featured .news-card-feat-body{flex:1;display:flex;flex-direction:column;min-width:0}
+  .news-card.featured .news-card-stripe{height:5px}
+  .news-card.featured .news-card-inner{padding:16px 18px;flex:1}
+  .news-card.featured .news-card-title{font-size:15px;font-weight:800;margin-bottom:7px}
+  .news-card.featured .news-card-excerpt{font-size:13px}
   .tag{font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px}
   /* Rightbar */
   .rightbar{position:fixed;top:calc(var(--topbar-h) + 20px);right:18px;width:var(--rightbar-w);bottom:18px;background:transparent;padding:8px;overflow:auto}
@@ -451,10 +464,10 @@
         <option value="Commercial">Commercial</option>
       </select>
       <div class="lang-switcher" id="langSwitcher" title="Switch language">
-        <button class="lang-btn active" data-lang="EN">🇬🇧 EN</button>
-        <button class="lang-btn" data-lang="DE">🇩🇪 DE</button>
-        <button class="lang-btn" data-lang="NL">🇳🇱 NL</button>
-        <button class="lang-btn" data-lang="RO">🇷🇴 RO</button>
+        <button class="lang-btn active" data-lang="EN" title="English"><svg width="22" height="15" viewBox="0 0 22 15" style="border-radius:2px;vertical-align:middle"><rect width="22" height="15" fill="#012169"/><path d="M0,0 L22,15 M22,0 L0,15" stroke="#fff" stroke-width="4"/><path d="M0,0 L22,15 M22,0 L0,15" stroke="#C8102E" stroke-width="2"/><rect x="9" width="4" height="15" fill="#fff"/><rect y="5.5" width="22" height="4" fill="#fff"/><rect x="10" width="2" height="15" fill="#C8102E"/><rect y="6.5" width="22" height="2" fill="#C8102E"/></svg> EN</button>
+        <button class="lang-btn" data-lang="DE" title="Deutsch"><svg width="22" height="15" viewBox="0 0 22 15" style="border-radius:2px;vertical-align:middle"><rect width="22" height="5" fill="#000"/><rect y="5" width="22" height="5" fill="#DD0000"/><rect y="10" width="22" height="5" fill="#FFCE00"/></svg> DE</button>
+        <button class="lang-btn" data-lang="NL" title="Nederlands"><svg width="22" height="15" viewBox="0 0 22 15" style="border-radius:2px;vertical-align:middle"><rect width="22" height="5" fill="#AE1C28"/><rect y="5" width="22" height="5" fill="#fff"/><rect y="10" width="22" height="5" fill="#21468B"/></svg> NL</button>
+        <button class="lang-btn" data-lang="RO" title="Română"><svg width="22" height="15" viewBox="0 0 22 15" style="border-radius:2px;vertical-align:middle"><rect width="7" height="15" fill="#002B7F"/><rect x="7" width="8" height="15" fill="#FCD116"/><rect x="15" width="7" height="15" fill="#CE1126"/></svg> RO</button>
       </div>
     </div>
   </div>
@@ -476,7 +489,7 @@
       <div class="mission-text-panel">
         <div class="mission-tag">Our Mission</div>
 
-        <h2>Building a Better<br>Future, <em>Together.</em></h2>
+        <h2>Let's Build <br>A Better, <em>Tomorrow.</em></h2>
 
         <p>At CCM Europe, we deliver innovative, sustainable sealing solutions creating lasting value for our customers, employees, and communities &mdash; with safety and inclusion at the core of everything we do.</p>
 
@@ -524,9 +537,13 @@
 
     <section class="section" id="newsSection">
       <div class="card">
-        <div class="card-header"><i class="fa fa-newspaper"></i><h3>Company News & Announcements</h3></div>
-        <div class="news-list" id="newsList">
-          <!-- news items injected by JS -->
+        <div class="card-header" style="border-bottom:2px solid var(--bright);padding-bottom:12px;margin-bottom:14px">
+          <i class="fa fa-newspaper" style="color:var(--bright);font-size:18px"></i>
+          <h3 style="font-size:16px">Company News &amp; Announcements</h3>
+          <a href="#" style="margin-left:auto;font-size:12px;color:var(--accent);font-weight:600;display:flex;align-items:center;gap:4px;text-decoration:none">View all <i class="fa fa-arrow-right" style="font-size:10px"></i></a>
+        </div>
+        <div class="news-grid" id="newsList">
+          <!-- news cards injected by JS -->
         </div>
       </div>
     </section>
@@ -560,61 +577,92 @@ const newsItems = [
    title:{EN:'CCM Europe Achieves Carbon-Neutral Operations at Breda',DE:'CCM Europa: CO₂-neutraler Betrieb in Breda',NL:'CCM Europa bereikt CO₂-neutraliteit in Breda',RO:'CCM Europa atinge neutralitatea CO₂ la Breda'},
    excerpt:{EN:'Breda plant is now fully carbon-neutral — a major milestone in our 2030 sustainability roadmap.',NL:'Onze fabriek in Breda is nu volledig CO₂-neutraal.'},
    category:'Sustainability', catColor:'#2e7d32', thumbBg:'#e8f5e9', icon:'fa-leaf',
+   img:'https://picsum.photos/seed/greenfactory/400/210',
    date:'2026-03-01', author:'Corporate Comms', regions:['EU'], audience:[]},
 
   {id:2,
    title:{EN:'New Travel & Expense Policy Effective April 2026',DE:'Neue Reise- und Spesenrichtlinie ab April 2026',NL:'Nieuw reis- en onkostenbeleid per april 2026',RO:'Noua politică de cheltuieli intră în vigoare în aprilie 2026'},
    excerpt:{EN:'Updated Travel Expense Policy and Company Car Directive are in Quick Links. All employees must review by 31 March.'},
    category:'HR & Policy', catColor:'#880e4f', thumbBg:'#fce4ec', icon:'fa-plane',
+   img:'https://picsum.photos/seed/officetravel/400/210',
    date:'2026-02-28', author:'HR Department', regions:['EU'], audience:[]},
 
   {id:3,
    title:{EN:'Q1 Employee Training Week — Hamburg (10–14 March)',DE:'Q1 Schulungswoche – Hamburg',NL:'Q1 Trainingweek – Hamburg',RO:'Săptămâna de instruire Q1 – Hamburg'},
    excerpt:{EN:'Sessions include MS Office Life Hacks, Kelio FAQ, Software Trainings and Employee Training programmes. Register now.'},
    category:'Training', catColor:'#1565c0', thumbBg:'#e3f2fd', icon:'fa-chalkboard-teacher',
+   img:'https://picsum.photos/seed/classroom2026/400/210',
    date:'2026-02-25', author:'CCM Academy / HR', regions:['EU','DE'], audience:[]},
 
   {id:4,
    title:{EN:'Updated EHS Near-Miss Reporting Procedure',DE:'Aktualisiertes EHS-Meldeverfahren',NL:'Bijgewerkte EHS-procedure bijna-ongelukken',RO:'Procedura EHS actualizată privind raportarea incidentelor'},
    excerpt:{EN:'New near-miss reporting procedure effective March 2026. Use the Safety Alert Manager to submit reports from all sites.'},
    category:'EHS & Safety', catColor:'#c62828', thumbBg:'#ffebee', icon:'fa-hard-hat',
+   img:'https://picsum.photos/seed/industrial safety/400/210',
    date:'2026-02-18', author:'EHS Team', regions:['EU'], audience:[]},
 
   {id:5,
    title:{EN:'Commercial Processes Guide 2026 Published',DE:'Leitfaden Handelsprozesse 2026',NL:'Gids Commerciële Processen 2026',RO:'Ghidul proceselor comerciale 2026'},
    excerpt:{EN:'Updated Commercial Processes guide, complete Price List 2026 and revised Territory Maps for sales reps now in Quick Links.'},
    category:'Commercial', catColor:'#0277bd', thumbBg:'#e1f5fe', icon:'fa-briefcase',
+   img:'https://picsum.photos/seed/businessmeeting/400/210',
    date:'2026-02-15', author:'Sales & Commercial', regions:['EU'], audience:['Sales','Commercial']},
 
   {id:6,
    title:{EN:'Year-End Financial Close Schedule Available',DE:'Zeitplan für den Jahresabschluss',NL:'Tijdschema jaarafsluiting beschikbaar',RO:'Calendarul închiderii de an financiar'},
    excerpt:{EN:'Finance published the Year-End Close checklist. Review Expenses, Gifts & Hospitality policy before submission.'},
    category:'Finance', catColor:'#558b2f', thumbBg:'#f9fbe7', icon:'fa-chart-bar',
+   img:'https://picsum.photos/seed/financecharts/400/210',
    date:'2026-02-10', author:'Finance Team', regions:['EU'], audience:['Finance']},
 
   {id:7,
    title:{NL:'Gorinchem site: nieuwe veiligheidsprotocollen',EN:'[NL] Gorinchem Site — New Safety Protocols'},
    excerpt:{NL:'De Gorinchem-locatie heeft nieuwe veiligheidsprotocollen ingevoerd per 1 maart 2026.',EN:'Gorinchem site has implemented new safety protocols effective March 2026.'},
    category:'Local NL', catColor:'#00695c', thumbBg:'#e0f7fa', icon:'fa-map-marker-alt',
+   img:'https://picsum.photos/seed/netherlands factory/400/210',
    date:'2026-02-22', author:'NL Site Management', regions:['NL'], audience:[]},
 
   {id:8,
    title:{DE:'Neue IT-Tutorials für SAP-Nutzer',EN:'[DE] New SAP IT Tutorials Available'},
    excerpt:{DE:'Der IT-Bereich hat neue SAP- und MS-Office-Tutorials veröffentlicht. Verfügbar in Quick Links.',EN:'New SAP IT tutorials are now available under Quick Links > IT Tutorial.'},
    category:'IT & Tools', catColor:'#283593', thumbBg:'#e8eaf6', icon:'fa-laptop-code',
+   img:'https://picsum.photos/seed/saptechnology/400/210',
    date:'2026-02-20', author:'IT Department — DE', regions:['DE'], audience:[]},
 
   {id:9,
    title:{EN:'Swindon: Contract Management System Upgrade — 15 March'},
    excerpt:{EN:'The Contract Management system upgrade at Swindon runs 15 March 18:00–22:00 GMT. Contact IT Helpdesk for queries.'},
    category:'IT & Tools', catColor:'#283593', thumbBg:'#e8eaf6', icon:'fa-file-signature',
+   img:'https://picsum.photos/seed/itoffice uk/400/210',
    date:'2026-02-17', author:'IT Department — UK', regions:['UK'], audience:[]},
 
   {id:10,
    title:{RO:'Actualizare proceduri interne — Brașov',EN:'[RO] Internal Procedures Update — Brasov'},
    excerpt:{RO:'Procedurile interne pentru site-ul Brașov au fost actualizate. Consultați biblioteca de documente.',EN:'Internal procedures for the Brasov site have been updated. See the document library.'},
    category:'Local RO', catColor:'#6a1b9a', thumbBg:'#f3e5f5', icon:'fa-map-marker-alt',
-   date:'2026-02-14', author:'RO Site Management', regions:['RO'], audience:[]}
+   img:'https://picsum.photos/seed/romania plant/400/210',
+   date:'2026-02-14', author:'RO Site Management', regions:['RO'], audience:[]},
+
+  {id:11,
+   title:{EN:'CCM Europe Wins Employer of the Year Award 2026',DE:'CCM Europa gewinnt Arbeitgeber des Jahres 2026',NL:'CCM Europa wint Werkgever van het Jaar 2026',RO:'CCM Europa câștigă premiul Angajator al Anului 2026'},
+   excerpt:{EN:'We are proud to announce that CCM Europe has been recognised as Employer of the Year 2026 by the European Manufacturing Association. A testament to our people-first culture.'},
+   category:'Company News', catColor:'#e65100', thumbBg:'#fff3e0', icon:'fa-trophy',
+   img:'https://picsum.photos/seed/award ceremony/400/210',
+   date:'2026-03-15', author:'Corporate Comms', regions:['EU'], audience:[]},
+
+  {id:12,
+   title:{EN:'New Canteen & Wellness Area Opens at Hamburg HQ',DE:'Neue Kantine und Wellnessbereich im Hamburger HQ',NL:'Nieuwe kantine en wellnessruimte open in Hamburg HQ',RO:'Noua cantină și zonă de wellness se deschid la Hamburg HQ'},
+   excerpt:{EN:'The refurbished canteen and newly built wellness area at our Schellerdam HQ are now open. Free healthy lunches on Fridays throughout March and April.'},
+   category:'Facility & Wellbeing', catColor:'#00695c', thumbBg:'#e0f2f1', icon:'fa-utensils',
+   img:'https://picsum.photos/seed/modern canteen/400/210',
+   date:'2026-03-10', author:'Facilities Management', regions:['EU','DE'], audience:[]},
+
+  {id:13,
+   title:{EN:'Product Innovation: RESITRIX® SK Ultra Launched',DE:'Produktinnovation: RESITRIX® SK Ultra vorgestellt',NL:'Productinnovatie: RESITRIX® SK Ultra gelanceerd',RO:'Inovație produs: lansare RESITRIX® SK Ultra'},
+   excerpt:{EN:'Our R&D team has launched RESITRIX® SK Ultra — a next-generation single-ply roofing membrane offering 30% improved tensile strength and enhanced UV resistance. Full specs in the product library.'},
+   category:'Product News', catColor:'#5da552', thumbBg:'#e8f5e9', icon:'fa-cubes',
+   img:'https://picsum.photos/seed/roofing product/400/210',
+   date:'2026-03-05', author:'Product Management', regions:['EU'], audience:[]}
 ];
 
 // ── EHS SAFETY DASHBOARD  (SharePoint list: EHSSiteTracker — fields: SiteName, Country, Flag, Subtitle, AccidentFreeDays, StatusLabel)
@@ -634,13 +682,13 @@ const locations = [
   // Germany
   {city:'Hamburg (DE)',             country:'Germany',        flag:'🇩🇪', hq:true,  employees:120, icon:'fa-building',   iconBg:'#ede9fe', iconColor:'#6d28d9', grad:['#4776E6','#8E54E9']},
   {city:'Hamburg Noeldekestrasse', country:'Germany',        flag:'🇩🇪', hq:false, employees:200, icon:'fa-industry',   iconBg:'#e0f2fe', iconColor:'#0369a1', grad:['#0369a1','#38bdf8']},
-  {city:'Kaufbeuren',              country:'Germany',        flag:'🇩🇪', hq:false, employees:130, icon:'fa-cogs',       iconBg:'#fce7f3', iconColor:'#be185d', grad:['#be185d','#f472b6']},
+  {city:'Kaufbeuren',              country:'Germany',        flag:'🇩🇪', hq:false, employees:130, icon:'fa-cogs',       iconBg:'#e5f0e3', iconColor:'#2d5229', grad:['#152c12','#5da552']},
   {city:'Waltershausen',           country:'Germany',        flag:'🇩🇪', hq:false, employees:115, icon:'fa-industry',   iconBg:'#fef9c3', iconColor:'#a16207', grad:['#d97706','#fde047']},
   // Netherlands
   {city:'Kampen',                  country:'Netherlands',    flag:'🇳🇱', hq:false, employees:95,  icon:'fa-cogs',       iconBg:'#fff7ed', iconColor:'#c2410c', grad:['#c2410c','#fb923c']},
   {city:'Weesp',                   country:'Netherlands',    flag:'🇳🇱', hq:false, employees:110, icon:'fa-warehouse',  iconBg:'#fef3c7', iconColor:'#b45309', grad:['#b45309','#fbbf24']},
   // United Kingdom
-  {city:'Mansfield',               country:'United Kingdom', flag:'🇬🇧', hq:false, employees:75,  icon:'fa-boxes',      iconBg:'#f3e8ff', iconColor:'#7e22ce', grad:['#6d28d9','#a78bfa']},
+  {city:'Mansfield',               country:'United Kingdom', flag:'🇬🇧', hq:false, employees:75,  icon:'fa-boxes',      iconBg:'#fde8e8', iconColor:'#8a0008', grad:['#620008','#f1242a']},
   {city:'Kirby',                   country:'United Kingdom', flag:'🇬🇧', hq:false, employees:80,  icon:'fa-truck',      iconBg:'#e0f7fa', iconColor:'#00838f', grad:['#0097a7','#4dd0e1']},
   // Romania
   {city:'Baia Mare',               country:'Romania',        flag:'🇷🇴', hq:false, employees:180, icon:'fa-industry',   iconBg:'#dcfce7', iconColor:'#15803d', grad:['#15803d','#4ade80']}
@@ -709,24 +757,48 @@ function renderNews(){
     list.innerHTML='<div style="padding:16px;color:var(--muted);font-size:13px">No news items for your current region and groups.</div>';
     return;
   }
-  visible.forEach(n=>{
+  visible.forEach((n,i)=>{
     const title = n.title[currentLang]||n.title['EN']||n.title['NL']||Object.values(n.title)[0];
     const ex    = n.excerpt&&(n.excerpt[currentLang]||n.excerpt['EN']||'');
-    const el = document.createElement('div'); el.className='news-item';
-    el.innerHTML = `
-      <div class="news-thumb" style="background:${n.thumbBg||'#eee'};color:${n.catColor||'#444'}">
-        <i class="fa ${n.icon||'fa-newspaper'}"></i>
-      </div>
-      <div class="news-body">
-        <div class="news-cat" style="color:${n.catColor}">${n.category}</div>
-        <div class="news-title">${title}</div>
-        <div class="news-excerpt">${ex}</div>
-        <div class="news-meta">
-          <span><i class="fa fa-user" style="opacity:.5"></i> ${n.author||''}</span>
-          <span><i class="fa fa-clock" style="opacity:.5"></i> ${n.date}</span>
-          <span class="tag" style="background:${n.thumbBg};color:${n.catColor}">${n.regions.join(', ')}</span>
-        </div>
-      </div>`;
+    const el = document.createElement('div');
+    el.className = i===0 ? 'news-card featured' : 'news-card';
+    if(i===0){
+      el.innerHTML = `
+        <img class="news-card-feat-img" src="${n.img||''}" alt="${title}" onerror="this.style.display='none'">
+        <div class="news-card-feat-body">
+          <div class="news-card-stripe" style="background:${n.catColor}"></div>
+          <div class="news-card-inner">
+            <div class="news-card-top">
+              <div class="news-card-icon" style="background:${n.thumbBg||'#eee'};color:${n.catColor||'#444'}"><i class="fa ${n.icon||'fa-newspaper'}"></i></div>
+              <div class="news-card-cat" style="color:${n.catColor}">${n.category}</div>
+            </div>
+            <div class="news-card-title">${title}</div>
+            <div class="news-card-excerpt">${ex}</div>
+            <div class="news-card-footer">
+              <span><i class="fa fa-user" style="opacity:.5"></i> ${n.author||''}</span>
+              <span><i class="fa fa-clock" style="opacity:.5"></i> ${n.date}</span>
+              <span class="tag" style="background:${n.thumbBg};color:${n.catColor}">${n.regions.join(', ')}</span>
+            </div>
+          </div>
+        </div>`;
+    } else {
+      el.innerHTML = `
+        <img class="news-card-img" src="${n.img||''}" alt="${title}" onerror="this.style.display='none'">
+        <div class="news-card-stripe" style="background:${n.catColor}"></div>
+        <div class="news-card-inner">
+          <div class="news-card-top">
+            <div class="news-card-icon" style="background:${n.thumbBg||'#eee'};color:${n.catColor||'#444'}"><i class="fa ${n.icon||'fa-newspaper'}"></i></div>
+            <div class="news-card-cat" style="color:${n.catColor}">${n.category}</div>
+          </div>
+          <div class="news-card-title">${title}</div>
+          <div class="news-card-excerpt">${ex}</div>
+          <div class="news-card-footer">
+            <span><i class="fa fa-user" style="opacity:.5"></i> ${n.author||''}</span>
+            <span><i class="fa fa-clock" style="opacity:.5"></i> ${n.date}</span>
+            <span class="tag" style="background:${n.thumbBg};color:${n.catColor}">${n.regions.join(', ')}</span>
+          </div>
+        </div>`;
+    }
     list.appendChild(el);
   });
 }
